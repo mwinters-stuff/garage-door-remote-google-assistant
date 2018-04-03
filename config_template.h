@@ -1,3 +1,4 @@
+// Copy this and name it config.h, then edit config.h
 #define WIFI_SSID "<<WIFI SID>>"
 #define WIFI_PASS "<<WIFI PASSWORD>>"
 
