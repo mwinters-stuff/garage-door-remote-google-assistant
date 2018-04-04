@@ -1,17 +1,21 @@
 
 #include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <AdafruitIO_WiFi.h>
+
 #include <AdafruitIO_Feed.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
 #include "config.h"
 
+
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 
 AdafruitIO_Feed *io_door_action = io.feed("garagedooraction");
 AdafruitIO_Feed *io_door_position = io.feed("garagedoorposition");
 AdafruitIO_Feed *io_garage_temperature = io.feed("garagetemperature");
+AdafruitIO_Feed *io_reset_reason = io.feed("resetreason");
 
 OneWire oneWire(ONE_WIRE_PIN);
 DallasTemperature DS18B20(&oneWire);
@@ -25,8 +29,8 @@ uint32_t temperatureLastRead = 0;
 #define MANUAL_FLASH_TIME_OFF 150
 #define WAITING_TIME_OFF 4950
 
-
 enum doorPositions{
+  dpStartup,
   dpUnknown,
   dpOpen,
   dpClosed,
@@ -36,10 +40,10 @@ enum doorPositions{
   dpManualClosedToOpen
 };
 
-char door_position_strings [][20]= {"UNKNOWN","OPEN","CLOSED","OPEN_CLOSED","CLOSED_OPEN","MANUAL_OPEN_CLOSED","MANUAL_CLOSED_OPEN"};
+char door_position_strings [][20]= {"STARTUP","UNKNOWN","OPEN","CLOSED","OPEN_CLOSED","CLOSED_OPEN","MANUAL_OPEN_CLOSED","MANUAL_CLOSED_OPEN"};
 
-doorPositions door_position = dpUnknown;
-doorPositions start_move_door_position = dpUnknown;
+doorPositions door_position = dpStartup;
+doorPositions start_move_door_position = dpStartup;
 bool door_moving = false;
 
 
@@ -94,6 +98,9 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
 
 void setup() {
   Serial.begin(115200);
+  for(int i = 0; i < 10; i++){
+    Serial.println();
+  }
 
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_GREEN, OUTPUT);
@@ -106,19 +113,26 @@ void setup() {
   digitalWrite(LED_GREEN,LED_ON);
   digitalWrite(LED_BUILTIN,HIGH);
 
-  Serial.print("Connecting to Adafruit IO");
+  Serial.println(F("Connecting to Adafruit IO"));
+  WiFi.setAutoReconnect(true);
+  WiFi.mode(WIFI_STA);
 
   io.connect();
   io_door_action->onMessage(handleDoorActionMessage);
 
-  while(io.mqttStatus() < AIO_CONNECTED) {
-    Serial.print(".");
+  while(io.status() < AIO_NET_CONNECTED){
+    Serial.print("Net Status ");
+    Serial.println(io.statusText());
+    WiFi.printDiag(Serial);
     delay(500);
   }
+
   Serial.println();
   Serial.println(io.statusText());
   digitalWrite(LED_GREEN,LED_OFF);
   digitalWrite(LED_RED,LED_OFF);
+
+  io_reset_reason->save(ESP.getResetReason());
 
 }
 
@@ -142,6 +156,7 @@ void read_switchs(){
   uint8_t current_door_position = door_position;
   
   switch(door_position){
+    case dpStartup:
     case dpUnknown:
       if(s_closed){
         door_position = dpClosed;
@@ -154,6 +169,7 @@ void read_switchs(){
       }else{
         Serial.println(F("Startup Door UNKNOWN"));
         digitalWrite(LED_RED,LED_ON);
+        delay(1000);
       }
       break;
     case dpClosedToOpen:
@@ -240,24 +256,28 @@ void read_switchs(){
 
 void read_temperature(){
   if(temperatureLastRead == 0 || (millis() - temperatureLastRead) >= TEMPERATURE_DELAY ){
-    float temp;
-    do {
+    ESP.wdtDisable();
+    for(int d = 0; d < 5; d++) {
       DS18B20.requestTemperatures(); 
-      temp = DS18B20.getTempCByIndex(0);
-      Serial.print("Temperature: ");
-      Serial.println(temp);
-    }while (temp == 85.0 || temp == (-127.0));
+      float temp = DS18B20.getTempCByIndex(0);
+      if(temp != 85.0 && temp != (-127.0)){
+        Serial.print(F("Temperature: "));
+        Serial.println(temp);
+        io_garage_temperature->save(temp);
+        break;
+      }
+      Serial.print(F("Temperature Reading Failed"));
+      delay(1000);
+    }
     temperatureLastRead = millis();
-    io_garage_temperature->save(temp);
+    ESP.wdtEnable((uint32_t)0);
   }
 }
 
 void loop() {
   io.run();
   read_switchs();
-
   read_temperature();
-
 
   if(door_position == dpOpen || door_position == dpClosed){
     if(millis() - greenMillisFlash >= WAITING_TIME_OFF && digitalRead(LED_GREEN) == LED_OFF){
@@ -298,4 +318,5 @@ void loop() {
     redMillisFlash = 0;
   }
 
+  delay(10);
 }
