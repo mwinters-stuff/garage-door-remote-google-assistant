@@ -12,10 +12,11 @@
 
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 
-AdafruitIO_Feed *io_door_action = io.feed("garagedooraction");
-AdafruitIO_Feed *io_door_position = io.feed("garagedoorposition");
-AdafruitIO_Feed *io_garage_temperature = io.feed("garagetemperature");
-AdafruitIO_Feed *io_reset_reason = io.feed("resetreason");
+AdafruitIO_Feed *io_door_action;// = io.feed(PSTR("garagedooraction"));
+AdafruitIO_Feed *io_door_position;// = io.feed(PSTR("garagedoorposition"));
+AdafruitIO_Feed *io_garage_temperature;// = io.feed(PSTR("garagetemperature"));
+AdafruitIO_Feed *io_reset_reason;// = io.feed(PSTR("resetreason"));
+AdafruitIO_Feed *io_in_home_area;// = io.feed(PSTR("resetreason"));
 
 OneWire oneWire(ONE_WIRE_PIN);
 DallasTemperature DS18B20(&oneWire);
@@ -40,7 +41,7 @@ enum doorPositions{
   dpManualClosedToOpen
 };
 
-char door_position_strings [][20]= {"STARTUP","UNKNOWN","OPEN","CLOSED","OPEN_CLOSED","CLOSED_OPEN","MANUAL_OPEN_CLOSED","MANUAL_CLOSED_OPEN"};
+static const char door_position_strings [][20] PROGMEM = {"STARTUP","UNKNOWN","OPEN","CLOSED","OPEN_CLOSED","CLOSED_OPEN","MANUAL_OPEN_CLOSED","MANUAL_CLOSED_OPEN"};
 
 doorPositions door_position = dpStartup;
 doorPositions start_move_door_position = dpStartup;
@@ -52,9 +53,14 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
   Serial.print(F("Action: Received door action -> "));
   Serial.println(data->value());
 
+  if(io_in_home_area->lastValue()->toString().compareTo(F("entered")) != 0){
+    Serial.print(F("Not near home, won't action door!"));
+    return;
+  }
+
   doorPositions current_door_position = door_position;
 
-  if (strcmp(data->value(), "OPEN") == 0)
+  if (strcmp_P(data->value(), PSTR("OPEN")) == 0)
   {
     if(door_position == dpClosed){
       Serial.println(F("Action: Door is closed, Open"));
@@ -70,7 +76,7 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
       digitalWrite(LED_RED,LED_ON);
     }
   }
-  if (strcmp(data->value(), "CLOSE") == 0)
+  if (strcmp_P(data->value(), PSTR("CLOSE")) == 0)
   {
     if(door_position == dpOpen){
       Serial.println(F("Action: Door is open, Close"));
@@ -89,10 +95,10 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
 
   if (current_door_position != door_position){
     Serial.print(F("Action: Update Door Position:"));
-    Serial.print(door_position_strings[current_door_position]);
+    Serial.print(FPSTR(door_position_strings[current_door_position]));
     Serial.print(F(" --> "));
-    Serial.println(door_position_strings[door_position]);
-    io_door_position->save(door_position_strings[door_position]);
+    Serial.println(FPSTR(door_position_strings[door_position]));
+    io_door_position->save(String(FPSTR(door_position_strings[door_position])));
   }
 }
 
@@ -113,6 +119,12 @@ void setup() {
   digitalWrite(LED_GREEN,LED_ON);
   digitalWrite(LED_BUILTIN,HIGH);
 
+  io_door_action = io.feed(PSTR("garagedooraction"));
+  io_door_position = io.feed(PSTR("garagedoorposition"));
+  io_garage_temperature = io.feed(PSTR("garagetemperature"));
+  io_in_home_area = io.feed(PSTR("inhomearea"));
+  io_reset_reason = io.feed(PSTR("resetreason"));
+
   Serial.println(F("Connecting to Adafruit IO"));
   WiFi.setAutoReconnect(true);
   WiFi.mode(WIFI_STA);
@@ -121,7 +133,7 @@ void setup() {
   io_door_action->onMessage(handleDoorActionMessage);
 
   while(io.status() < AIO_NET_CONNECTED){
-    Serial.print("Net Status ");
+    Serial.print(F("Net Status "));
     Serial.println(io.statusText());
     WiFi.printDiag(Serial);
     delay(500);
@@ -245,10 +257,10 @@ void read_switchs(){
   }
   if (current_door_position != door_position){
     Serial.print(F("Switch: Update Door Position:"));
-    Serial.print(door_position_strings[current_door_position]);
+    Serial.print(FPSTR(door_position_strings[current_door_position]));
     Serial.print(F(" --> "));
-    Serial.println(door_position_strings[door_position]);
-    io_door_position->save(door_position_strings[door_position]);
+    Serial.println(FPSTR(door_position_strings[door_position]));
+    io_door_position->save(String(FPSTR(door_position_strings[door_position])));
   }
   
   
