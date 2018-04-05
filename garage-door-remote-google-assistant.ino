@@ -7,20 +7,31 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+#include <ESP8266HTTPUpdateServer.h>
+#include <EEPROM.h>
+
 #include "config.h"
 
+#define EEPROM_SIZE 16
+#define  EEPROM_IN_GEOFENCE_ADDR 0
+
+ESP8266WebServer httpServer(80);
+ESP8266HTTPUpdateServer httpUpdater;
 
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
+AdafruitIO_Feed* io_door_action = io.feed(IO_FEED_DOOR_ACTION);
+AdafruitIO_Feed* io_door_position = io.feed(IO_FEED_POSITION);
+AdafruitIO_Feed* io_garage_temperature = io.feed(IO_FEED_TEMPERATURE);
+AdafruitIO_Feed* io_reset_reason = io.feed(IO_FEED_RESET_REASON);
+#ifdef GEOFENCE
+AdafruitIO_Feed* io_in_home_area = io.feed(IO_FEED_IN_HOME_AREA);
+#endif
 
-AdafruitIO_Feed *io_door_action;// = io.feed(PSTR("garagedooraction"));
-AdafruitIO_Feed *io_door_position;// = io.feed(PSTR("garagedoorposition"));
-AdafruitIO_Feed *io_garage_temperature;// = io.feed(PSTR("garagetemperature"));
-AdafruitIO_Feed *io_reset_reason;// = io.feed(PSTR("resetreason"));
-AdafruitIO_Feed *io_in_home_area;// = io.feed(PSTR("resetreason"));
 
 OneWire oneWire(ONE_WIRE_PIN);
 DallasTemperature DS18B20(&oneWire);
-
 
 uint32_t greenMillisFlash = 0;
 uint32_t redMillisFlash = 0;
@@ -48,15 +59,98 @@ doorPositions start_move_door_position = dpStartup;
 bool door_moving = false;
 
 
+void handleDoorActionMessage(AdafruitIO_Data *data);
+#ifdef GEOFENCE
+bool in_geofence = false;
+void handleInHomeAreaMessage(AdafruitIO_Data *data);
+#endif
+
+void setup() {
+  Serial.begin(115200);
+  for(int i = 0; i < 10; i++){
+    Serial.println();
+  }
+
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_GREEN, OUTPUT);
+  pinMode(LED_RED, OUTPUT);
+  pinMode(RELAY, OUTPUT);
+  pinMode(SWITCH_OPEN,INPUT_PULLUP);
+  pinMode(SWITCH_CLOSED,INPUT_PULLUP);
+
+  digitalWrite(LED_RED,LED_ON);
+  digitalWrite(LED_GREEN,LED_ON);
+  digitalWrite(LED_BUILTIN,HIGH);
+
+  Serial.println(F("Connecting to Adafruit IO"));
+  WiFi.hostname(HOSTNAME);
+  WiFi.setAutoReconnect(true);
+  WiFi.mode(WIFI_STA);
+
+  io.connect();
+  io_door_action->onMessage(handleDoorActionMessage);
+#ifdef GEOFENCE  
+  io_in_home_area->onMessage(handleInHomeAreaMessage);
+  EEPROM.begin(EEPROM_SIZE);
+  in_geofence = EEPROM.read(EEPROM_IN_GEOFENCE_ADDR) == 1;
+  Serial.println(in_geofence ? F("restored inside geofence") : F("restored outside geofence"));
+  EEPROM.end();
+#endif  
+
+  while(io.status() < AIO_NET_CONNECTED){
+    Serial.print(F("Net Status "));
+    Serial.println(io.statusText());
+    // WiFi.printDiag(Serial);
+    delay(500);
+  }
+
+  Serial.println();
+  Serial.println(io.statusText());
+  digitalWrite(LED_GREEN,LED_OFF);
+  digitalWrite(LED_RED,LED_OFF);
+
+  io_reset_reason->save(ESP.getResetReason());
+
+
+  MDNS.begin(HOSTNAME);
+
+  httpUpdater.setup(&httpServer);
+  httpServer.begin();
+
+  MDNS.addService("http", "tcp", 80);
+  Serial.printf("HTTPUpdateServer ready! Open http://%s/update in your browser\n", HOSTNAME);
+
+}
+
+#ifdef GEOFENCE
+
+void handleInHomeAreaMessage(AdafruitIO_Data *data) {
+
+  Serial.print(F("Action: Received in home area -> "));
+  Serial.print(data->value());
+
+  in_geofence = strcmp_P(data->value(), PSTR("entered")) == 0;
+  Serial.println(in_geofence ? F(" inside geofence") : F(" outside geofence"));
+
+  EEPROM.begin(EEPROM_SIZE);
+  EEPROM.write(EEPROM_IN_GEOFENCE_ADDR, in_geofence ? 1 : 0);
+  EEPROM.end();
+
+}
+#endif
+
 void handleDoorActionMessage(AdafruitIO_Data *data) {
 
   Serial.print(F("Action: Received door action -> "));
   Serial.println(data->value());
 
-  if(io_in_home_area->lastValue()->toString().compareTo(F("entered")) != 0){
-    Serial.print(F("Not near home, won't action door!"));
+#ifdef GEOFENCE
+  if(!in_geofence){
+    Serial.println(F("Not near home, won't action door!"));
     return;
   }
+#endif
 
   doorPositions current_door_position = door_position;
 
@@ -102,51 +196,6 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
   }
 }
 
-void setup() {
-  Serial.begin(115200);
-  for(int i = 0; i < 10; i++){
-    Serial.println();
-  }
-
-  pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(LED_GREEN, OUTPUT);
-  pinMode(LED_RED, OUTPUT);
-  pinMode(RELAY, OUTPUT);
-  pinMode(SWITCH_OPEN,INPUT_PULLUP);
-  pinMode(SWITCH_CLOSED,INPUT_PULLUP);
-
-  digitalWrite(LED_RED,LED_ON);
-  digitalWrite(LED_GREEN,LED_ON);
-  digitalWrite(LED_BUILTIN,HIGH);
-
-  io_door_action = io.feed(PSTR("garagedooraction"));
-  io_door_position = io.feed(PSTR("garagedoorposition"));
-  io_garage_temperature = io.feed(PSTR("garagetemperature"));
-  io_in_home_area = io.feed(PSTR("inhomearea"));
-  io_reset_reason = io.feed(PSTR("resetreason"));
-
-  Serial.println(F("Connecting to Adafruit IO"));
-  WiFi.setAutoReconnect(true);
-  WiFi.mode(WIFI_STA);
-
-  io.connect();
-  io_door_action->onMessage(handleDoorActionMessage);
-
-  while(io.status() < AIO_NET_CONNECTED){
-    Serial.print(F("Net Status "));
-    Serial.println(io.statusText());
-    WiFi.printDiag(Serial);
-    delay(500);
-  }
-
-  Serial.println();
-  Serial.println(io.statusText());
-  digitalWrite(LED_GREEN,LED_OFF);
-  digitalWrite(LED_RED,LED_OFF);
-
-  io_reset_reason->save(ESP.getResetReason());
-
-}
 
 void read_switchs(){
   bool s_closed = false;
@@ -278,7 +327,7 @@ void read_temperature(){
         io_garage_temperature->save(temp);
         break;
       }
-      Serial.print(F("Temperature Reading Failed"));
+      Serial.println(F("Temperature Reading Failed"));
       delay(1000);
     }
     temperatureLastRead = millis();
@@ -288,6 +337,7 @@ void read_temperature(){
 
 void loop() {
   io.run();
+  httpServer.handleClient();
   read_switchs();
   read_temperature();
 

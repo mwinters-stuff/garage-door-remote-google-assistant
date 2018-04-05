@@ -5,6 +5,15 @@
 #define IO_USERNAME "<<Adifruit.io username>>"
 #define IO_KEY "<<Adafruit.io api key>>"
 
+#define GEOFENCE
+
+#define IO_FEED_DOOR_ACTION "garagedooraction"
+#define IO_FEED_POSITION "garagedoorposition"
+#define IO_FEED_TEMPERATURE "garagetemperature"
+#define IO_FEED_IN_HOME_AREA "inhomearea"
+#define IO_FEED_RESET_REASON  "resetreason"
+
+
 #define ONE_WIRE_PIN D1
 #define LED_GREEN D2
 #define LED_RED D3
