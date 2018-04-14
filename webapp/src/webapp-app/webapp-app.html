@@ -1,0 +1,134 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="webapp-app">
+  <template>
+    <style is="custom-style">
+      /* :host {
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --app-primary-color: var(--paper-indigo-500);
+        --app-secondary-color: black;
+
+      } */
+
+      .content {
+        @apply --layout-vertical;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      /* paper-card{
+        @apply --paper-font-display3;
+      } */
+      .value{
+        @apply --paper-font-subheading;
+        font-weight: bold;
+      }
+      .label{
+        @apply --paper-font-subheading;
+      }
+    </style>
+    <iron-ajax id="getDataAjax" auto url="/all" handle-as="json" last-response="{{_data}}" debounce-duration="300">
+    </iron-ajax>
+    <iron-ajax id="doorActionAjax" url="/action" handle-as="json" method="GET" params="[[_actionParams]]" debounce-duration="300">
+    </iron-ajax>
+
+
+    <div class="content">
+      <paper-card heading="Garage Door">
+        <div class="card-content">
+          <table fixed-column>
+            <tbody>
+              <tr>
+                <td class="label">Door Action</td>
+                <td class="value">[[_data.door_action]]</td>
+              </tr>
+              <tr>
+                <td class="label">Door Position</td>
+                <td class="value">[[_data.door_position]]</td>
+              </tr>
+              <tr>
+                <td class="label">In Home Area</td>
+                <td class="value">[[_at_home(_data.in_home_area)]]</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-actions">
+          <paper-button disabled="[[_door_action_enabled(_data.door_position)]]" on-tap="_toggle_door">[[_door_action_title(_data.door_position)]]</paper-button>
+          <paper-button on-tap="_go_update">Update</paper-button>
+        </div>
+      </paper-card>
+
+    </div>
+    <!-- </app-header-layout> -->
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class WebappApp extends Polymer.Element {
+      static get is() { return 'webapp-app'; }
+      // static get properties() {
+      //   return {
+      //     prop1: {
+      //       type: String,
+      //       value: 'webapp-app'
+      //     }
+      //   };
+      // }
+      constructor() {
+        super();
+        this._data = null;
+        this._actionParams = null;
+
+        // this._intervalID = window.setInterval(() => {
+        //   this.$.getDataAjax.generateRequest();
+        // }, 1000);
+      }
+
+      _at_home(home) {
+        if (home != true || home != false) {//} "" || home == null){
+          return "Unknown"
+        }
+        return home ? "Yes" : "No";
+      }
+
+      _door_action_enabled(position) {
+        return position !== "OPEN" && position !== "CLOSED";
+      }
+
+      _door_action_title(position) {
+        if (position === "OPEN") {
+          return "Close Door"
+        } else if (position === "CLOSED") {
+          return "Open Door";
+        } if (position === "" || position == null) {
+          return "Unknown";
+        }
+        return "Moving";
+      }
+
+      _toggle_door() {
+        this._actionParams = {
+          "door_action": this._data.door_position === "OPEN" ? "CLOSE" : "OPEN"
+        };
+        this.$.doorActionAjax.generateRequest();
+      }
+
+      _go_update() {
+        window.location = "/update"
+      }
+
+    }
+
+    window.customElements.define(WebappApp.is, WebappApp);
+  </script>
+</dom-module>

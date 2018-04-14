@@ -33,3 +33,5 @@
 
 config.h
 build/*
+webapp/bower_components/
+webapp/build/

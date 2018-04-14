@@ -11,6 +11,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <EEPROM.h>
+#include <FS.h>
 
 #include "config.h"
 
@@ -60,17 +61,37 @@ bool door_moving = false;
 
 
 void handleDoorActionMessage(AdafruitIO_Data *data);
+String doDoorAction(String action);
+void actionDoor(String position);
+
 #ifdef GEOFENCE
 bool in_geofence = false;
 void handleInHomeAreaMessage(AdafruitIO_Data *data);
+String doInHomeArea(String action);
 #endif
+
+bool handleFileRead(String path){
+  Serial.println("handleFileRead: " + path);
+  if(path.endsWith("/")) path += "index.html";
+  String contentType = "text/html";
+  String pathWithGz = path + ".gz";
+  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
+    if(SPIFFS.exists(pathWithGz))
+      path += ".gz";
+    File file = SPIFFS.open(path, "r");
+    httpServer.streamFile(file, contentType);
+    file.close();
+    return true;
+  }
+  return false;
+}
 
 void setup() {
   Serial.begin(115200);
   for(int i = 0; i < 10; i++){
     Serial.println();
   }
-
+  SPIFFS.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_GREEN, OUTPUT);
@@ -111,11 +132,65 @@ void setup() {
   digitalWrite(LED_RED,LED_OFF);
 
   io_reset_reason->save(ESP.getResetReason());
+  Serial.println(io_door_action->lastValue()->toString());
 
 
   MDNS.begin(HOSTNAME);
 
   httpUpdater.setup(&httpServer);
+  
+  httpServer.on("/all", HTTP_GET, [](){
+    httpServer.sendHeader("Access-Control-Allow-Origin","*");
+    String json = "{";
+    json += "\"heap\": " + String(ESP.getFreeHeap());
+    json += ", \"door_action\": \"" + io_door_action->data->toString() + "\"";
+    json += ", \"door_position\": \"" + io_door_position->data->toString() + "\"";
+#ifdef GEOFENCE
+    json += ", \"in_home_area\": ";
+    if(in_geofence == 1){
+      json += "true";
+    } else{
+      json += "false";
+    } 
+#endif
+    json += "}";
+    httpServer.send(200, "text/json", json);
+    json = String();
+  });
+
+  httpServer.on("/action", HTTP_GET,[](){
+    httpServer.sendHeader("Access-Control-Allow-Origin","*");
+    if(httpServer.args() == 0) 
+      return httpServer.send(500, "text/plain", "BAD ARGS");
+    String name= httpServer.argName(0);
+    String action = httpServer.arg(0);
+
+    Serial.print(F("Action: "));
+    Serial.print(name);
+    Serial.print(" = ");
+    Serial.println(action);
+    String result = "ERROR: " + name + ": " + action + " is an unknown action";
+
+    if(name.equals("door_action")){
+      result = doDoorAction(action);
+    }
+
+#ifdef GEOFENCE
+    if(name.equals("in_home_area")){
+      result = doInHomeArea(action);
+    }
+#endif
+    httpServer.send(200, "text/plain", result);
+
+  });
+
+  //called when the url is not defined here
+  //use it to load content from SPIFFS
+  httpServer.onNotFound([](){
+    if(!handleFileRead(httpServer.uri()))
+      httpServer.send(404, "text/plain", "FileNotFound");
+  });
+
   httpServer.begin();
 
   MDNS.addService("http", "tcp", 80);
@@ -152,9 +227,13 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
   }
 #endif
 
+  actionDoor(data->value());
+}
+
+void actionDoor(String position){
   doorPositions current_door_position = door_position;
 
-  if (strcmp_P(data->value(), PSTR("OPEN")) == 0)
+  if (position.compareTo(F("OPEN")) == 0)
   {
     if(door_position == dpClosed){
       Serial.println(F("Action: Door is closed, Open"));
@@ -170,7 +249,7 @@ void handleDoorActionMessage(AdafruitIO_Data *data) {
       digitalWrite(LED_RED,LED_ON);
     }
   }
-  if (strcmp_P(data->value(), PSTR("CLOSE")) == 0)
+  if (position.compareTo(F("CLOSE")) == 0)
   {
     if(door_position == dpOpen){
       Serial.println(F("Action: Door is open, Close"));
@@ -382,3 +461,18 @@ void loop() {
 
   delay(10);
 }
+
+String doDoorAction(String action){
+  if(action.compareTo(F("OPEN")) == 0 || action.compareTo(F("CLOSE"))==0){
+    io_door_action->save(action);
+    actionDoor(action);
+    return "OK";
+  }
+
+  return "ERROR: " + action + " is not a door action";
+}
+#ifdef GEOFENCE
+String doInHomeArea(String action){
+  return "ERROR: " + action + " is not in home action";
+}
+#endif

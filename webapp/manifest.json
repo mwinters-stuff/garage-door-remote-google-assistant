@@ -1,0 +1,7 @@
+{
+  "name": "webapp",
+  "short_name": "webapp",
+  "description": "Web app for garage door mcu",
+  "start_url": "/",
+  "display": "standalone"
+}
