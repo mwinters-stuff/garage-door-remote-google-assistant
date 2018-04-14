@@ -4,6 +4,7 @@
 
 #define IO_USERNAME "<<Adifruit.io username>>"
 #define IO_KEY "<<Adafruit.io api key>>"
+#define ARDUINO_OTA_PASSWORD "<<apassword>>"
 
 #define GEOFENCE
 

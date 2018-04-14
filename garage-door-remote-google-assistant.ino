@@ -12,6 +12,7 @@
 #include <ESP8266HTTPUpdateServer.h>
 #include <EEPROM.h>
 #include <FS.h>
+#include <ArduinoOTA.h>
 
 #include "config.h"
 
@@ -192,6 +193,35 @@ void setup() {
   });
 
   httpServer.begin();
+
+  // setup arduino ArduinoOTA
+  ArduinoOTA.setPassword(ARDUINO_OTA_PASSWORD);
+  ArduinoOTA.onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH)
+      Serial.println(F("Start updating sketch"));
+    else // U_SPIFFS
+      Serial.println(F("Start updating filesystem"));
+
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    SPIFFS.end();
+  });
+  ArduinoOTA.onEnd([]() {
+    SPIFFS.begin();
+    Serial.println(F("\nEnd"));
+  });
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf(("Progress: %u%%\r"), (progress / (total / 100)));
+  });
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf(("Error[%u]: "), error);
+    if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
+    else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
+    else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
+    else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
+    else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
+  });
+  ArduinoOTA.begin();
 
   MDNS.addService("http", "tcp", 80);
   Serial.printf("HTTPUpdateServer ready! Open http://%s/update in your browser\n", HOSTNAME);
@@ -417,6 +447,7 @@ void read_temperature(){
 void loop() {
   io.run();
   httpServer.handleClient();
+  ArduinoOTA.handle();
   read_switchs();
   read_temperature();
 

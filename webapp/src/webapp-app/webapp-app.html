@@ -95,7 +95,7 @@
       }
 
       _at_home(home) {
-        if (home != true || home != false) {//} "" || home == null){
+        if (home != true && home != false) {//} "" || home == null){
           return "Unknown"
         }
         return home ? "Yes" : "No";
