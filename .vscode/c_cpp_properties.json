@@ -20,7 +20,8 @@
                 "${env:HOME}/Arduino/libraries/Adafruit_MQTT_Library/",
                 "${env:HOME}/Arduino/libraries/Adafruit_IO_Arduino/src",
                 "${env:HOME}/Arduino/libraries/DallasTemperature",
-                "${env:HOME}/Arduino/libraries/OneWire"
+                "${env:HOME}/Arduino/libraries/OneWire",
+                "${env:HOME}/Arduino/libraries/ESP_EEPROM/src"
             ],
             "defines": [
                 "ARDUINO=101",
