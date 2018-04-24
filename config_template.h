@@ -14,7 +14,7 @@
 #define IO_FEED_IN_HOME_AREA "inhomearea"
 #define IO_FEED_RESET_REASON  "resetreason"
 
-
+#define OPEN_CLOSE_BUTTON D0
 #define ONE_WIRE_PIN D1
 #define LED_GREEN D2
 #define LED_RED D3
@@ -29,3 +29,9 @@
 #define RELAY_OPEN LOW
 
 #define TEMPERATURE_DELAY 600000
+
+// Shouldnt need to change these.
+
+#define EEPROM_SIZE 16
+#define  EEPROM_IN_GEOFENCE_ADDR 0
+#define  EEPROM_LOCKED_ADDR 1
