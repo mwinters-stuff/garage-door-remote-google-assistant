@@ -59,9 +59,7 @@ void HTTPHandler::setupServer(){
     json += ", \"door_action\": \"" + dataStore->io_door_action_value + "\"";
     json += ", \"door_position\": \"" + dataStore->io_door_position_value + "\"";
     json += ", \"door_locked\": " + String(dataStore->is_locked ? "true" : "false");
-#ifdef GEOFENCE
     json += ", \"in_home_area\": " + String(dataStore->in_geofence ? "true" : "false") ;
-#endif
     json += ", \"garage_temperature\": \"" + dataStore->io_garage_temperature_value + "\"";
     json += "}";
     httpServer.send(200, "text/json", json);
@@ -89,11 +87,10 @@ void HTTPHandler::setupServer(){
       result = doLockAction(action);
     }
 
-#ifdef GEOFENCE
     if(name.equals("in_home_area")){
       result = doInHomeArea(action);
     }
-#endif
+
     httpServer.send(200, "text/plain", result);
 
   });
@@ -168,8 +165,7 @@ String HTTPHandler::doLockAction(String action){
   return "ERROR: " + action + " is not a lock action";
 }
 
-#ifdef GEOFENCE
 String HTTPHandler::doInHomeArea(String action){
   return "ERROR: " + action + " is not in home action";
 }
-#endif
+

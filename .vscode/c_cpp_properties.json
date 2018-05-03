@@ -22,8 +22,8 @@
                 "${env:HOME}/Arduino/libraries/DallasTemperature",
                 "${env:HOME}/Arduino/libraries/OneWire",
                 "${env:HOME}/Arduino/libraries/Bounce2",
-                "${env:HOME}/Arduino/libraries/rm89m_Buttons/src",
-                "${env:HOME}/Arduino/libraries/rm89m_PushButton/src",
+                "${env:HOME}/Arduino/libraries/r89m_Buttons/src",
+                "${env:HOME}/Arduino/libraries/r89m_PushButton/src",
                 "${env:HOME}/Arduino/libraries/ESP_EEPROM/src"
             ],
             "defines": [

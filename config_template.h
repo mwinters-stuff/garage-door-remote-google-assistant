@@ -6,8 +6,6 @@
 #define IO_KEY "<<Adafruit.io api key>>"
 #define ARDUINO_OTA_PASSWORD "<<apassword>>"
 
-#define GEOFENCE
-
 #define IO_FEED_DOOR_ACTION "garagedooraction"
 #define IO_FEED_POSITION "garagedoorposition"
 #define IO_FEED_TEMPERATURE "garagetemperature"

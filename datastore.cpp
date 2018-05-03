@@ -1,4 +1,4 @@
-#include "data.h"
+#include "datastore.h"
 #include <Arduino.h>
 #include <EEPROM.h>
 
@@ -33,9 +33,7 @@ void DataStore::initFeeds(AdafruitIO_WiFi &io){
   io_door_action = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_DOOR_ACTION));
   io_door_position = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_POSITION));
   io_garage_temperature = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_TEMPERATURE));
-#ifdef GEOFENCE
   io_in_home_area = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_IN_HOME_AREA));
-#endif
 }
 
 void DataStore::afterIOConnect(){
@@ -43,11 +41,10 @@ void DataStore::afterIOConnect(){
   io_door_position_value = io_door_position->lastValue()->toString();
 
   EEPROM.begin(EEPROM_SIZE);
-#ifdef GEOFENCE  
+
   io_in_home_area->onMessage(handleInHomeAreaMessage);
   in_geofence = EEPROM.read(EEPROM_IN_GEOFENCE_ADDR) == 1;
   Serial.println(in_geofence ? F("restored inside geofence") : F("restored outside geofence"));
-#endif  
 
   is_locked = EEPROM.read(EEPROM_LOCKED_ADDR) == 1;
   Serial.println(is_locked ? F("restored locked") : F("restored unlocked"));
@@ -72,12 +69,12 @@ bool DataStore::doorAction(AdafruitIO_Data *data){
   Serial.print(F("Action: Received door action -> "));
   io_door_action_value = data->value();
   Serial.println(io_door_action_value);
-#ifdef GEOFENCE
+
   if(!in_geofence){
     Serial.println(F("Not near home, won't action door!"));
     return false;
   }
-#endif
+
   return true;
 }
 
