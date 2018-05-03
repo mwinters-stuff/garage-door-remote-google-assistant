@@ -5,6 +5,8 @@ std::shared_ptr<IOHandler> IOHandler::m_instance;
 
 IOHandler::IOHandler():
   buttonOpenClose(OPEN_CLOSE_BUTTON),
+  buttonOpenSwitch(SWITCH_OPEN),
+  buttonClosedSwitch(SWITCH_CLOSED),
   greenMillisFlash(0),
   redMillisFlash(0)
 
@@ -22,7 +24,11 @@ std::shared_ptr<IOHandler> IOHandler::get(){
 }
 
 void _onButtonRelease(Button& btn, uint16_t duration){
-  IOHandler::get()->onOpenCloseButtonRelease(btn, duration);
+  IOHandler::get()->onButtonRelease(btn, duration);
+}
+
+void _onButtonPress(Button& btn){
+  IOHandler::get()->onButtonPress(btn);
 }
 
 void _onButtonHeld(Button& btn, uint16_t duration){
@@ -45,6 +51,11 @@ void IOHandler::setup(){
   buttonOpenClose.onRelease(_onButtonRelease);
   buttonOpenClose.onHold(5000, _onButtonHeld);
 
+  buttonOpenSwitch.onPress(_onButtonPress);
+  buttonOpenSwitch.onRelease(_onButtonRelease);
+
+  buttonClosedSwitch.onPress(_onButtonPress);
+  buttonClosedSwitch.onRelease(_onButtonRelease);
 }
 
 void IOHandler::ledGreen(bool on){
@@ -55,9 +66,30 @@ void IOHandler::ledRed(bool on){
   digitalWrite(LED_RED,on ? LED_ON : LED_OFF);
 }
 
+void IOHandler::onButtonPress(Button &btn){
+  if(btn.is(buttonOpenClose)){
+  } else if(btn.is(buttonOpenSwitch)){
+    onOpenSwitchPress();
+  } else if(btn.is(buttonClosedSwitch)){
+    onClosedSwitchPress();
+  }
+}
+
+void IOHandler::onButtonRelease(Button &btn, uint16_t duration){
+  if(btn.is(buttonOpenClose)){
+    onOpenCloseButtonRelease(duration);
+  } else if(btn.is(buttonOpenSwitch)){
+    onOpenSwitchRelease();
+  } else if(btn.is(buttonClosedSwitch)){
+    onClosedSwitchRelease();
+  }
+}
+
 void IOHandler::update(){
   buttonOpenClose.update();
-  readSwitchs();
+  buttonOpenSwitch.update();
+  buttonClosedSwitch.update();
+//  readSwitchs();
 
   doorPositions door_position = DataStore::get()->door_position;
 
@@ -102,23 +134,28 @@ void IOHandler::update(){
 
 }
 
-void IOHandler::readSwitchs(){
-  bool s_closed = false;
-  bool s_open = false;
+void IOHandler::onOpenSwitchPress(){
+  Serial.println(F("onOpenSwitchPress"));
+  processSwitchs(true,buttonClosedSwitch.isPressed());
+}
 
-  uint8_t state = digitalRead(SWITCH_CLOSED);
-  delay(20);
-  if(state == digitalRead(SWITCH_CLOSED)){
-    // closed switch debounced.
-    s_closed = state == LOW;
-  }
-  
-  state = digitalRead(SWITCH_OPEN);
-  delay(20);
-  if(state == digitalRead(SWITCH_OPEN)){
-    // open switch debounced.
-    s_open = state == LOW;
-  }
+void IOHandler::onOpenSwitchRelease(){
+  Serial.println(F("onOpenSwitchRelease"));
+  processSwitchs(false,buttonClosedSwitch.isPressed());
+}
+
+void IOHandler::onClosedSwitchPress(){
+  Serial.println(F("onClosedSwitchPress"));
+  processSwitchs(buttonOpenSwitch.isPressed(),true);
+}
+
+void IOHandler::onClosedSwitchRelease(){
+  Serial.println(F("onClosedSwitchRelease"));
+  processSwitchs(buttonOpenSwitch.isPressed(),false);
+}
+
+void IOHandler::processSwitchs(bool s_open, bool s_closed){
+
   doorPositions door_position = DataStore::get()->door_position;
   doorPositions current_door_position = door_position;
   bool door_moving = DataStore::get()->door_moving;
@@ -251,7 +288,8 @@ void IOHandler::actionDoor(String position){
 }
 
 
-void IOHandler::onOpenCloseButtonRelease(Button& btn, uint16_t duration){
+void IOHandler::onOpenCloseButtonRelease(uint16_t duration){
+  Serial.println(F("onOpenCloseButtonRelease"));
   if(duration < 1000){
     if(!DataStore::get()->is_locked){
       toggleRelay();
@@ -262,6 +300,7 @@ void IOHandler::onOpenCloseButtonRelease(Button& btn, uint16_t duration){
 }
 
 void IOHandler::onOpenCloseButtonHeld(Button& btn, uint16_t duration){
+  Serial.println(F("onOpenCloseButtonHeld"));
   DataStore::get()->toggleLocked();
 }
 

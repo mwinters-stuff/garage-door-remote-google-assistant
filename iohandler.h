@@ -31,14 +31,27 @@ class IOHandler{
     void update();
     void actionDoor(String position);
 
+    void onButtonPress(Button &btn);
+    void onButtonRelease(Button &btn, uint16_t duration);
     void onOpenCloseButtonHeld(Button& btn, uint16_t duration);
-    void onOpenCloseButtonRelease(Button& btn, uint16_t duration);
+
   private:
+
+    void onOpenCloseButtonRelease(uint16_t duration);
+
+    void onOpenSwitchPress();
+    void onOpenSwitchRelease();
+
+    void onClosedSwitchPress();
+    void onClosedSwitchRelease();
+
     PushButton buttonOpenClose;
+    PushButton buttonOpenSwitch;
+    PushButton buttonClosedSwitch;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
 
-    void readSwitchs();
+    void processSwitchs(bool s_open, bool s_closed);
     void toggleRelay();
 
 
