@@ -51,7 +51,7 @@ class IOHandler{
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
 
-    void processSwitchs(bool s_open, bool s_closed);
+    void processSwitchs();
     void toggleRelay();
 
 

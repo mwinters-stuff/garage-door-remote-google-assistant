@@ -5,6 +5,7 @@
 #include <ESP8266mDNS.h>
 
 #include <AdafruitIO_Feed.h>
+#include <AdafruitIO_WiFi.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
@@ -13,11 +14,13 @@
 #include "datastore.h"
 #include "httphandler.h"
 #include "iohandler.h"
+#include "logging.h"
 
 
 std::shared_ptr<DataStore> the_data_store;
 std::shared_ptr<IOHandler> the_io_handler;
 std::shared_ptr<HTTPHandler> the_http_handler;
+std::shared_ptr<Logging> the_logger;
 
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 
@@ -32,18 +35,31 @@ void setup() {
   for(int i = 0; i < 10; i++){
     Serial.println();
   }
+  the_io_handler = IOHandler::init();
+  the_io_handler->setup();
+  the_io_handler->ledRed(true);
+  the_io_handler->ledGreen(true);
+  // Serial.println("Connecting Wifi");
+  // WiFi.begin(WIFI_SSID, WIFI_PASS);
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   delay(500);
+  //   Serial.print(".");
+  // }
+  // Serial.println();
+
 
   the_data_store = DataStore::init();
   the_data_store->initFeeds(io);
-
-  the_io_handler = IOHandler::init();
-  the_io_handler->setup();
-
 
   connect_adafruit_io();
 
   Serial.println();
   Serial.println(io.statusText());
+
+  the_logger = Logging::init();
+  the_logger->update();
+
+
   
 
   the_data_store->afterIOConnect();
@@ -55,6 +71,8 @@ void setup() {
   the_io_handler->ledRed(false);
   the_io_handler->ledGreen(false);
 
+  the_logger->log("setup","Started");
+
 }
 
 
@@ -63,7 +81,7 @@ void connect_adafruit_io(){
   WiFi.hostname(HOSTNAME);
   WiFi.setAutoReconnect(true);
   WiFi.mode(WIFI_STA);
-  
+
   io.connect();
   the_data_store->io_door_action->onMessage(handleDoorActionMessage);
 
@@ -93,7 +111,7 @@ void read_temperature(){
         break;
       }
       the_data_store->io_garage_temperature_value = "Failed";
-      Serial.println(F("Temperature Reading Failed"));
+      the_logger->log(F("read_temperature"),F("Temperature Reading Failed"));
       delay(1000);
     }
     temperatureLastRead = millis();
@@ -105,5 +123,7 @@ void loop() {
   io.run();
   the_http_handler->update();
   the_io_handler->update();
+  the_logger->update();
   read_temperature();
+
 }

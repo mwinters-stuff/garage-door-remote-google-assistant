@@ -1,6 +1,9 @@
-#include "datastore.h"
 #include <Arduino.h>
+#include <AdafruitIO_Feed.h>
+#include <AdafruitIO_WiFi.h>
 #include <EEPROM.h>
+#include "logging.h"
+#include "datastore.h"
 
 std::shared_ptr<DataStore> DataStore::m_instance;
 
@@ -57,7 +60,7 @@ void DataStore::inHomeMessage(AdafruitIO_Data *data){
   Serial.print(data->value());
   
   in_geofence = strcmp_P(data->value(), PSTR("entered")) == 0;
-  Serial.println(in_geofence ? F(" inside geofence") : F(" outside geofence"));
+  Logging::get()->log(F("DataStore"),in_geofence ? F(" inside geofence") : F(" outside geofence"));
 
   EEPROM.begin(EEPROM_SIZE);
   EEPROM.write(EEPROM_IN_GEOFENCE_ADDR, in_geofence ? 1 : 0);
@@ -71,7 +74,7 @@ bool DataStore::doorAction(AdafruitIO_Data *data){
   Serial.println(io_door_action_value);
 
   if(!in_geofence){
-    Serial.println(F("Not near home, won't action door!"));
+    Logging::get()->log(F("DataStore"),F("Not near home, won't action door!"));
     return false;
   }
 
@@ -108,8 +111,11 @@ void DataStore::toggleLocked(){
 }
 
 void DataStore::setLocked(bool locked){
-  Serial.print(F("Setting lock to "));
-  Serial.println(is_locked ? F("locked") : F("unlocked"));
+  if(locked){
+    Logging::get()->log(F("DataStore"),F("Setting lock to LOCKED"));
+  }else{
+    Logging::get()->log(F("DataStore"),F("Setting lock to UNLOCKED"));
+  }
   digitalWrite(LED_RED, is_locked ? LED_ON : LED_OFF);
   EEPROM.begin(EEPROM_SIZE);
   EEPROM.write(EEPROM_LOCKED_ADDR, is_locked ? 1 : 0);

@@ -1,5 +1,5 @@
-#ifndef _DATA_H
-#define _DATA_H
+#ifndef _DATA_STORE_H
+#define _DATA_STORE_H
 #include <Arduino.h>
 #include <AdafruitIO_Feed.h>
 #include <AdafruitIO_WiFi.h>

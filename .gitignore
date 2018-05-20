@@ -32,6 +32,6 @@
 *.app
 
 config.h
-build/*
+build*/*
 webapp/bower_components/
 webapp/build/

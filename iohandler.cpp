@@ -1,5 +1,6 @@
 #include "iohandler.h"
 #include "datastore.h"
+#include "logging.h"
 
 std::shared_ptr<IOHandler> IOHandler::m_instance;
 
@@ -135,26 +136,28 @@ void IOHandler::update(){
 }
 
 void IOHandler::onOpenSwitchPress(){
-  Serial.println(F("onOpenSwitchPress"));
-  processSwitchs(true,buttonClosedSwitch.isPressed());
+  Logging::get()->log(F("IOHandler"),F("onOpenSwitchPress"));
+  processSwitchs();
 }
 
 void IOHandler::onOpenSwitchRelease(){
-  Serial.println(F("onOpenSwitchRelease"));
-  processSwitchs(false,buttonClosedSwitch.isPressed());
+  Logging::get()->log(F("IOHandler"),F("onOpenSwitchRelease"));
+  processSwitchs();
 }
 
 void IOHandler::onClosedSwitchPress(){
-  Serial.println(F("onClosedSwitchPress"));
-  processSwitchs(buttonOpenSwitch.isPressed(),true);
+  Logging::get()->log(F("IOHandler"),F("onClosedSwitchPress"));
+  processSwitchs();
 }
 
 void IOHandler::onClosedSwitchRelease(){
-  Serial.println(F("onClosedSwitchRelease"));
-  processSwitchs(buttonOpenSwitch.isPressed(),false);
+  Logging::get()->log(F("IOHandler"),F("onClosedSwitchRelease"));
+  processSwitchs();
 }
 
-void IOHandler::processSwitchs(bool s_open, bool s_closed){
+void IOHandler::processSwitchs(){
+  bool s_open = buttonOpenSwitch.isPressed();
+  bool s_closed = buttonClosedSwitch.isPressed();
 
   doorPositions door_position = DataStore::get()->door_position;
   doorPositions current_door_position = door_position;
@@ -165,84 +168,84 @@ void IOHandler::processSwitchs(bool s_open, bool s_closed){
     case dpUnknown:
       if(s_closed){
         door_position = dpClosed;
-        Serial.println(F("Startup Door CLOSED"));
+        Logging::get()->log(F("IOHandler"),F("Startup Door CLOSED"));
         ledRed(false);
       }else if(s_open){
         door_position = dpOpen;
         ledRed(false);
-        Serial.println(F("Startup Door OPEN"));
+        Logging::get()->log(F("IOHandler"),F("Startup Door OPEN"));
       }else{
-        Serial.println(F("Startup Door UNKNOWN"));
+        Logging::get()->log(F("IOHandler"),F("Startup Door UNKNOWN"));
         ledRed(true);
         delay(1000);
       }
       break;
     case dpClosedToOpen:
       if(!s_closed && ! door_moving){
-        Serial.println(F("Switch: ClosedToOpen Door Moving"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ClosedToOpen Door Moving"));
         door_moving = true;
       }
       if(s_open && door_moving){
-        Serial.println(F("Switch: ClosedToOpen Door Open"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ClosedToOpen Door Open"));
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Serial.println(F("Switch: ClosedToOpen Door Closed"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ClosedToOpen Door Closed"));
         door_position = dpClosed;
         door_moving = false;
       }
       break;
     case dpOpenToClosed:
       if(!s_open && !door_moving){
-        Serial.println(F("Switch: OpenToClosed Door Moving"));
+        Logging::get()->log(F("IOHandler"),F("Switch: OpenToClosed Door Moving"));
         door_moving = true;
       }
       if(s_open && door_moving){
-        Serial.println(F("Switch: OpenToClosed Door Open"));
+        Logging::get()->log(F("IOHandler"),F("Switch: OpenToClosed Door Open"));
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Serial.println(F("Switch: OpenToClosed Door Closed"));
+        Logging::get()->log(F("IOHandler"),F("Switch: OpenToClosed Door Closed"));
         door_position = dpClosed;
         door_moving = false;
       }
       break;
     case dpClosed:
       if(!s_closed && !door_moving){
-        Serial.println(F("Switch: Closed -> Manual Movement Door Moving"));
+        Logging::get()->log(F("IOHandler"),F("Switch: Closed -> Manual Movement Door Moving"));
         door_moving = true;
         door_position = dpManualClosedToOpen;
       }
       break;
     case dpOpen:
       if(!s_open && !door_moving){
-        Serial.println(F("Switch: Open -> Manual Movement Door Moving"));
+        Logging::get()->log(F("IOHandler"),F("Switch: Open -> Manual Movement Door Moving"));
         door_moving = true;
         door_position = dpManualOpenToClosed;
       }
       break; 
     case dpManualClosedToOpen:
       if(s_open && door_moving){
-        Serial.println(F("Switch: ManualClosedToOpen Door Open"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ManualClosedToOpen Door Open"));
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Serial.println(F("Switch: ManualClosedToOpen Door Closed"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ManualClosedToOpen Door Closed"));
         door_position = dpClosed;
         door_moving = false;
       }
       break;
     case dpManualOpenToClosed:
       if(s_open && door_moving){
-        Serial.println(F("Switch: ManualOpenToClosed Door Open"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ManualOpenToClosed Door Open"));
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Serial.println(F("Switch: ManualOpenToClosed Door Closed"));
+        Logging::get()->log(F("IOHandler"),F("Switch: ManualOpenToClosed Door Closed"));
         door_position = dpClosed;
         door_moving = false;
       }
@@ -259,7 +262,7 @@ void IOHandler::actionDoor(String position){
     if (position.compareTo(F("OPEN")) == 0)
     {
       if(door_position == dpClosed){
-        Serial.println(F("Action: Door is closed, Open"));
+        Logging::get()->log(F("IOHandler"),F("Action: Door is closed, Open"));
         // start_move_door_position = door_position;
         door_position = dpClosedToOpen;
         toggleRelay();
@@ -271,7 +274,7 @@ void IOHandler::actionDoor(String position){
     if (position.compareTo(F("CLOSE")) == 0)
     {
       if(door_position == dpOpen){
-        Serial.println(F("Action: Door is open, Close"));
+        Logging::get()->log(F("IOHandler"),F("Action: Door is open, Close"));
         // start_move_door_position = door_position;
         door_position = dpOpenToClosed;
         toggleRelay();
@@ -283,30 +286,30 @@ void IOHandler::actionDoor(String position){
 
     DataStore::get()->updateDoorPosition(current_door_position, door_position);
   }else{
-    Serial.println(F("door Locked"));
+    Logging::get()->log(F("IOHandler"),F("door Locked"));
   }
 }
 
 
 void IOHandler::onOpenCloseButtonRelease(uint16_t duration){
-  Serial.println(F("onOpenCloseButtonRelease"));
+  Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonRelease"));
   if(duration < 1000){
     if(!DataStore::get()->is_locked){
       toggleRelay();
     }else{
-      Serial.println(F("door Locked"));
+      Logging::get()->log(F("IOHandler"),F("door Locked"));
     }
   }
 }
 
 void IOHandler::onOpenCloseButtonHeld(Button& btn, uint16_t duration){
-  Serial.println(F("onOpenCloseButtonHeld"));
+  Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonHeld"));
   DataStore::get()->toggleLocked();
 }
 
 
 void IOHandler::toggleRelay(){
-  Serial.println(F("Toggling garage door"));
+  Logging::get()->log(F("IOHandler"),F("Toggling garage door"));
   ledRed(true);
   digitalWrite(RELAY,RELAY_CLOSED);
   delay(500);

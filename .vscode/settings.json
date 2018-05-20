@@ -2,5 +2,10 @@
   "esp8266fs.espota.auth": "harper",
   "esp8266fs.espota.debug": true,
   "esp8266fs.esptool.verbosity": "vvv",
-  "esp8266fs.logLevel": "verbose"
+  "esp8266fs.logLevel": "verbose",
+  "files.associations": {
+    "array": "cpp",
+    "string_view": "cpp",
+    "initializer_list": "cpp"
+  }
 }
