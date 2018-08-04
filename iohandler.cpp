@@ -5,12 +5,8 @@
 std::shared_ptr<IOHandler> IOHandler::m_instance;
 
 IOHandler::IOHandler():
-  buttonOpenClose(OPEN_CLOSE_BUTTON),
-  buttonOpenSwitch(SWITCH_OPEN),
-  buttonClosedSwitch(SWITCH_CLOSED),
   greenMillisFlash(0),
   redMillisFlash(0)
-
 {
 
 }
@@ -24,16 +20,12 @@ std::shared_ptr<IOHandler> IOHandler::get(){
   return m_instance;
 }
 
-void _onButtonRelease(Button& btn, uint16_t duration){
-  IOHandler::get()->onButtonRelease(btn, duration);
-}
-
-void _onButtonPress(Button& btn){
-  IOHandler::get()->onButtonPress(btn);
-}
-
-void _onButtonHeld(Button& btn, uint16_t duration){
-  IOHandler::get()->onOpenCloseButtonHeld(btn, duration);
+void IOHandler::_switchCallback(uint8_t pin, bool closed){
+  if(pin == SWITCH_OPEN){
+    IOHandler::get()->onOpenSwitchCallback(closed);
+  }else if(pin == SWITCH_CLOSED){
+    IOHandler::get()->onClosedSwitchCallback(closed);
+  }
 }
 
 void IOHandler::setup(){
@@ -41,7 +33,7 @@ void IOHandler::setup(){
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_RED, OUTPUT);
   pinMode(RELAY, OUTPUT);
-  pinMode(OPEN_CLOSE_BUTTON,INPUT_PULLUP);
+  // pinMode(OPEN_CLOSE_BUTTON,INPUT_PULLUP);
   pinMode(SWITCH_OPEN,INPUT_PULLUP);
   pinMode(SWITCH_CLOSED,INPUT_PULLUP);
 
@@ -49,14 +41,13 @@ void IOHandler::setup(){
   digitalWrite(LED_GREEN,LED_ON);
   digitalWrite(LED_BUILTIN,HIGH);
 
-  buttonOpenClose.onRelease(_onButtonRelease);
-  buttonOpenClose.onHold(5000, _onButtonHeld);
+  switches.addButtonPin(OPEN_CLOSE_BUTTON, [&](uint8_t pin, uint32_t msPressed){
+    onOpenCloseButtonPress(pin, msPressed);
+  },true);
 
-  buttonOpenSwitch.onPress(_onButtonPress);
-  buttonOpenSwitch.onRelease(_onButtonRelease);
+  switches.addSwitchPin(SWITCH_OPEN, digitalRead(SWITCH_OPEN) == HIGH, _switchCallback);
+  switches.addSwitchPin(SWITCH_CLOSED, digitalRead(SWITCH_CLOSED) == HIGH, _switchCallback);
 
-  buttonClosedSwitch.onPress(_onButtonPress);
-  buttonClosedSwitch.onRelease(_onButtonRelease);
 }
 
 void IOHandler::ledGreen(bool on){
@@ -67,30 +58,8 @@ void IOHandler::ledRed(bool on){
   digitalWrite(LED_RED,on ? LED_ON : LED_OFF);
 }
 
-void IOHandler::onButtonPress(Button &btn){
-  if(btn.is(buttonOpenClose)){
-  } else if(btn.is(buttonOpenSwitch)){
-    onOpenSwitchPress();
-  } else if(btn.is(buttonClosedSwitch)){
-    onClosedSwitchPress();
-  }
-}
-
-void IOHandler::onButtonRelease(Button &btn, uint16_t duration){
-  if(btn.is(buttonOpenClose)){
-    onOpenCloseButtonRelease(duration);
-  } else if(btn.is(buttonOpenSwitch)){
-    onOpenSwitchRelease();
-  } else if(btn.is(buttonClosedSwitch)){
-    onClosedSwitchRelease();
-  }
-}
-
 void IOHandler::update(){
-  buttonOpenClose.update();
-  buttonOpenSwitch.update();
-  buttonClosedSwitch.update();
-//  readSwitchs();
+  switches.update();
 
   doorPositions door_position = DataStore::get()->door_position;
 
@@ -135,29 +104,22 @@ void IOHandler::update(){
 
 }
 
-void IOHandler::onOpenSwitchPress(){
-  Logging::get()->log(F("IOHandler"),F("onOpenSwitchPress"));
+void IOHandler::onOpenSwitchCallback(bool closed){
+  switch_open_closed = closed;
   processSwitchs();
+  switches.addSwitchPin(SWITCH_OPEN, !closed, _switchCallback);
+
 }
 
-void IOHandler::onOpenSwitchRelease(){
-  Logging::get()->log(F("IOHandler"),F("onOpenSwitchRelease"));
+void IOHandler::onClosedSwitchCallback(bool closed){
+  switch_closed_closed = closed;
   processSwitchs();
-}
-
-void IOHandler::onClosedSwitchPress(){
-  Logging::get()->log(F("IOHandler"),F("onClosedSwitchPress"));
-  processSwitchs();
-}
-
-void IOHandler::onClosedSwitchRelease(){
-  Logging::get()->log(F("IOHandler"),F("onClosedSwitchRelease"));
-  processSwitchs();
+  switches.addSwitchPin(SWITCH_CLOSED, !closed, _switchCallback);
 }
 
 void IOHandler::processSwitchs(){
-  bool s_open = buttonOpenSwitch.isPressed();
-  bool s_closed = buttonClosedSwitch.isPressed();
+  bool s_open = switch_open_closed;
+  bool s_closed = switch_closed_closed;
 
   doorPositions door_position = DataStore::get()->door_position;
   doorPositions current_door_position = door_position;
@@ -291,22 +253,17 @@ void IOHandler::actionDoor(String position){
 }
 
 
-void IOHandler::onOpenCloseButtonRelease(uint16_t duration){
-  Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonRelease"));
-  if(duration < 1000){
-    if(!DataStore::get()->is_locked){
-      toggleRelay();
-    }else{
-      Logging::get()->log(F("IOHandler"),F("door Locked"));
-    }
+void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
+  Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonPress"));
+  if(!DataStore::get()->is_locked && msPressed < 1000){
+    toggleRelay();
+  }else if(msPressed > 3000){
+    Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonPress Long"));     
+    DataStore::get()->toggleLocked();
+  }else{
+    Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonPress door Locked"));
   }
 }
-
-void IOHandler::onOpenCloseButtonHeld(Button& btn, uint16_t duration){
-  Logging::get()->log(F("IOHandler"),F("onOpenCloseButtonHeld"));
-  DataStore::get()->toggleLocked();
-}
-
 
 void IOHandler::toggleRelay(){
   Logging::get()->log(F("IOHandler"),F("Toggling garage door"));

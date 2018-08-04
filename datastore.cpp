@@ -72,7 +72,9 @@ bool DataStore::doorAction(AdafruitIO_Data *data){
   Serial.print(F("Action: Received door action -> "));
   io_door_action_value = data->value();
   Serial.println(io_door_action_value);
-
+  if(io_door_action_value.startsWith("OVERRIDE_")){
+    Logging::get()->log(F("DataStore"),F("Override, action door!"));
+  }
   if(!in_geofence){
     Logging::get()->log(F("DataStore"),F("Not near home, won't action door!"));
     return false;
@@ -116,6 +118,7 @@ void DataStore::setLocked(bool locked){
   }else{
     Logging::get()->log(F("DataStore"),F("Setting lock to UNLOCKED"));
   }
+  is_locked = locked;
   digitalWrite(LED_RED, is_locked ? LED_ON : LED_OFF);
   EEPROM.begin(EEPROM_SIZE);
   EEPROM.write(EEPROM_LOCKED_ADDR, is_locked ? 1 : 0);

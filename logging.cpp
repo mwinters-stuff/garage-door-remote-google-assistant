@@ -1,5 +1,5 @@
-#include <ArduinoJson.h>
 #include <Arduino.h>
+#include "ArduinoJson.hpp"
 #include "logging.h"
 #include "config.h"
 

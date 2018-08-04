@@ -2,10 +2,11 @@
 #define _IOHANDLER_H
 
 #include <Arduino.h>
-#include <Button.h>
-#include <ButtonEventCallback.h>
-#include <PushButton.h>
-#include <Bounce2.h> 
+// #include <Button.h>
+// #include <ButtonEventCallback.h>
+// #include <PushButton.h>
+// #include <Bounce2.h> 
+#include <ESP8266DebounceSwitch.h>
 
 #include "config.h"
 #include <memory>
@@ -24,30 +25,28 @@ class IOHandler{
     static std::shared_ptr<IOHandler> get();
     static std::shared_ptr<IOHandler> init();
 
-
     void ledGreen(bool on);
     void ledRed(bool on);
 
     void update();
     void actionDoor(String position);
 
-    void onButtonPress(Button &btn);
-    void onButtonRelease(Button &btn, uint16_t duration);
-    void onOpenCloseButtonHeld(Button& btn, uint16_t duration);
-
+    // void onButtonPress(Button &btn);
+    // void onButtonRelease(Button &btn, uint16_t duration);
+    // void onOpenCloseButtonHeld(Button& btn, uint16_t duration);
+    static void _switchCallback(uint8_t button, bool closed);
   private:
+    bool switch_open_closed;
+    bool switch_closed_closed;
 
-    void onOpenCloseButtonRelease(uint16_t duration);
+    void onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed);
+    void onOpenSwitchCallback(bool closed);
+    void onClosedSwitchCallback(bool closed);
 
-    void onOpenSwitchPress();
-    void onOpenSwitchRelease();
-
-    void onClosedSwitchPress();
-    void onClosedSwitchRelease();
-
-    PushButton buttonOpenClose;
-    PushButton buttonOpenSwitch;
-    PushButton buttonClosedSwitch;
+    ESP8266DebounceSwitch switches;
+    // PushButton buttonOpenClose;
+    // PushButton buttonOpenSwitch;
+    // PushButton buttonClosedSwitch;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
 

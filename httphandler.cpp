@@ -103,6 +103,7 @@ void HTTPHandler::setupServer(){
   });
 
   httpServer.begin();
+  MDNS.addService("http", "tcp", 80);
 }
 
 void HTTPHandler::setupOTA(){
@@ -135,7 +136,6 @@ void HTTPHandler::setupOTA(){
   });
   ArduinoOTA.begin();
 
-  MDNS.addService("http", "tcp", 80);
   
 
 }
