@@ -22,8 +22,8 @@ class IOHandler{
 
     void setup();
 
-    static std::shared_ptr<IOHandler> get();
-    static std::shared_ptr<IOHandler> init();
+    static IOHandler* get();
+    static IOHandler* init();
 
     void ledGreen(bool on);
     void ledRed(bool on);
@@ -54,7 +54,7 @@ class IOHandler{
     void toggleRelay();
 
 
-    static std::shared_ptr<IOHandler> m_instance;
+    static IOHandler* m_instance;
 
 
 };

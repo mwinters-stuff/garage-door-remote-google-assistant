@@ -15,10 +15,10 @@ class Logging{
 
     void log(String from, String text);
 
-    static std::shared_ptr<Logging> get();
-    static std::shared_ptr<Logging> init();
+    static Logging* get();
+    static Logging* init();
   private:
-    static std::shared_ptr<Logging> m_instance;
+    static Logging* m_instance;
 #ifdef MQTTLOGGING
     uint32_t lastPing;
 

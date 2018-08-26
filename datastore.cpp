@@ -5,7 +5,7 @@
 #include "logging.h"
 #include "datastore.h"
 
-std::shared_ptr<DataStore> DataStore::m_instance;
+DataStore* DataStore::m_instance;
 
 static const char door_position_strings [][20] PROGMEM = {"STARTUP","UNKNOWN","OPEN","CLOSED","OPEN_CLOSED","CLOSED_OPEN","MANUAL_OPEN_CLOSED","MANUAL_CLOSED_OPEN"};
 
@@ -23,20 +23,20 @@ DataStore::DataStore():
 
 }
 
-std::shared_ptr<DataStore> DataStore::init(){
-  m_instance = std::make_shared<DataStore>();
+DataStore* DataStore::init(){
+  m_instance = new DataStore();
   return m_instance;
 }
 
-std::shared_ptr<DataStore> DataStore::get(){
+DataStore* DataStore::get(){
   return m_instance;
 }
 
 void DataStore::initFeeds(AdafruitIO_WiFi &io){
-  io_door_action = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_DOOR_ACTION));
-  io_door_position = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_POSITION));
-  io_garage_temperature = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_TEMPERATURE));
-  io_in_home_area = std::shared_ptr<AdafruitIO_Feed>(io.feed(IO_FEED_IN_HOME_AREA));
+  io_door_action = io.feed(IO_FEED_DOOR_ACTION);
+  io_door_position = io.feed(IO_FEED_POSITION);
+  io_garage_temperature = io.feed(IO_FEED_TEMPERATURE);
+  io_in_home_area = io.feed(IO_FEED_IN_HOME_AREA);
 }
 
 void DataStore::afterIOConnect(){

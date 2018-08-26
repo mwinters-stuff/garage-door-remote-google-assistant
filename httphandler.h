@@ -15,11 +15,11 @@ class HTTPHandler{
     void setupOTA();
     void update();
 
-    static std::shared_ptr<HTTPHandler> get();
-    static std::shared_ptr<HTTPHandler> init();
+    static HTTPHandler* get();
+    static HTTPHandler* init();
 
   private:
-    static std::shared_ptr<HTTPHandler> m_instance;
+    static HTTPHandler* m_instance;
     ESP8266WebServer httpServer;
     ESP8266HTTPUpdateServer httpUpdater;
 

@@ -2,7 +2,7 @@
 #include "datastore.h"
 #include "logging.h"
 
-std::shared_ptr<IOHandler> IOHandler::m_instance;
+IOHandler *IOHandler::m_instance;
 
 IOHandler::IOHandler():
   greenMillisFlash(0),
@@ -11,12 +11,12 @@ IOHandler::IOHandler():
 
 }
 
-std::shared_ptr<IOHandler> IOHandler::init(){
-  m_instance = std::make_shared<IOHandler>();
+IOHandler* IOHandler::init(){
+  m_instance = new IOHandler();
   return m_instance;
 }
 
-std::shared_ptr<IOHandler> IOHandler::get(){
+IOHandler* IOHandler::get(){
   return m_instance;
 }
 

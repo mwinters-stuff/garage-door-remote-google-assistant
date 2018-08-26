@@ -1,35 +1,20 @@
+ARDUINO_VARIANT = nodemcuv2
+# UPLOAD_PORT = /dev/nodemcu
 UPLOAD_PORT = /dev/ttyUSB1
-BOARD=nodemcuv2
-SKETCH=garage-door-remote-google-assistant.ino
-BUILD_ROOT=build
+UPLOAD_SPEED=921600
 
-ESP_ADDR=garage-door-test
-ESP_PWD=123
-HTTP_ADDR = garage-door-test
-HTTP_URI = /update
+SERIAL_PORT = $(UPLOAD_PORT)
+SERIAL_BAUD = 115200
 
-LIBS=$(ESP_LIBS)/../cores/esp8266 \
-  $(ESP_LIBS)/ESP8266WiFi \
-  $(ESP_LIBS)/ESP8266mDNS \
-	$(ESP_LIBS)/ESP8266WebServer \
-	$(ESP_LIBS)/ArduinoOTA \
-	$(ESP_LIBS)/EEPROM \
-	$(ESP_LIBS)/ESP8266HTTPUpdateServer \
-	$(ARDUINO_LIBS)/Adafruit_MQTT_Library \
-  $(ARDUINO_LIBS)/ArduinoHttpClient \
-  $(ARDUINO_LIBS)/r89m_Buttons \
-	$(ARDUINO_LIBS)/r89m_PushButton \
-	$(ARDUINO_LIBS)/Bounce2 \
-	$(ARDUINO_LIBS)/OneWire \
-	$(ARDUINO_LIBS)/Adafruit_IO_Arduino \
-	$(ARDUINO_LIBS)/DallasTemperature 
-	
-BUILD_EXTRA_FLAGS=-DTEST 
-# -DARDUINO_OTA_PASSWORD=\"$(ESP_PWD)\"
-# test:
-# 	BUILD_EXTRA_FLAGS=-DTEST 
-
-# release:
-	
-include makeEspArduino.mk
+LOG_SERIAL_TO_FILE=yes
+USER_DEFINE = -DTEST
+OTA_IP = garage-door
+OTA_PORT = 8266 
+OTA_AUTH = 123
+ESP8266_VERSION=.git
+GLOBAL_USER_LIBDIR=../libraries
+USER_LIBS=$(GLOBAL_USER_LIBDIR)/Adafruit_IO_Arduino \
+          $(GLOBAL_USER_LIBDIR)/Adafruit_MQTT_Library \
+					$(GLOBAL_USER_LIBDIR)/ESP8266DebounceButtons/src
+include ../Esp8266-Arduino-Makefile/espXArduino.mk
 

@@ -8,18 +8,18 @@
 #include "datastore.h"
 #include "iohandler.h"
 
-std::shared_ptr<HTTPHandler> HTTPHandler::m_instance;
+HTTPHandler* HTTPHandler::m_instance;
 
 HTTPHandler::HTTPHandler(): httpServer(80){
 
 }
 
-std::shared_ptr<HTTPHandler> HTTPHandler::init(){
-  m_instance = std::make_shared<HTTPHandler>();
+HTTPHandler* HTTPHandler::init(){
+  m_instance = new HTTPHandler();
   return m_instance;
 }
 
-std::shared_ptr<HTTPHandler> HTTPHandler::get(){
+HTTPHandler* HTTPHandler::get(){
   return m_instance;
 }
 
@@ -53,7 +53,7 @@ void HTTPHandler::setupServer(){
   
   httpServer.on("/all", HTTP_GET, [this](){
     httpServer.sendHeader("Access-Control-Allow-Origin","*");
-    std::shared_ptr<DataStore> dataStore = DataStore::get();
+    DataStore* dataStore = DataStore::get();
     String json = "{";
     json += "\"heap\": " + String(ESP.getFreeHeap());
     json += ", \"door_action\": \"" + dataStore->io_door_action_value + "\"";

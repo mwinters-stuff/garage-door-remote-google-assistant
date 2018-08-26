@@ -26,11 +26,11 @@ class DataStore{
     bool door_moving;
 
 
-    std::shared_ptr<AdafruitIO_Feed> io_door_action;
-    std::shared_ptr<AdafruitIO_Feed> io_door_position;
-    std::shared_ptr<AdafruitIO_Feed> io_garage_temperature;
+    AdafruitIO_Feed* io_door_action;
+    AdafruitIO_Feed* io_door_position;
+    AdafruitIO_Feed* io_garage_temperature;
 
-    std::shared_ptr<AdafruitIO_Feed> io_in_home_area;
+    AdafruitIO_Feed* io_in_home_area;
     bool in_geofence;
 
     bool is_locked;
@@ -51,10 +51,10 @@ class DataStore{
     void setLocked(bool locked);
     
 
-    static std::shared_ptr<DataStore> get();
-    static std::shared_ptr<DataStore> init();
+    static DataStore* get();
+    static DataStore* init();
   private:
-    static std::shared_ptr<DataStore> m_instance;
+    static DataStore* m_instance;
 };
 
 

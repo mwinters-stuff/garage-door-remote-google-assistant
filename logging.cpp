@@ -5,7 +5,7 @@
 
 // Logging to a thingsboard on a local network.
 
-std::shared_ptr<Logging> Logging::m_instance;
+Logging* Logging::m_instance;
 
 
 #ifdef MQTTLOGGING
@@ -73,11 +73,11 @@ void Logging::mqtt_connect(){
 
 #endif
 
-std::shared_ptr<Logging> Logging::init(){
-  m_instance = std::make_shared<Logging>();
+Logging* Logging::init(){
+  m_instance = new Logging();
   return m_instance;
 }
 
-std::shared_ptr<Logging> Logging::get(){
+Logging* Logging::get(){
   return m_instance;
 }
