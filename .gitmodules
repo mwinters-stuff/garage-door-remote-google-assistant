@@ -1,0 +1,39 @@
+[submodule "libs/RemoteDebug"]
+	path = libs/RemoteDebug
+	url = https://github.com/JoaoLopesF/RemoteDebug.git
+[submodule "libs/ArduinoJson"]
+	path = libs/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git
+[submodule "libs/ESPAsyncTCP"]
+	path = libs/ESPAsyncTCP
+	url = https://github.com/me-no-dev/ESPAsyncTCP.git
+[submodule "libs/ESPAsyncWebServer"]
+	path = libs/ESPAsyncWebServer
+	url = https://github.com/me-no-dev/ESPAsyncWebServer.git
+[submodule "libs/NtpClientLib"]
+	path = libs/NtpClientLib
+	url = https://github.com/gmag11/NtpClient.git
+[submodule "libs/Time"]
+	path = libs/Time
+	url = https://github.com/PaulStoffregen/Time.git
+[submodule "libs/Adafruit_IO_Arduino"]
+	path = libs/Adafruit_IO_Arduino
+	url = https://github.com/adafruit/Adafruit_IO_Arduino.git
+[submodule "libs/Adafruit_MQTT_Library"]
+	path = libs/Adafruit_MQTT_Library
+	url = https://github.com/adafruit/Adafruit_MQTT_Library.git
+[submodule "libs/ESP8266DebounceButtons"]
+	path = libs/ESP8266DebounceButtons
+	url = https://github.com/wintersandroid/ESP8266DebounceButtons.git
+[submodule "libs/OneWire"]
+	path = libs/OneWire
+	url = https://github.com/PaulStoffregen/OneWire.git
+[submodule "libs/DallasTemperature"]
+	path = libs/DallasTemperature
+	url = https://github.com/milesburton/Arduino-Temperature-Control-Library.git
+[submodule "libs/ArduinoHttpClient"]
+	path = libs/ArduinoHttpClient
+	url = https://github.com/arduino-libraries/ArduinoHttpClient.git
+[submodule "libs/ESP_EEPROM"]
+	path = libs/ESP_EEPROM
+	url = https://github.com/jwrw/ESP_EEPROM.git
