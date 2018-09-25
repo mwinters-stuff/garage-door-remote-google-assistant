@@ -12,19 +12,13 @@ OTA_IP = garage-door.fritz.box
 OTA_PORT = 8266 
 OTA_AUTH = 123
 ESP8266_VERSION=2.4.2
-GLOBAL_USER_LIBDIR=./libs
-LOCAL_LIBS=./libs
-USER_LIBS=$(LOCAL_LIBS)/Time \
-					$(LOCAL_LIBS)/NtpClientLib/src \
-					$(LOCAL_LIBS)/RemoteDebug \
-					$(LOCAL_LIBS)/ESP_EEPROM/src \
-					$(LOCAL_LIBS)/DallasTemperature \
-					$(LOCAL_LIBS)/OneWire \
-					$(LOCAL_LIBS)/ArduinoJson/src \
-					$(LOCAL_LIBS)/ESPAsyncTCP/src \
-					$(LOCAL_LIBS)/ESPAsyncWebServer/src \
-          $(LOCAL_LIBS)/Adafruit_IO_Arduino/src \
-          $(LOCAL_LIBS)/Adafruit_MQTT_Library \
-					$(LOCAL_LIBS)/ESP8266DebounceButtons/src
+# GLOBAL_USER_LIBDIR=./libs
+LOCAL_USER_LIBDIR=./libs
+USER_LIBS=\
+    $(LOCAL_LIBS)/Adafruit_IO_Arduino/src \
+		$(LOCAL_LIBS)/Adafruit_IO_Arduino/src/util \
+		$(LOCAL_LIBS)/Adafruit_IO_Arduino/src/wifi \
+    $(LOCAL_LIBS)/Adafruit_MQTT_Library 
+
 include ~/Arduino/Esp8266-Arduino-Makefile/espXArduino.mk
 

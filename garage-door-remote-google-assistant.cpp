@@ -4,6 +4,7 @@
 #include <AdafruitIO_WiFi.h>
 #include <ESP8266mDNS.h>
 
+#include <AdafruitIO.h>
 #include <AdafruitIO_Feed.h>
 #include <AdafruitIO_WiFi.h>
 #include <OneWire.h>
