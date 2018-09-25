@@ -11,10 +11,20 @@ USER_DEFINE = -DTEST
 OTA_IP = garage-door
 OTA_PORT = 8266 
 OTA_AUTH = 123
-ESP8266_VERSION=.git
-GLOBAL_USER_LIBDIR=../libraries
-USER_LIBS=$(GLOBAL_USER_LIBDIR)/Adafruit_IO_Arduino \
-          $(GLOBAL_USER_LIBDIR)/Adafruit_MQTT_Library \
-					$(GLOBAL_USER_LIBDIR)/ESP8266DebounceButtons/src
-include ../Esp8266-Arduino-Makefile/espXArduino.mk
+ESP8266_VERSION=2.4.2
+GLOBAL_USER_LIBDIR=./libs
+LOCAL_LIBS=./libs
+USER_LIBS=$(LOCAL_LIBS)/Time \
+					$(LOCAL_LIBS)/NtpClientLib/src \
+					$(LOCAL_LIBS)/RemoteDebug \
+					$(LOCAL_LIBS)/ESP_EEPROM/src \
+					$(LOCAL_LIBS)/DallasTemperature \
+					$(LOCAL_LIBS)/OneWire \
+					$(LOCAL_LIBS)/ArduinoJson/src \
+					$(LOCAL_LIBS)/ESPAsyncTCP/src \
+					$(LOCAL_LIBS)/ESPAsyncWebServer/src \
+          $(LOCAL_LIBS)/Adafruit_IO_Arduino/src \
+          $(LOCAL_LIBS)/Adafruit_MQTT_Library \
+					$(LOCAL_LIBS)/ESP8266DebounceButtons/src
+include ~/Arduino/Esp8266-Arduino-Makefile/espXArduino.mk
 
