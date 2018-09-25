@@ -2,10 +2,6 @@
 #define _IOHANDLER_H
 
 #include <Arduino.h>
-// #include <Button.h>
-// #include <ButtonEventCallback.h>
-// #include <PushButton.h>
-// #include <Bounce2.h> 
 #include <ESP8266DebounceSwitch.h>
 
 #include "config.h"
@@ -31,9 +27,6 @@ class IOHandler{
     void update();
     void actionDoor(String position);
 
-    // void onButtonPress(Button &btn);
-    // void onButtonRelease(Button &btn, uint16_t duration);
-    // void onOpenCloseButtonHeld(Button& btn, uint16_t duration);
     static void _switchCallback(uint8_t button, bool closed);
   private:
     bool switch_open_closed;
@@ -44,9 +37,6 @@ class IOHandler{
     void onClosedSwitchCallback(bool closed);
 
     ESP8266DebounceSwitch switches;
-    // PushButton buttonOpenClose;
-    // PushButton buttonOpenSwitch;
-    // PushButton buttonClosedSwitch;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
 

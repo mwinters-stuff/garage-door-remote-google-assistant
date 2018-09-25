@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#include <ESP8266DebounceSwitch.h>
 #include "iohandler.h"
 #include "datastore.h"
 #include "logging.h"
