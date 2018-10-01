@@ -1,0 +1,47 @@
+{llœŸ|Ädà|„däb<‡ƒìsÛc„#Äóngž$gnœãìcpŒŽd{$sdpûgàƒlÄÜcnã|$ìŽcŒûg'çl„‡d`˜nd`osŽncœd{“cœlœcc#Üà‡d`üƒoÜ
+
+
+
+
+
+
+
+
+
+mounted file system
+reading config file
+opened config file
+{"influx_host":"sensornet","wifi_ap":"WINTERS","wifi_password":"tesskatt","hostname":"weather-station-test","influx_port":"8086","influx_database":"demo","influx_measurement":"left","influx_username":"","influx_password":"","update_interval":"60","io_feed_garagedooraction":"tests.garagedooraction","io_feed_garagedoorposition":"tests.garagedoorposition","io_feed_garagetemperature":"tests.garagetemperature","io_feed_inhomearea":"tests.inhomearea","io_feed_username":"","io_feed_key":""}Connecting to Adafruit IO
+AdafruitIO::connect()
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+lastValue get /api/v2/mwinters/feeds/tests.garagedooraction/data/retain
+lastValue get /api/v2/mwinters/feeds/tests.garagedoorposition/data/retain
+sd$œž|Œlà|Œlìc|ÃäcŒcŒûg'Ÿlogœãäcx„‡l;l{lxóoàƒdŒœcgã|lä‡cÄò'oï$ŒŽl`ngl`'{‡“cœls'cœdÜcbcœ‡àŽl`üÃgœ
+
+
+
+
+
+
+
+
+
+mounted file system
+reading config file
+opened config file
+{"influx_host":"sensornet","wifi_ap":"WINTERS","wifi_password":"tesskatt","hostname":"weather-station-test","influx_port":"8086","influx_database":"demo","influx_measurement":"left","influx_username":"","influx_password":"","update_interval":"60","io_feed_garagedooraction":"tests.garagedooraction","io_feed_garagedoorposition":"tests.garagedoorposition","io_feed_garagetemperature":"tests.garagetemperature","io_feed_inhomearea":"tests.inhomearea","io_feed_username":"","io_feed_key":""}Connecting to Adafruit IO
+AdafruitIO::connect()
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+Net Status Network disconnected.
+lastValue get /api/v2/mwinters/feeds/tests.garagedooraction/data/retain
+lastValue get /api/v2/mwinters/feeds/tests.garagedoorposition/data/retain
+À ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ À

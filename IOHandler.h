@@ -3,8 +3,13 @@
 
 #include <Arduino.h>
 #include <ESP8266DebounceSwitch.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-#include "config.h"
+#include "ConfigFile.h"
+#include "SettingsFile.h"
+#include "HardwareConfig.h"
+#include "MQTTHandler.h"
 #include <memory>
 
 #define FLASH_TIME_ON 50
@@ -14,12 +19,10 @@
 
 class IOHandler{
   public:
-    IOHandler();
+    IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, ConfigFile *configFile);
 
-    void setup();
-
-    static IOHandler* get();
-    static IOHandler* init();
+    static IOHandler* _getInstance(){return m_instance;};
+    // static IOHandler* init();
 
     void ledGreen(bool on);
     void ledRed(bool on);
@@ -29,12 +32,20 @@ class IOHandler{
 
     static void _switchCallback(uint8_t button, bool closed);
   private:
+    SettingsFile *settingsFile;
+    ConfigFile *configFile;
+    MQTTHandler *mqttHandler;
+    OneWire oneWire;
+    DallasTemperature DS18B20;
+    uint32_t temperatureLastRead;
+    
     bool switch_open_closed;
     bool switch_closed_closed;
 
     void onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed);
     void onOpenSwitchCallback(bool closed);
     void onClosedSwitchCallback(bool closed);
+    void readTemperature();
 
     ESP8266DebounceSwitch switches;
     uint32_t greenMillisFlash;

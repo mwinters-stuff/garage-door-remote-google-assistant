@@ -1,7 +1,6 @@
-#!/bin/bash
 (
   cd webapp || exit
-  bower install
+  npm install
   polymer build --bundle
   mkdir -p ../data
   cp build/default/index.html ../data/
@@ -10,5 +9,5 @@ rm ./data/index.html.gz
 gzip ./data/index.html
 gzip -l ./data/index.html.gz
 
-# ~/.arduino15/packages/esp8266/tools/mkspiffs/0.2.0/mkspiffs --create ./data --size 1028096 --page 256 --block 8192 ./spiffs.image
-# ~/.arduino15/packages/esp8266/tools/esptool/0.4.13/esptool -ca 0x300000 -cd nodemcu -cp /dev/ttyUSB1 -cb 115200 -cf ~/spiffs.image
+make fs
+# /home/mathew/Arduino/Esp8266-Arduino-Makefile/esp8266-2.4.2/tools/espota.py -i weather-station.fritz.box -p 8266  -a 123 -s -f build.nodemcuv2-2.4.2/spiffs/spiffs.bin

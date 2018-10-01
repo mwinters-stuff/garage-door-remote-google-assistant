@@ -1,0 +1,19 @@
+{
+  "influx_host": "192.168.1.5",
+  "wifi_ap":"WINTERS2",
+  "wifi_password":"tesskatt",
+  "hostname":"garage-door",
+  "ntp_server": "",
+  "influx_port":"8086",
+  "influx_database":"winters",
+  "influx_measurement":"left",
+  "influx_username":"",
+  "influx_password":"",
+  "update_interval": "60",
+  "io_feed_garagedooraction":"tests.garagedooraction",
+  "io_feed_garagedoorposition":"tests.garagedoorposition",
+  "io_feed_garagetemperature":"tests.garagetemperature",
+  "io_feed_inhomearea":"tests.inhomearea",
+  "io_feed_username": "",
+  "io_feed_key": ""
+}
