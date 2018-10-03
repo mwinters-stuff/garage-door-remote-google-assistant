@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 
 class JSONFileBase{
-  private:
+  protected:
     String fileName;
   public:
     JSONFileBase(const String& fileName);

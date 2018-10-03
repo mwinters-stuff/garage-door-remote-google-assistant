@@ -3,14 +3,6 @@
 
 JSONFileBase::JSONFileBase(const String& fileName):
       fileName(fileName){
-
-  if(!readFile()){
-    Serial.print(F("Failed to read "));
-    Serial.println(fileName);
-    while(true){
-      delay(1000);
-    }
-  }
 }
 
 
@@ -30,11 +22,14 @@ bool JSONFileBase::readFile()
       {
         DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(configFile);
-        json.printTo(Serial);
 
         if (json.success())
         {
+          json.printTo(Serial);
+          Serial.println("Printed");
+
           setJson(json);
+          Serial.println("Set");
           result = true;
         }
         else

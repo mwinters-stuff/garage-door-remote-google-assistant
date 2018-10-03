@@ -4,8 +4,8 @@
 // #include <EEPROM.h>
 
 #include <RemoteDebug.h>
-extern RemoteDebug Debug;
-//#define Debug Serial
+//extern RemoteDebug Debug;
+#define Debug Serial
 
 #include "MQTTHandler.h"
 
@@ -34,6 +34,7 @@ MQTTHandler::MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile) :
   door_moving(false),
   io(NULL)
 {
+  m_instance = this;
 }
 
 // MQTTHandler *MQTTHandler::init()
@@ -86,6 +87,7 @@ void MQTTHandler::update()
   if(io){
     io->run();
   }
+  
 }
 
 void MQTTHandler::connect()
@@ -138,22 +140,20 @@ void MQTTHandler::inHomeMessage(AdafruitIO_Data *data)
   
 }
 
-bool MQTTHandler::doorAction(AdafruitIO_Data *data)
+
+void MQTTHandler::doorAction(AdafruitIO_Data *data)
 {
-  Debug.print(F("Action: Received door action -> "));
   settingsFile->last_door_action = data->value();
+  Debug.print(F("Action: Received door action -> "));
   Debug.println(settingsFile->last_door_action);
-  if (settingsFile->last_door_action.startsWith("OVERRIDE_"))
-  {
-    Debug.println(F("IOHandler Override, action door!"));
-  }
+
   if (!settingsFile->is_in_home_area)
   {
     Debug.println(F("IOHandler Not near home, won't action door!"));
-    return false;
+  }else if(doorActionCallback){
+    Debug.println("doorActionCallback");
+    doorActionCallback(settingsFile->last_door_action);
   }
-
-  return true;
 }
 
 void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPositions _door_position)

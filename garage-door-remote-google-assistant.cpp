@@ -1,4 +1,8 @@
 
+#ifdef ENABLE_GDB
+	#include "gdbstub.h"
+#endif
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <AdafruitIO_WiFi.h>
@@ -33,6 +37,9 @@ HTTPHandler* httpHandler;
 RemoteDebug Debug;
 
 void setup() {
+  #ifdef ENABLE_GDB
+	  gdbstub_init();
+  #endif
   Serial.begin(115200);
   for(int i = 0; i < 10; i++){
     Serial.println();

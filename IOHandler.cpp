@@ -37,16 +37,11 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
 
   switches.addSwitchPin(SWITCH_OPEN, digitalRead(SWITCH_OPEN) == HIGH, _switchCallback);
   switches.addSwitchPin(SWITCH_CLOSED, digitalRead(SWITCH_CLOSED) == HIGH, _switchCallback);
+
+  mqttHandler->doorActionCallback = [&](String action){
+    actionDoor(action);
+  };
 }
-
-// IOHandler* IOHandler::init(){
-//   m_instance = new IOHandler();
-//   return m_instance;
-// }
-
-// IOHandler* IOHandler::getInstance(){
-//   return m_instance;
-// }
 
 void IOHandler::_switchCallback(uint8_t pin, bool closed){
   if(pin == SWITCH_OPEN){

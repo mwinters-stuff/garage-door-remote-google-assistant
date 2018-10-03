@@ -19,6 +19,8 @@ enum doorPositions{
   dpManualClosedToOpen
 };
 
+typedef std::function<void(String) > stringCallback;
+
 class MQTTHandler{
   public:
     MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile);
@@ -36,7 +38,7 @@ class MQTTHandler{
     void update();
 
     void inHomeMessage(AdafruitIO_Data *data);
-    bool doorAction(AdafruitIO_Data *data);
+    void doorAction(AdafruitIO_Data *data);
     void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position);
     void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position, bool _door_moving);
     void toggleLocked();
@@ -45,6 +47,8 @@ class MQTTHandler{
 
     static MQTTHandler* _getInstance(){return m_instance;};
     // static MQTTHandler* init();
+    stringCallback doorActionCallback;
+
   private:
     SettingsFile *settingsFile;
     ConfigFile *configFile;

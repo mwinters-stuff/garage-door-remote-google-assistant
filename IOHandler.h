@@ -5,6 +5,7 @@
 #include <ESP8266DebounceSwitch.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <functional>
 
 #include "ConfigFile.h"
 #include "SettingsFile.h"
@@ -50,6 +51,8 @@ class IOHandler{
     ESP8266DebounceSwitch switches;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
+
+    stringCallback doorActionCallback;
 
     void processSwitchs();
     void toggleRelay();

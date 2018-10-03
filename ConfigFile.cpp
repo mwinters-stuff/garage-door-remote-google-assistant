@@ -28,7 +28,10 @@
 // ConfigFile *ConfigFile::m_instance;
 
 ConfigFile::ConfigFile(): JSONFileBase(CONFIG_FILE){
-  // ConfigFile::m_instance = this;
+  if(!readFile()){
+    Serial.print(F("Failed to read "));
+    Serial.println(fileName);
+  }
 }
 
 void ConfigFile::getJson(JsonObject & root){

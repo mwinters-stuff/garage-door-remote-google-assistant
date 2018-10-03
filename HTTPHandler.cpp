@@ -74,6 +74,15 @@ void HTTPHandler::setupServer(){
     request->send(response);
   });
 
+  httpServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    AsyncJsonResponse * response = new AsyncJsonResponse();
+    Debug.println(F("Get Settings"));
+    JsonObject& root = response->getRoot();
+    settingsFile->getJson(root);
+    response->setLength();
+    request->send(response);
+  });
+
   AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/save-config", [this](AsyncWebServerRequest *request, JsonVariant &json) {
     JsonObject& root = json.as<JsonObject>();
     Debug.println(F("Save Config"));

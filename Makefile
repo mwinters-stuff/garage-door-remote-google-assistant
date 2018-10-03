@@ -20,5 +20,11 @@ USER_LIBS=\
 		$(LOCAL_LIBS)/Adafruit_IO_Arduino/src/wifi \
     $(LOCAL_LIBS)/Adafruit_MQTT_Library 
 
+
+ifeq ($(ENABLE_GDB), 1)
+	CFLAGS += -Og -ggdb -DGDBSTUB_FREERTOS=0 -DENABLE_GDB=1
+	USER_LIBS += $(HOME)/Arduino/Esp8266-Arduino-Makefile/esp8266-2.4.2/libraries/GDBStub
+endif
+
 include ~/Arduino/Esp8266-Arduino-Makefile/espXArduino.mk
 

@@ -16,7 +16,14 @@
 // SettingsFile *SettingsFile::m_instance;
 
 SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
-  // SettingsFile::m_instance = this;
+  if(!readFile()){
+    Serial.print(F("Failed to read "));
+    Serial.println(fileName);
+    current_door_position = "";
+    last_door_action = "";
+    is_locked = false;
+    is_in_home_area = true;
+  }
 }
 
 void SettingsFile::getJson(JsonObject & root){
