@@ -29,7 +29,10 @@ class IOHandler{
     void ledRed(bool on);
 
     void update();
-    void actionDoor(String position);
+
+    void setDoorAction(String action){
+      doorAction = action;
+    }
 
     static void _switchCallback(uint8_t button, bool closed);
   private:
@@ -39,6 +42,8 @@ class IOHandler{
     OneWire oneWire;
     DallasTemperature DS18B20;
     uint32_t temperatureLastRead;
+    String doorAction;
+    bool firstLoop;
     
     bool switch_open_closed;
     bool switch_closed_closed;
@@ -56,6 +61,7 @@ class IOHandler{
 
     void processSwitchs();
     void toggleRelay();
+    void actionDoor(String position);
 
 
     static IOHandler* m_instance;

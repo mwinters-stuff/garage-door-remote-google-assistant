@@ -1,4 +1,4 @@
-import '@polymer/polymer/polymer-legacy.js';
+// import '@polymer/polymer/polymer-legacy.js';
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-styles/typography.js';
@@ -179,6 +179,7 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="Password" type="password" value="{{_config.influx_password}}"></paper-input>
                   <paper-input always-float-label label="Database" value="{{_config.influx_database}}"></paper-input>
                   <paper-input always-float-label label="Measurement" value="{{_config.influx_measurement}}"></paper-input>
+                  <paper-input always-float-label label="Door" value="{{_config.influx_door}}"></paper-input>
               </div>
 
             </iron-pages>            

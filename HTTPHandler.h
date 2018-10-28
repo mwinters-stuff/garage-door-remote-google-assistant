@@ -27,9 +27,11 @@ class HTTPHandler{
     IOHandler *ioHandler;
 
     bool handleFileRead(AsyncWebServerRequest *request);
-    String doDoorAction(String action);
-    String doLockAction(String action);
-    String doInHomeArea(String action);
+    String doDoorAction(const String &action);
+    String doLockAction(const String &action);
+    String doInHomeArea(const String &action);
+
+    String formatUnknownAction(const String &what, const String &action);
 };
 
 

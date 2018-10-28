@@ -12,6 +12,7 @@ class ConfigFile: public JSONFileBase{
     String hostname;
     String influx_database;
     String influx_measurement;
+    String influx_door;
     String influx_host;
     String influx_username;
     String influx_password;
@@ -32,7 +33,8 @@ class ConfigFile: public JSONFileBase{
 
     void getJson(JsonObject & root);
     void setJson(const JsonObject &object);
-    String getInfluxUrl(bool timestamp=false);
+    String getInfluxUrl();
+    bool influxOk();
   private:
     // static ConfigFile* m_instance;
 

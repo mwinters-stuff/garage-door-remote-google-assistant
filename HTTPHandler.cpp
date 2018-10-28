@@ -8,6 +8,7 @@
 #include <TimeLib.h>
 #include <NtpClientLib.h>
 #include <RemoteDebug.h>
+#include <WString.h>
 
 #include "ConfigFile.h"
 #include "HTTPHandler.h"
@@ -15,24 +16,13 @@
 #include "MQTTHandler.h"
 #include "IOHandler.h"
 #include "SettingsFile.h"
+#include "StringConstants.h"
 
 extern RemoteDebug Debug;
-
-// HTTPHandler* HTTPHandler::m_instance;
 
 HTTPHandler::HTTPHandler(IOHandler *ioHandler, SettingsFile *settingsFile, ConfigFile *configFile): httpServer(80),
   ioHandler(ioHandler), settingsFile(settingsFile), configFile(configFile){
 }
-
-// HTTPHandler* HTTPHandler::init(){
-//   m_instance = new HTTPHandler();
-//   return m_instance;
-// }
-
-// HTTPHandler* HTTPHandler::get(){
-//   return m_instance;
-// }
-
 
 void HTTPHandler::update(){
   ArduinoOTA.handle();
@@ -41,94 +31,110 @@ void HTTPHandler::update(){
 void HTTPHandler::setupServer(){
   SPIFFS.begin();
 
-  httpServer.on("/all", HTTP_GET, [this](AsyncWebServerRequest *request) {
+  httpServer.on(String(F("/all")).c_str(), HTTP_GET, [this](AsyncWebServerRequest *request) {
     AsyncJsonResponse * response = new AsyncJsonResponse();
     JsonObject& root = response->getRoot();
 
-    root[F("heap")] = ESP.getFreeHeap();
-    root[F("temperature")] = settingsFile->temperature;
-    root[F("door_action")] = settingsFile->last_door_action;
-    root[F("door_position")] = settingsFile->current_door_position;
-    root[F("door_locked")] =  settingsFile->is_locked;
-    root[F("in_home_area")] = settingsFile->is_in_home_area;
+    root[HEAP] = ESP.getFreeHeap();
+    root[TEMPERATURE] = settingsFile->getTemperature();
+    root[DOOR_ACTION] = settingsFile->getLastDoorAction();
+    root[DOOR_POSITION] = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
+    root[DOOR_LOCKED] =  settingsFile->isLocked();
+    root[IN_HOME_AREA] = settingsFile->isInHomeArea();
     // root[F("last_http_response")] = sensors->getLastResponse();
-    root[F("up_time")] = NTP.getUptimeString();
-    root[F("boot_time")] = NTP.getTimeDateString(NTP.getLastBootTime());
-    root[F("time_stamp")] = NTP.getTimeDateString();
+    root[UP_TIME] = NTP.getUptimeString();
+    root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
+    root[TIME_STAMP] = NTP.getTimeDateString();
     // root[F("reading_time_stamp")] = NTP.getTimeDateString(reading.last_send_time);
 
-    root.prettyPrintTo(Debug);
+    // root.prettyPrintTo(Debug);
+    // Debug.println();
     
-    response->addHeader(F("Access-Control-Allow-Origin"), "*");
+    response->addHeader(ACCESS_CONTROL_HEADER, "*");
     response->setLength();
     request->send(response);
   
   });
 
-  httpServer.on("/config", HTTP_GET, [this](AsyncWebServerRequest *request) {
+  httpServer.on(String(F("/config")).c_str(), HTTP_GET, [this](AsyncWebServerRequest *request) {
     AsyncJsonResponse * response = new AsyncJsonResponse();
     Debug.println(F("Get Config"));
     JsonObject& root = response->getRoot();
     configFile->getJson(root);
+
+    root.prettyPrintTo(Debug);
+    Debug.println();
+
     response->setLength();
     request->send(response);
   });
 
-  httpServer.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request) {
+  httpServer.on(String(F("/settings")).c_str(), HTTP_GET, [this](AsyncWebServerRequest *request) {
     AsyncJsonResponse * response = new AsyncJsonResponse();
     Debug.println(F("Get Settings"));
+    
     JsonObject& root = response->getRoot();
     settingsFile->getJson(root);
+
+    root.prettyPrintTo(Debug);
+    Debug.println();
+
     response->setLength();
     request->send(response);
   });
 
-  AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler("/save-config", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+  AsyncCallbackJsonWebHandler* handler = new AsyncCallbackJsonWebHandler(F("/save-config"), [this](AsyncWebServerRequest *request, JsonVariant &json) {
     JsonObject& root = json.as<JsonObject>();
     Debug.println(F("Save Config"));
+
+    root.prettyPrintTo(Debug);
+    Debug.println();
+
     configFile->setJson(root);
     configFile->saveFile();
 
-    AsyncWebServerResponse *response = request->beginResponse(200, "text/plain","OK");
-    response->addHeader("Access-Control-Allow-Origin", "*");
+    AsyncWebServerResponse *response = request->beginResponse(200, TEXT_PLAIN,OKRESULT);
+    response->addHeader(ACCESS_CONTROL_HEADER, "*");
     request->send(response);
   });
   httpServer.addHandler(handler);
 
+  httpServer.on(String(F("/action")).c_str(), HTTP_GET, [this](AsyncWebServerRequest *request){
+    if(request->args() == 0){
+      request->send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
+      return;
+    }
+    
+    String name = request->argName(0);
+    String action = request->arg((size_t)0);
 
-  // httpServer.on("/action", HTTP_GET,[this](){
-  //   httpServer.sendHeader("Access-Control-Allow-Origin","*");
-  //   if(httpServer.args() == 0) 
-  //     return httpServer.send(500, "text/plain", "BAD ARGS");
-  //   String name= httpServer.argName(0);
-  //   String action = httpServer.arg(0);
+    Debug.printf_P(PSTR("Action: %s = %s "), name.c_str(), action.c_str());
 
-  //   Serial.print(F("Action: "));
-  //   Serial.print(name);
-  //   Serial.print(" = ");
-  //   Serial.println(action);
-  //   String result = "ERROR: " + name + ": " + action + " is an unknown action";
+    String result = formatUnknownAction(name, action);
 
-  //   if(name.equals("door_action")){
-  //     result = doDoorAction(action);
-  //   }
+    if(name.equals(DOOR_ACTION)){
+      result = doDoorAction(action);
+    }
 
-  //   if(name.equals("lock_action")){
-  //     result = doLockAction(action);
-  //   }
+    if(name.equals(LOCK_ACTION)){
+      result = doLockAction(action);
+    }
 
-  //   if(name.equals("in_home_area")){
-  //     result = doInHomeArea(action);
-  //   }
+    if(name.equals(IN_HOME_AREA)){
+      result = doInHomeArea(action);
+    }
 
-  //   httpServer.send(200, "text/plain", result);
+    AsyncWebServerResponse *response = request->beginResponse(200,TEXT_PLAIN, result);
+    
+    response->addHeader(ACCESS_CONTROL_HEADER, "*");
 
-  // });
+    request->send(response);
+  });
 
-  httpServer.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+  httpServer.serveStatic("/", SPIFFS, "/").setDefaultFile(String(F("index.html")).c_str());
 
   httpServer.onNotFound([this](AsyncWebServerRequest *request) {
-    request->send(404, F("text/plain"), F("Not found"));
+    request->send(404, TEXT_PLAIN, F("Not found"));
   });
 
   httpServer.begin();
@@ -141,10 +147,11 @@ void HTTPHandler::setupOTA(){
   ArduinoOTA.setPassword(ARDUINO_OTA_PASSWORD);
   ArduinoOTA.onStart([]() {
     String type;
+    Debug.print(F("Start updating "));
     if (ArduinoOTA.getCommand() == U_FLASH)
-      Debug.println(F("Start updating sketch"));
+      Debug.println(F("sketch"));
     else // U_SPIFFS
-      Debug.println(F("Start updating filesystem"));
+      Debug.println(F("filesystem"));
 
     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
     SPIFFS.end();
@@ -154,48 +161,76 @@ void HTTPHandler::setupOTA(){
     Debug.println(F("\nEnd"));
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Debug.printf(("Progress: %u%%\r"), (progress / (total / 100)));
+    Debug.printf_P(PSTR("Progress: %u%%\r"), (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
-    Debug.printf(("Error[%u]: "), error);
-    if (error == OTA_AUTH_ERROR) Debug.println(F("Auth Failed"));
-    else if (error == OTA_BEGIN_ERROR) Debug.println(F("Begin Failed"));
-    else if (error == OTA_CONNECT_ERROR) Debug.println(F("Connect Failed"));
-    else if (error == OTA_RECEIVE_ERROR) Debug.println(F("Receive Failed"));
-    else if (error == OTA_END_ERROR) Debug.println(F("End Failed"));
+    String error_s;
+    switch(error){
+      case OTA_AUTH_ERROR:
+        error_s = F("Auth");
+        break;
+      case OTA_BEGIN_ERROR:
+        error_s = F("Begin");
+        break;
+      case OTA_CONNECT_ERROR:
+        error_s = F("Connect");
+        break;
+      case OTA_RECEIVE_ERROR:
+        error_s = F("Receive");
+        break;
+      case OTA_END_ERROR:
+        error_s = F("End");
+        break;
+    }
+    Debug.printf(String(ERROR_FAILED).c_str(), error, error_s.c_str());
   });
   ArduinoOTA.begin();
 
-  
-
 }
 
 
-String HTTPHandler::doDoorAction(String action){
-  if(action.compareTo(F("OPEN")) == 0 || action.compareTo(F("CLOSE"))==0){
+String HTTPHandler::doDoorAction(const String &action){
+  if(action.compareTo(OPEN) == 0 || action.compareTo(CLOSE)==0){
     // TODO: DataStore::get()->io_door_action->save(action);
-    ioHandler->actionDoor(action);
-    return "OK";
+    ioHandler->setDoorAction(action);
+    return OKRESULT;
   }
 
-  return "ERROR: " + action + " is not a door action";
+  return formatUnknownAction(DOOR_ACTION, action);
 }
 
-String HTTPHandler::doLockAction(String action){
-  if(action.compareTo(F("LOCK")) == 0){
-    // DataStore::get()->setLocked(true);
-    return "OK";
+String HTTPHandler::doLockAction(const String &action){
+  if(action.compareTo(LOCK) == 0){
+    settingsFile->setLocked();
+    return OKRESULT;
   }
 
-  if(action.compareTo(F("UNLOCK")) == 0){
-    // DataStore::get()->setLocked(false);
-    return "OK";
+  if(action.compareTo(UNLOCK) == 0){
+    settingsFile->setUnLocked();
+    return OKRESULT;
   }
 
-  return "ERROR: " + action + " is not a lock action";
+  return formatUnknownAction(LOCK_ACTION, action);
 }
 
-String HTTPHandler::doInHomeArea(String action){
-  return "ERROR: " + action + " is not in home action";
+String HTTPHandler::doInHomeArea(const String &action){
+    if(action.compareTo(YES) == 0){
+    settingsFile->setInHomeArea();
+    return OKRESULT;
+  }
+
+  if(action.compareTo(NO) == 0){
+    settingsFile->setOutHomeArea();
+    return OKRESULT;
+  }
+
+  return formatUnknownAction(IN_HOME_AREA, action);
+}
+
+String HTTPHandler::formatUnknownAction(const String &what, const String &action){
+  size_t len = 40 + what.length() + action.length();
+  char buffer[len];
+  snprintf_P(buffer, len, _UNKNOWN_ACTION, what.c_str(), action.c_str());
+  return String(buffer);
 }
 

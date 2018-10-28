@@ -11,7 +11,7 @@ bool JSONFileBase::readFile()
   bool result = false;
   if (SPIFFS.begin())
   {
-    Serial.println("mounted file system");
+    Serial.println(F("mounted file system"));
     if (SPIFFS.exists(fileName))
     {
       //file exists, reading and loading
@@ -26,10 +26,10 @@ bool JSONFileBase::readFile()
         if (json.success())
         {
           json.printTo(Serial);
-          Serial.println("Printed");
+          Serial.println(F("Printed"));
 
           setJson(json);
-          Serial.println("Set");
+          Serial.println(F("Set"));
           result = true;
         }
         else

@@ -1,6 +1,6 @@
 (
   cd webapp || exit
-  npm install
+  polymer install
   polymer build --bundle
   mkdir -p ../data
   cp build/default/index.html ../data/

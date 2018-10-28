@@ -68,6 +68,7 @@ void setup() {
   MDNS.begin(configFile->hostname.c_str());
   Debug.begin(configFile->hostname);
   Debug.setResetCmdEnabled(true);
+  Debug.setSerialEnabled(true); 
 	NTP.begin("192.168.1.1"); 
 
   mqttHandler = new MQTTHandler(settingsFile, configFile);
