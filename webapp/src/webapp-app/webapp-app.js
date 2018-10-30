@@ -1,4 +1,3 @@
-// import '@polymer/polymer/polymer-legacy.js';
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-styles/typography.js';
@@ -79,8 +78,6 @@ class WebappApp extends PolymerElement {
     </iron-ajax>
     <iron-ajax id="saveConfigAjax" method="POST" url="[[_http_root]]save-config" content-type="application/json" debounce-duration="300" on-response="_onSaveConfigResponse" on-error="_onSaveConfigError">
     </iron-ajax>
-    <iron-ajax id="readNowAjax" url="[[_http_root]]read-now" method="GET" debounce-duration="300" on-response="_onReadNowResponse" on-error="_onReadNowError">
-    </iron-ajax>
     <iron-ajax id="rebootAjax" url="[[_http_root]]reboot" method="GET" debounce-duration="300" on-response="_onRebootResponse" on-error="_onRebootError">
     </iron-ajax>
     <iron-ajax id="doorActionAjax" url="[[_http_root]]action" handle-as="json" method="GET" params="[[_actionParams]]" debounce-duration="300" on-response="_onActionResponse"
@@ -145,7 +142,6 @@ class WebappApp extends PolymerElement {
             <paper-button raised class="blue" disabled="[[_door_action_enabled(_data.door_position, _data.door_locked)]]" 
               on-tap="_toggle_door">[[_door_action_title(_data.door_position)]]</paper-button>
             <paper-button on-tap="_toggle_locked">[[_door_locked_title(_data.door_locked)]]</paper-button>
-            <paper-button raised class="blue" on-tap="_read_now">Read Now</paper-button>
             <paper-button raised class="green" on-tap="_configure">Configure</paper-button>
           </div>
         </paper-card>
@@ -180,6 +176,8 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="Database" value="{{_config.influx_database}}"></paper-input>
                   <paper-input always-float-label label="Measurement" value="{{_config.influx_measurement}}"></paper-input>
                   <paper-input always-float-label label="Door" value="{{_config.influx_door}}"></paper-input>
+                  <paper-input always-float-label label="Temperature Location" value="{{_config.influx_temperature_location}}"></paper-input>
+                  <paper-input always-float-label label="Temperature Measurement" value="{{_config.influx_temperature_measurement}}"></paper-input>
               </div>
 
             </iron-pages>            
@@ -202,6 +200,12 @@ class WebappApp extends PolymerElement {
   }
 
   static get is() { return 'webapp-app'; }
+
+  static get observers() {
+    return [
+      '_pageChanged(_page)'
+    ];
+  }
   
   constructor() {
     super();
@@ -212,10 +216,16 @@ class WebappApp extends PolymerElement {
     this._dialogMessage = null;
     this._http_root = window.MyAppGlobals.rootPath;
     this._selectedConfTab = 0;
+    this._page = 0;
   }
 
-  _read_now() {
-    this.$.readNowAjax.generateRequest();
+  _pageChanged(page){
+    if (page == 1){ 
+      this.$.getConfigAjax.generateRequest();
+    }
+    if(page == 0){
+      this.$.getDataAjax.generateRequest();
+    }
   }
 
   _onReadNowResponse(event) {

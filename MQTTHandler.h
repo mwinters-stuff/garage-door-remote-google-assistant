@@ -21,6 +21,7 @@ class MQTTHandler{
     AdafruitIO_Feed* io_door_action;
     AdafruitIO_Feed* io_door_position;
     AdafruitIO_Feed* io_in_home_area;
+    AdafruitIO_Feed* io_temperature;
 
     void initFeeds();
     void connect();
@@ -33,6 +34,7 @@ class MQTTHandler{
     void toggleLocked();
     void setLocked(bool locked);
     void sendToInflux(const String &dataPoint, const String &dataValue);
+    void setTemperature(double temperature);
     
 
     static MQTTHandler* _getInstance(){return m_instance;};
@@ -44,6 +46,7 @@ class MQTTHandler{
     ConfigFile *configFile;
     String last_http_reponse_str;
     static MQTTHandler* m_instance;
+    void sendInflux(const String &body);
 };
 
 

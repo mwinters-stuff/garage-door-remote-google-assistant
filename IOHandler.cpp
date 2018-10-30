@@ -40,6 +40,8 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
   mqttHandler->doorActionCallback = [&](String action){
     setDoorAction(action);
   };
+  DS18B20.begin();
+  temperatureLastRead = millis();
 }
 
 void IOHandler::_switchCallback(uint8_t pin, bool closed){
@@ -76,6 +78,7 @@ void IOHandler::update(){
     switches.addSwitchPin(SWITCH_OPEN, digitalRead(SWITCH_OPEN) == HIGH, _switchCallback);
     switches.addSwitchPin(SWITCH_CLOSED, digitalRead(SWITCH_CLOSED) == HIGH, _switchCallback);
   }else{
+    readTemperature();
     switches.update();
     if(doorAction.length() > 0){
       actionDoor(doorAction);
@@ -127,6 +130,7 @@ void IOHandler::update(){
 
 void IOHandler::onOpenSwitchCallback(bool closed){
   switch_open_closed = closed;
+  Debug.println(String(F("onOpenSwitchCallback ")) + String(closed ? CLOSED : OPEN));
   processSwitchs();
   switches.addSwitchPin(SWITCH_OPEN, !closed, _switchCallback);
 
@@ -134,6 +138,7 @@ void IOHandler::onOpenSwitchCallback(bool closed){
 
 void IOHandler::onClosedSwitchCallback(bool closed){
   switch_closed_closed = closed;
+  Debug.println(String(F("onClosedSwitchCallback ")) + String(closed ? CLOSED : OPEN));
   processSwitchs();
   switches.addSwitchPin(SWITCH_CLOSED, !closed, _switchCallback);
 }
@@ -252,6 +257,7 @@ void IOHandler::processSwitchs(){
       break;
   }
   mqttHandler->updateDoorPosition(current_door_position, door_position, door_moving);
+  Debug.println("");
 }
 
 void IOHandler::actionDoor(String position){
@@ -318,13 +324,14 @@ void IOHandler::toggleRelay(){
 
 void IOHandler::readTemperature(){
   if(DS18B20.getDS18Count() > 0){
-    if(temperatureLastRead == 0 || (millis() - temperatureLastRead) >= TEMPERATURE_DELAY ){
+    if(temperatureLastRead == 0 || (millis() - temperatureLastRead) >= configFile->update_interval_ms ){
       ESP.wdtDisable();
       for(int d = 0; d < 5; d++) {
         DS18B20.requestTemperatures(); 
         float temp = DS18B20.getTempCByIndex(0);
         if(temp != 85.0 && temp != (-127.0)){
           settingsFile->setTemperature(temp);
+          mqttHandler->setTemperature(temp);
           break;
         }
         Debug.println(F("Temperature Reading Failed"));

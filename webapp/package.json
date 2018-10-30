@@ -2,23 +2,8 @@
   "description": "Garage Door",
   "name": "garagedoorapp",
   "version": "1.0.0",
-  "license": "private",
-  "resolutions": {
-    "inherits": "2.0.3",
-    "samsam": "1.1.3",
-    "supports-color": "3.1.2",
-    "type-detect": "1.0.0"
-  },
-  "scripts": {
-    "start": "polymer serve",
-    "build": "polymer build",
-    "lint": "polymer lint",
-    "test": "polymer test",
-    "test:integration": "polymer build # test that psk builds without error with the CLI"
-  },
   "main": "index.html",
   "dependencies": {
-    "@polymer/iron-ajax": "^3.0.1",
     "@polymer/iron-flex-layout": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
@@ -26,10 +11,11 @@
     "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-input": "^3.0.1",
     "@polymer/paper-tabs": "^3.0.1",
-    "@polymer/polymer": "^3.1.0"
+    "@polymer/iron-ajax": "^3.0.1",
+    "@polymer/polymer": "^3.0.0"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "^2.1.3",
-    "wct-browser-legacy": "^1.0.2"
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.0"
   }
 }

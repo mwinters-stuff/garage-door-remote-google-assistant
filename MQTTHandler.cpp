@@ -47,11 +47,13 @@ void MQTTHandler::initFeeds() {
       delete io_door_action;
       delete io_door_position;
       delete io_in_home_area;
-      io = NULL;
-      io_door_action = NULL;
-      io_door_position = NULL;
-      io_in_home_area = NULL;
+      delete io_temperature;
     }
+    io = NULL;
+    io_door_action = NULL;
+    io_door_position = NULL;
+    io_in_home_area = NULL; 
+    io_temperature = NULL; 
   }
 }
 
@@ -155,25 +157,36 @@ void MQTTHandler::setLocked(bool locked) {
   
 }
 
-void MQTTHandler::sendToInflux(const String &dataPoint, const String &dataValue){
+void MQTTHandler::sendInflux(const String &body){
   if(configFile->influxOk()){
-
-    String influxData = configFile->influx_measurement + ",door=" + configFile->influx_door + " " + dataPoint + "=\"" + dataValue + "\"";
-   
     HTTPClient http;
     String url = configFile->getInfluxUrl();
 
     Debug.print(F("Sending to influx url: "));
     Debug.print(url);
-    Debug.print(F(" data= "));
-    Debug.println(influxData);
+    Debug.print(F(" body "));
+    Debug.println(body);
 
     http.begin(url);
     
-    int result = http.POST(influxData);
+    int result = http.POST(body);
     http.end();
     Debug.print(F("HTTP Result: "));
     last_http_reponse_str = String(result) + String(" - ") + http.errorToString(result);
     Debug.println(last_http_reponse_str);
+  }
+
+}
+
+void MQTTHandler::sendToInflux(const String &dataPoint, const String &dataValue){
+  if(configFile->influx_measurement.length() > 0 && configFile->influx_door.length() > 0){
+    sendInflux(configFile->influx_measurement + F(",door=") + configFile->influx_door + " " + dataPoint + "=\"" + dataValue + "\"");
+  }
+}
+
+void MQTTHandler::setTemperature(double temperature){
+  if(configFile->influx_measurement_temperature.length() > 0 && configFile->influx_temperature_location.length() > 0){
+    sendInflux(configFile->influx_measurement_temperature + F(",location=") + 
+      configFile->influx_temperature_location + F(" temperature=") + String(temperature,3) );
   }
 }

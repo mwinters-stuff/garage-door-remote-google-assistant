@@ -18,6 +18,8 @@ class ConfigFile: public JSONFileBase{
     String influx_password;
     String influx_port;
     String update_interval;
+    String influx_measurement_temperature;
+    String influx_temperature_location;
     uint16_t update_interval_ms;
 
     String io_feed_door_action;
