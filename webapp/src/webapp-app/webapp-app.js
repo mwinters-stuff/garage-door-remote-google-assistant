@@ -157,7 +157,7 @@ class WebappApp extends PolymerElement {
             <iron-pages id="_ConfigPages" selected="{{_selectedConfTab}}">
               <div>
                   <paper-input always-float-label label="Hostname" value="{{_config.hostname}}"></paper-input>
-                  <paper-input always-float-label label="WiFi AP Name" type="password" value="{{_config.wifi_ap}}"></paper-input>
+                  <paper-input always-float-label label="WiFi AP Name" value="{{_config.wifi_ap}}"></paper-input>
                   <paper-input always-float-label label="WiFi Password" type="password" value="{{_config.wifi_password}}"></paper-input>
                   <paper-input always-float-label label="Update Interval (Seconds)" value="{{_config.update_interval}}"></paper-input>
               </div>

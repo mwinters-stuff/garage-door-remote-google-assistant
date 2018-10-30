@@ -2,8 +2,7 @@
 #define _HTTPHANDLER_H
 
 #include <Arduino.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <ESP8266WebServer.h>
 #include <ArduinoOTA.h>
 #include "SettingsFile.h"
 #include "ConfigFile.h"
@@ -21,15 +20,17 @@ class HTTPHandler{
 
   private:
     // static HTTPHandler* m_instance;
-    AsyncWebServer httpServer;
+    ESP8266WebServer httpServer;
     SettingsFile *settingsFile;
     ConfigFile *configFile;
     IOHandler *ioHandler;
 
-    bool handleFileRead(AsyncWebServerRequest *request);
+    // bool handleFileRead(AsyncWebServerRequest *request);
     String doDoorAction(const String &action);
     String doLockAction(const String &action);
     String doInHomeArea(const String &action);
+    String getContentType(String filename);
+    bool handleFileRead(String path);
 
     String formatUnknownAction(const String &what, const String &action);
 };

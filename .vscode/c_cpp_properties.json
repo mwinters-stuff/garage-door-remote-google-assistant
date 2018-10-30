@@ -12,6 +12,7 @@
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/tools/sdk/lwip/include/",
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/variants/nodemcu/",
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WiFi/src/",
+                "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266WebServer/src/",
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266mDNS/",
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/ESP8266HTTPClient/src",
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/DNSServer/src",
