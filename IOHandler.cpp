@@ -326,16 +326,15 @@ void IOHandler::readTemperature(){
   if(DS18B20.getDS18Count() > 0){
     if(temperatureLastRead == 0 || (millis() - temperatureLastRead) >= configFile->update_interval_ms ){
       ESP.wdtDisable();
-      for(int d = 0; d < 5; d++) {
-        DS18B20.requestTemperatures(); 
-        float temp = DS18B20.getTempCByIndex(0);
-        if(temp != 85.0 && temp != (-127.0)){
-          settingsFile->setTemperature(temp);
-          mqttHandler->setTemperature(temp);
-          break;
-        }
+      DS18B20.requestTemperatures(); 
+      float temp = DS18B20.getTempCByIndex(0);
+      if(temp != 85.0 && temp != (-127.0)){
+        Debug.print(F("Temperature -> "));
+        Debug.println(temp);
+        settingsFile->setTemperature(temp);
+        mqttHandler->setTemperature(temp);
+      }else{
         Debug.println(F("Temperature Reading Failed"));
-        delay(1000);
       }
       temperatureLastRead = millis();
       ESP.wdtEnable((uint32_t)0);

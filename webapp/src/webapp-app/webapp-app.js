@@ -176,8 +176,8 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="Database" value="{{_config.influx_database}}"></paper-input>
                   <paper-input always-float-label label="Measurement" value="{{_config.influx_measurement}}"></paper-input>
                   <paper-input always-float-label label="Door" value="{{_config.influx_door}}"></paper-input>
-                  <paper-input always-float-label label="Temperature Location" value="{{_config.influx_temperature_location}}"></paper-input>
-                  <paper-input always-float-label label="Temperature Measurement" value="{{_config.influx_temperature_measurement}}"></paper-input>
+                  <paper-input always-float-label label="Temperature Tags" value="{{_config.influx_temperature_tags}}"></paper-input>
+                  <paper-input always-float-label label="Temperature Measurement" value="{{_config.influx_measurement_temperature}}"></paper-input>
               </div>
 
             </iron-pages>            

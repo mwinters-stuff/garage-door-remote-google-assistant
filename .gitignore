@@ -31,6 +31,8 @@
 *.out
 *.app
 
+data/config.json
+data/config-test.json
 config.h
 build*/*
 webapp/bower_components/

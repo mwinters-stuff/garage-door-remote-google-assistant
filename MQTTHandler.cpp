@@ -185,8 +185,8 @@ void MQTTHandler::sendToInflux(const String &dataPoint, const String &dataValue)
 }
 
 void MQTTHandler::setTemperature(double temperature){
-  if(configFile->influx_measurement_temperature.length() > 0 && configFile->influx_temperature_location.length() > 0){
-    sendInflux(configFile->influx_measurement_temperature + F(",location=") + 
-      configFile->influx_temperature_location + F(" temperature=") + String(temperature,3) );
+  if(configFile->influx_measurement_temperature.length() > 0 && configFile->influx_temperature_tags.length() > 0){
+    sendInflux(configFile->influx_measurement_temperature + F(",") + 
+      configFile->influx_temperature_tags + F(" temperature=") + String(temperature,3) );
   }
 }

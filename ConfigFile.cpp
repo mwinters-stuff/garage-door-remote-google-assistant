@@ -27,7 +27,7 @@ void ConfigFile::getJson(JsonObject & root){
   root[INFLUX_DATABASE   ] = influx_database  ;
   root[INFLUX_MEASUREMENT] = influx_measurement;
   root[INFLUX_MEASUREMENT_TEMPERATURE] = influx_measurement_temperature;
-  root[INFLUX_TEMPERATURE_LOCATION]= influx_temperature_location;
+  root[INFLUX_TEMPERATURE_TAGS]= influx_temperature_tags;
   root[INFLUX_DOOR       ] = influx_door;
   root[UPDATE_INTERVAL   ] = update_interval;
   root[IO_FEED_DOOR_ACTION  ] = io_feed_door_action;
@@ -48,7 +48,7 @@ void ConfigFile::setJson(const JsonObject &json){
   influx_database     = json[INFLUX_DATABASE   ].as<String>();
   influx_measurement  = json[INFLUX_MEASUREMENT].as<String>();
   influx_measurement_temperature  = json[INFLUX_MEASUREMENT_TEMPERATURE].as<String>();
-  influx_temperature_location  = json[INFLUX_TEMPERATURE_LOCATION].as<String>();
+  influx_temperature_tags  = json[INFLUX_TEMPERATURE_TAGS].as<String>();
   influx_door         = json[INFLUX_DOOR       ].as<String>();
   update_interval     = json[UPDATE_INTERVAL   ].as<String>();
   update_interval_ms = update_interval.toInt() * 1000;
