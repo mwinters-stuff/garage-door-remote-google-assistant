@@ -1,7 +1,7 @@
 {
-  "influx_host": "netserver",
-  "wifi_ap":"WINTERS",
-  "wifi_password":"tesskatt",
+  "influx_host": "",
+  "wifi_ap":"",
+  "wifi_password":"",
   "hostname":"garage-door-test",
   "ntp_server": "192.168.1.1",
 
@@ -18,7 +18,7 @@
   "io_feed_garagetemperature":"tests.garagetemperature",
   "io_feed_inhomearea":"tests.inhomearea",
 
-  "io_feed_username": "mwinters",
-  "io_feed_key": "1e59ba9f9c5943e98a7af87f4f355c6f"
+  "io_feed_username": "",
+  "io_feed_key": ""
 
 }
