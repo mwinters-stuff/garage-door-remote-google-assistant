@@ -1,22 +1,26 @@
 {
-  "influx_host": "192.168.1.5",
-  "wifi_ap":"WINTERS2",
-  "wifi_password":"asdasdasd",
-  "hostname":"garage-door",
-  "ntp_server": "",
+  "influx_host": "netserver",
+  "wifi_ap":"WINTERS",
+  "wifi_password":"asdasdad",
+  "hostname":"garage-door-test",
+  "ntp_server": "192.168.1.1",
+
   "influx_port":"8086",
-  "influx_database":"winters",
-  "influx_measurement":"left",
+  "influx_database":"demo",
+  "influx_measurement":"garage-door",
+  "influx_door":"left",
   "influx_username":"",
   "influx_password":"",
   "update_interval": "60",
-  "mqtt_feed_set_position": "/feeds/setposition",
+
+   "mqtt_feed_set_position": "/feeds/setposition",
   "mqtt_feed_report_position": "/feeds/reportposition",
   "mqtt_feed_set_locked": "/feeds/setlock",
   "mqtt_feed_report_locked": "/feeds/reportlock",
   "mqtt_feed_temperature": "/feeds/temperature",
   "mqtt_username": "garagedoor",
-  "mqtt_password": "1e59ba9f9c5943e98a7af87f4f355c6f",
+  "mqtt_password": "adasdasd",
   "mqtt_port": "1883",
   "mqtt_hostname": "192.168.1.6"
+
 }

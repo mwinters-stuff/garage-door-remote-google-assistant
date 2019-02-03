@@ -21,10 +21,11 @@
                 "${env:HOME}/.arduino15/packages/esp8266/hardware/esp8266/2.4.2/libraries/Ticker/",                
                 
                 "${workspaceRoot}/libs/ArduinoHttpClient/src",
-                "${workspaceRoot}/libs/Adafruit_MQTT_Library",
+                "${workspaceRoot}/libs/./r89m_Buttons/src",
                 "${workspaceRoot}/libs/Adafruit_IO_Arduino/src",
                 "${workspaceRoot}/libs/DallasTemperature",
                 "${workspaceRoot}/libs/OneWire",
+                "${workspaceRoot}/libs/Adafruit_MQTT_Library",
                 "${workspaceRoot}/libs/RemoteDebug",
                 "${workspaceRoot}/libs/ESP_EEPROM/src",
                 "${workspaceRoot}/libs/ArduinoJson/src" ,

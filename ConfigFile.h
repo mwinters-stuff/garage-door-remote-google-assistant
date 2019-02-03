@@ -22,11 +22,16 @@ class ConfigFile: public JSONFileBase{
     String influx_temperature_tags;
     uint16_t update_interval_ms;
 
-    String io_feed_door_action;
-    String io_feed_in_home_area;
-    String io_feed_position;
-    String io_feed_username;
-    String io_feed_key;
+    String mqtt_hostname;
+    String mqtt_feed_door_report_position;
+    String mqtt_feed_door_set_position;
+    String mqtt_feed_door_report_locked;
+    String mqtt_feed_door_set_locked;
+    String mqtt_feed_online;
+    String mqtt_feed_temperature;
+    String mqtt_username;
+    String mqtt_password;
+    uint16_t mqtt_port;
 
     ConfigFile();
     // static ConfigFile* getInstance(){

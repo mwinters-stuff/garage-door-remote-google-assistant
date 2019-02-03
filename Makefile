@@ -2,15 +2,18 @@ ARDUINO_VARIANT = nodemcuv2
 UPLOAD_PORT = /dev/nodemcu
 # UPLOAD_PORT = /dev/ttyUSB1
 UPLOAD_SPEED=921600
+# UPLOAD_SPEED=115200
 
 SERIAL_PORT = $(UPLOAD_PORT)
 SERIAL_BAUD = 115200
 
 LOG_SERIAL_TO_FILE=yes
-USER_DEFINE = -D_TEST
-OTA_IP = garage-door.fritz.box
+
+USER_DEFINE = -DTEST
+OTA_IP = garage-door-test.fritz.box
+#OTA_IP = garage-door.fritz.box
 OTA_PORT = 8266 
-OTA_AUTH = 123
+OTA_AUTH = leo
 ESP8266_VERSION=2.4.2
 # GLOBAL_USER_LIBDIR=./libs
 LOCAL_USER_LIBDIR=./libs

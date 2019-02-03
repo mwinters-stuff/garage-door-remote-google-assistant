@@ -1,8 +1,9 @@
 #ifndef _DATA_STORE_H
 #define _DATA_STORE_H
 #include <Arduino.h>
-#include <AdafruitIO_Feed.h>
-#include "AdafruitIO_Custom.h"
+#include <Adafruit_MQTT_Client.h>
+#include <Adafruit_MQTT.h>
+#include <ESP8266WiFi.h>
 #include "ConfigFile.h"
 #include "SettingsFile.h"
 #include <ESP8266WiFi.h>
@@ -17,23 +18,25 @@ class MQTTHandler{
     MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile);
     
     // doorPositions start_move_door_position;
-    AdafruitIO_Custom *io;
-    AdafruitIO_Feed* io_door_action;
-    AdafruitIO_Feed* io_door_position;
-    AdafruitIO_Feed* io_in_home_area;
-    AdafruitIO_Feed* io_temperature;
+    Adafruit_MQTT_Client mqtt;
+    Adafruit_MQTT_Publish pub_door_position;
+    Adafruit_MQTT_Publish pub_door_locked;
+    Adafruit_MQTT_Publish pub_online;
+    Adafruit_MQTT_Publish pub_temperature;
 
-    void initFeeds();
-    void connect();
+    Adafruit_MQTT_Subscribe sub_door_position;
+    Adafruit_MQTT_Subscribe sub_door_locked;
+    WiFiClient wifiClient;
+
+    // void initFeeds();
     void update();
 
-    void inHomeMessage(AdafruitIO_Data *data);
-    void doorAction(AdafruitIO_Data *data);
+    void doorAction(String data);
     void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position);
     void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position, bool _door_moving);
     void toggleLocked();
     void setLocked(bool locked);
-    void sendToInflux(const String &dataPoint, const String &dataValue);
+    // void sendToInflux(const String &dataPoint, const String &dataValue);
     void setTemperature(double temperature);
     
 
@@ -44,9 +47,13 @@ class MQTTHandler{
   private:
     SettingsFile *settingsFile;
     ConfigFile *configFile;
+    uint32_t reconnectTimeout = 0;
+    uint32_t lastSentPing = 0;
     String last_http_reponse_str;
     static MQTTHandler* m_instance;
-    void sendInflux(const String &body);
+    // void sendInflux(const String &body);
+    void connect();
+    
 };
 
 

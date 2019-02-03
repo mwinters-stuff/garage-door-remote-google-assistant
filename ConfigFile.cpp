@@ -30,11 +30,18 @@ void ConfigFile::getJson(JsonObject & root){
   root[INFLUX_TEMPERATURE_TAGS]= influx_temperature_tags;
   root[INFLUX_DOOR       ] = influx_door;
   root[UPDATE_INTERVAL   ] = update_interval;
-  root[IO_FEED_DOOR_ACTION  ] = io_feed_door_action;
-  root[IO_FEED_IN_HOME_AREA ] = io_feed_in_home_area;
-  root[IO_FEED_POSITION     ] = io_feed_position;
-  root[IO_FEED_USERNAME  ] = io_feed_username;
-  root[IO_FEED_KEY       ] = io_feed_key;
+
+  root[MQTT_FEED_DOOR_SET_POSITION    ] = mqtt_feed_door_set_position;
+  root[MQTT_FEED_DOOR_REPORT_POSITION ] = mqtt_feed_door_report_position;
+  root[MQTT_FEED_DOOR_SET_LOCKED      ] = mqtt_feed_door_set_locked;
+  root[MQTT_FEED_DOOR_REPORT_LOCKED   ] = mqtt_feed_door_report_locked;
+  root[MQTT_FEED_ONLINE               ] = mqtt_feed_online;
+  root[MQTT_FEED_TEMPERATURE          ] = mqtt_feed_temperature;
+  root[MQTT_USERNAME                  ] = mqtt_username;
+  root[MQTT_PASSWORD                  ] = mqtt_password;
+  root[MQTT_HOSTNAME                  ] = mqtt_hostname;
+  root[MQTT_PORT                      ] = mqtt_port;
+
 }
 
 void ConfigFile::setJson(const JsonObject &json){
@@ -53,12 +60,16 @@ void ConfigFile::setJson(const JsonObject &json){
   update_interval     = json[UPDATE_INTERVAL   ].as<String>();
   update_interval_ms = update_interval.toInt() * 1000;
 
-  io_feed_door_action  = json[IO_FEED_DOOR_ACTION ].as<String>();
-  io_feed_in_home_area = json[IO_FEED_IN_HOME_AREA].as<String>();
-  io_feed_position     = json[IO_FEED_POSITION    ].as<String>();
-
-  io_feed_username     = json[IO_FEED_USERNAME    ].as<String>();
-  io_feed_key          = json[IO_FEED_KEY         ].as<String>();
+  mqtt_feed_door_set_position=    json[MQTT_FEED_DOOR_SET_POSITION    ].as<String>();
+  mqtt_feed_door_report_position= json[MQTT_FEED_DOOR_REPORT_POSITION ].as<String>();
+  mqtt_feed_door_set_locked=      json[MQTT_FEED_DOOR_SET_LOCKED      ].as<String>();
+  mqtt_feed_door_report_locked=   json[MQTT_FEED_DOOR_REPORT_LOCKED   ].as<String>();
+  mqtt_feed_online=               json[MQTT_FEED_ONLINE               ].as<String>();
+  mqtt_feed_temperature=          json[MQTT_FEED_TEMPERATURE          ].as<String>();
+  mqtt_username=                  json[MQTT_USERNAME                  ].as<String>();
+  mqtt_password=                  json[MQTT_PASSWORD                  ].as<String>();
+  mqtt_hostname=                  json[MQTT_HOSTNAME                  ].as<String>();
+  mqtt_port=                      json[MQTT_PORT                      ].as<uint16_t>();
 }
 
 String ConfigFile::getInfluxUrl(){

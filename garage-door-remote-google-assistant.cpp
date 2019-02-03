@@ -84,7 +84,7 @@ void setup() {
   ioHandler->ledRed(false);
   ioHandler->ledGreen(false);
 
-  mqttHandler->initFeeds();
+  // mqttHandler->initFeeds();
 
 
 }

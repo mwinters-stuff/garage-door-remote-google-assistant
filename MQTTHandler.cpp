@@ -16,119 +16,146 @@ extern RemoteDebug Debug;
 
 MQTTHandler *MQTTHandler::m_instance;
 
+void doorPositionCallback(char *data, uint16_t len){
+  Debug.print(F("Received POSITION Message "));
+  Debug.println(data);
+  MQTTHandler::_getInstance()->doorAction(String(data));
+}
 
-void handleInHomeAreaMessage(AdafruitIO_Data *data) { MQTTHandler::_getInstance()->inHomeMessage(data); }
-
-void handleDoorActionMessage(AdafruitIO_Data *data) { MQTTHandler::_getInstance()->doorAction(data); }
+void doorLockCallback(char *data, uint16_t len){
+  Debug.print(F("Received LOCK Message "));
+  Debug.println(data);
+  MQTTHandler::_getInstance()->setLocked(String(data) == "LOCK");
+}
 
 MQTTHandler::MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile)
     : settingsFile(settingsFile),
       configFile(configFile),
-      io(NULL) {
+      wifiClient(),
+      mqtt(&wifiClient, configFile->mqtt_hostname.c_str(), configFile->mqtt_port, configFile->mqtt_username.c_str(), configFile->mqtt_password.c_str()),
+      pub_door_position(&mqtt, configFile->mqtt_feed_door_report_position.c_str(), MQTT_QOS_1),
+      pub_door_locked(&mqtt, configFile->mqtt_feed_door_report_locked.c_str(), MQTT_QOS_1),
+      pub_online(&mqtt,configFile->mqtt_feed_online.c_str(), MQTT_QOS_1),
+      pub_temperature(&mqtt, configFile->mqtt_feed_temperature.c_str(), MQTT_QOS_1),
+      sub_door_position(&mqtt, configFile->mqtt_feed_door_set_position.c_str(), MQTT_QOS_1),
+      sub_door_locked(&mqtt, configFile->mqtt_feed_door_set_locked.c_str(), MQTT_QOS_1)
+{
   m_instance = this;
+  sub_door_position.setCallback(doorPositionCallback);
+  sub_door_locked.setCallback(doorLockCallback);
+  mqtt.subscribe(&sub_door_position);
+  mqtt.subscribe(&sub_door_locked);
 }
 
-void MQTTHandler::initFeeds() {
-  Debug.println(F("Init Feeds"));
 
-  if (configFile->io_feed_username.length() > 0 && configFile->io_feed_key.length() > 0) {
-    Debug.println(F("Starting Adafruit IO"));
-    io = new AdafruitIO_Custom(configFile->io_feed_username.c_str(), configFile->io_feed_key.c_str());
 
-    io_door_action = io->feed(configFile->io_feed_door_action.c_str());
-    io_door_position = io->feed(configFile->io_feed_position.c_str());
-    io_in_home_area = io->feed(configFile->io_feed_in_home_area.c_str());
+// void MQTTHandler::initFeeds() {
+//   Debug.println(F("Init Feeds"));
 
-    connect();
-  } else {
-    Debug.println(F("Adafruit IO Not Configured"));
-    if (io) {
-      delete io;
-      delete io_door_action;
-      delete io_door_position;
-      delete io_in_home_area;
-      delete io_temperature;
-    }
-    io = NULL;
-    io_door_action = NULL;
-    io_door_position = NULL;
-    io_in_home_area = NULL; 
-    io_temperature = NULL; 
-  }
-}
+
+
+  // if (configFile->mqtt_hostname.length() > 0 && configFile->mqtt_username.length() > 0 && configFile->mqtt_password.length() > 0) {
+  //   Debug.println(F("Starting mqtt"));
+  //   mqtt = new Adafruit_MQTT_Client(&wifiClient, configFile->mqtt_hostname.c_str(), configFile->mqtt_port, configFile->mqtt_username.c_str(), configFile->mqtt_password.c_str());
+
+  //   pub_door_position = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_door_report_position.c_str(), MQTT_QOS_1);
+  //   pub_door_locked   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_door_report_locked.c_str(), MQTT_QOS_1);
+  //   pub_online   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_online.c_str(), MQTT_QOS_1);
+  //   pub_temperature   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_temperature.c_str(), MQTT_QOS_1);
+
+  //   sub_door_position = new Adafruit_MQTT_Subscribe(mqtt, configFile->mqtt_feed_door_set_position.c_str(), MQTT_QOS_1);
+  //   sub_door_locked = new Adafruit_MQTT_Subscribe(mqtt, configFile->mqtt_feed_door_set_locked.c_str(), MQTT_QOS_1);
+  //   // connect();
+  // } else {
+  //   Debug.println(F("MQTT Not Configured"));
+  //   if (mqtt) {
+  //     delete mqtt;
+  //     delete pub_door_position;
+  //     delete pub_door_locked;
+  //     delete pub_online;
+  //     delete pub_temperature;
+  //     delete sub_door_locked;
+  //     delete sub_door_position;
+  //   }
+  //   mqtt = NULL;
+  //   pub_door_position = NULL;
+  //   pub_door_locked = NULL;
+  //   pub_online = NULL;
+  //   pub_temperature = NULL;
+  //   sub_door_locked = NULL;
+  //   sub_door_position = NULL;
+  // }
+// }
 
 void MQTTHandler::update() {
-  if (io) {
-    io->run();
-  }
+  // if (mqtt) {
+    connect();
+  // }
 }
 
 void MQTTHandler::connect() {
   int8_t ret;
+  mqtt.processPackets(10);
 
   // Stop if already connected.
-  if (!io || io->mqttStatus() < AIO_CONNECTED) {
+  if (mqtt.connected()) {
+    // ping the server to keep the mqtt connection alive
+    // NOT required if you are publishing once every KEEPALIVE seconds
+    if (millis() - lastSentPing > 30000) {
+      lastSentPing = millis();
+      if (mqtt.connected()) {
+        Debug.print(millis() / 1000);
+        Debug.println(" Sending Ping");
+        if (!mqtt.ping()) {
+          Debug.println("Ping Failed, Disconnect");
+          mqtt.disconnect();
+        } else {
+          pub_online.publish((uint32_t) millis());
+          // TODO: report position and locked;
+        }
+      }
+    }
     return;
   }
 
-  Debug.println(F("Connecting to Adafruit IO... "));
-  io->connect();
-
-  uint8_t retries = 5;
-  while ((ret = io->mqttStatus()) < AIO_CONNECTED) {  // connect will return 0 for connected
-    Debug.println(io->statusText());
-    Debug.println(F("Retrying Adafruit IO connection in 5 seconds..."));
-    delay(500);  // wait 5 seconds
-    retries--;
-    if (retries == 0) {
-      // basically die and wait for WDT to reset me
-      while (1)
-        ;
+  if (millis() - reconnectTimeout > 5000) {
+    Debug.println(configFile->mqtt_feed_online);
+    Debug.print(millis() / 1000);
+    reconnectTimeout = millis();
+    Debug.print(" Connecting to MQTT... ");
+    if ((ret = mqtt.connect()) != 0) {
+      // WiFi.printDiag(Serial);
+      Debug.println(mqtt.connectErrorString(ret));
+      Debug.println("Retrying MQTT connection in 5 seconds...");
+      mqtt.disconnect();
+      return;
     }
+    Debug.print(millis() / 1000);
+    Debug.println(" MQTT Connected!");
+ 
+
+    pub_online.publish((uint32_t)millis());
+ 
+ 
+    //reportFanSpeed();
   }
-
-  Debug.println(F("Adafruit IO Connected!"));
-
-  io_in_home_area->onMessage(handleInHomeAreaMessage);
-  io_door_action->onMessage(handleDoorActionMessage);
-
-  // io_door_action->get();
-  // io_door_position->get();
 }
 
-void MQTTHandler::inHomeMessage(AdafruitIO_Data *data) {
-  Debug.print(F("Action: Received in home area -> "));
-  Debug.print(data->value());
-
-  if(strcmp_P(data->value(), PSTR("entered")) == 0){
-    settingsFile->setInHomeArea();
-  }else{
-    settingsFile->setOutHomeArea();
-  }
-  sendToInflux("in-home-area",settingsFile->isInHomeArea() ? "true" : "false");
-  Debug.print(F("inHomeMessage "));
-  Debug.println(settingsFile->isInHomeArea() ? F(" inside geofence") : F(" outside geofence"));
-}
-
-void MQTTHandler::doorAction(AdafruitIO_Data *data) {
-  settingsFile->setLastDoorAction(data->value());
+void MQTTHandler::doorAction(String data) {
+  settingsFile->setLastDoorAction(data);
   Debug.print(F("Action: Received door action -> "));
-  Debug.println(data->value());
+  Debug.println(data);
 
-  if (!settingsFile->isInHomeArea()) {
-    Debug.println(F("MQTTHandler Not near home, won't action door!"));
-  } else if (doorActionCallback) {
-    Debug.println("doorActionCallback");
-    doorActionCallback(data->value());
-    sendToInflux("door-action",data->value());
-  }
+  Debug.println("doorActionCallback");
+  doorActionCallback(data);
+  // sendToInflux("door-action",data);
 }
 
 void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPositions _door_position) {
-  if (settingsFile->updateDoorPosition(current_door_position, _door_position) && io_door_position) {
+  if (settingsFile->updateDoorPosition(current_door_position, _door_position)) {
     String pos = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
-    io_door_position->save(pos);
-    sendToInflux("door-position",pos);
+    pub_door_position.publish(pos.c_str());
+    // sendToInflux("door-position",pos);
   }
 }
 
@@ -141,52 +168,25 @@ void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPo
   updateDoorPosition(current_door_position, _door_position);
 }
 
-void MQTTHandler::toggleLocked() { setLocked(!settingsFile->isLocked()); }
+void MQTTHandler::toggleLocked() { 
+  setLocked(!settingsFile->isLocked()); 
+}
 
 void MQTTHandler::setLocked(bool locked) {
   Debug.print(F("MQTTHandler Setting lock to "));
   if (locked) {
     Debug.println(LOCKED);
     settingsFile->setLocked();
-    sendToInflux("door-lock",LOCKED);
+    pub_door_locked.publish("LOCKED");
   } else {
     Debug.println(UNLOCKED);
+    pub_door_locked.publish("UNLOCKED");
     settingsFile->setUnLocked();
-    sendToInflux("door-lock",UNLOCKED);
   }
   
 }
 
-void MQTTHandler::sendInflux(const String &body){
-  if(configFile->influxOk()){
-    HTTPClient http;
-    String url = configFile->getInfluxUrl();
-
-    Debug.print(F("Sending to influx url: "));
-    Debug.print(url);
-    Debug.print(F(" body "));
-    Debug.println(body);
-
-    http.begin(url);
-    
-    int result = http.POST(body);
-    http.end();
-    Debug.print(F("HTTP Result: "));
-    last_http_reponse_str = String(result) + String(" - ") + http.errorToString(result);
-    Debug.println(last_http_reponse_str);
-  }
-
-}
-
-void MQTTHandler::sendToInflux(const String &dataPoint, const String &dataValue){
-  if(configFile->influx_measurement.length() > 0 && configFile->influx_door.length() > 0){
-    sendInflux(configFile->influx_measurement + F(",door=") + configFile->influx_door + " " + dataPoint + "=\"" + dataValue + "\"");
-  }
-}
 
 void MQTTHandler::setTemperature(double temperature){
-  if(configFile->influx_measurement_temperature.length() > 0 && configFile->influx_temperature_tags.length() > 0){
-    sendInflux(configFile->influx_measurement_temperature + F(",") + 
-      configFile->influx_temperature_tags + F(" temperature=") + String(temperature,3) );
-  }
+  pub_temperature.publish(temperature,3);
 }

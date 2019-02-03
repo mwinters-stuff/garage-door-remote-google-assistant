@@ -39,11 +39,24 @@ const char _INFLUX_MEASUREMENT[] PROGMEM   = "influx_measurement";
 const char _INFLUX_MEASUREMENT_TEMPERATURE[] PROGMEM   = "influx_measurement_temperature";
 const char _INFLUX_TEMPERATURE_TAGS[] PROGMEM      = "influx_temperature_tags";
 const char _INFLUX_DOOR[] PROGMEM          = "influx_door";
-const char _IO_FEED_DOOR_ACTION[] PROGMEM  = "io_feed_garagedooraction";
-const char _IO_FEED_POSITION[] PROGMEM     = "io_feed_garagedoorposition";
-const char _IO_FEED_IN_HOME_AREA[] PROGMEM = "io_feed_inhomearea";
-const char _IO_FEED_USERNAME[] PROGMEM     = "io_feed_username";
-const char _IO_FEED_KEY[] PROGMEM          = "io_feed_key";
+
+const char _MQTT_FEED_DOOR_SET_POSITION[] PROGMEM = "mqtt_feed_set_position";
+const char _MQTT_FEED_DOOR_REPORT_POSITION[] PROGMEM = "mqtt_feed_report_position";
+const char _MQTT_FEED_DOOR_SET_LOCKED[] PROGMEM = "mqtt_feed_set_locked";
+const char _MQTT_FEED_DOOR_REPORT_LOCKED[] PROGMEM = "mqtt_feed_report_locked";
+const char _MQTT_FEED_ONLINE[] PROGMEM = "mqtt_feed_online";
+const char _MQTT_FEED_TEMPERATURE[] PROGMEM = "mqtt_feed_temperature";
+const char _MQTT_USERNAME[] PROGMEM = "mqtt_username";
+const char _MQTT_PASSWORD[] PROGMEM = "mqtt_password";
+const char _MQTT_PORT[] PROGMEM = "mqtt_port";
+const char _MQTT_HOSTNAME[] PROGMEM = "mqtt_hostname";
+
+
+// const char _IO_FEED_DOOR_ACTION[] PROGMEM  = "io_feed_garagedooraction";
+// const char _IO_FEED_POSITION[] PROGMEM     = "io_feed_garagedoorposition";
+// const char _IO_FEED_IN_HOME_AREA[] PROGMEM = "io_feed_inhomearea";
+// const char _IO_FEED_USERNAME[] PROGMEM     = "io_feed_username";
+// const char _IO_FEED_KEY[] PROGMEM          = "io_feed_key";
 
 const char _OPEN[] PROGMEM   = "OPEN";
 const char _CLOSE[] PROGMEM  = "CLOSE";
