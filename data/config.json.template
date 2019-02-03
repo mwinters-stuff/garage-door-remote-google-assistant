@@ -1,7 +1,7 @@
 {
   "influx_host": "192.168.1.5",
-  "wifi_ap":"WINTERS2",
-  "wifi_password":"asdasdasd",
+  "wifi_ap":"",
+  "wifi_password":"",
   "hostname":"garage-door",
   "ntp_server": "",
   "influx_port":"8086",
