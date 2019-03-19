@@ -38,12 +38,9 @@ void HTTPHandler::setupServer(){
     root[DOOR_ACTION] = settingsFile->getLastDoorAction();
     root[DOOR_POSITION] = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
     root[DOOR_LOCKED] =  settingsFile->isLocked();
-    root[IN_HOME_AREA] = settingsFile->isInHomeArea();
-    // root[F("last_http_response")] = sensors->getLastResponse();
     root[UP_TIME] = NTP.getUptimeString();
     root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
     root[TIME_STAMP] = NTP.getTimeDateString();
-    // root[F("reading_time_stamp")] = NTP.getTimeDateString(reading.last_send_time);
 
     // root.prettyPrintTo(Debug);
     // Debug.println();
@@ -130,10 +127,6 @@ void HTTPHandler::setupServer(){
 
     if(name.equals(LOCK_ACTION)){
       result = doLockAction(action);
-    }
-
-    if(name.equals(IN_HOME_AREA)){
-      result = doInHomeArea(action);
     }
 
     httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
@@ -254,19 +247,6 @@ String HTTPHandler::doLockAction(const String &action){
   return formatUnknownAction(LOCK_ACTION, action);
 }
 
-String HTTPHandler::doInHomeArea(const String &action){
-    if(action.compareTo(YES) == 0){
-    settingsFile->setInHomeArea();
-    return OKRESULT;
-  }
-
-  if(action.compareTo(NO) == 0){
-    settingsFile->setOutHomeArea();
-    return OKRESULT;
-  }
-
-  return formatUnknownAction(IN_HOME_AREA, action);
-}
 
 String HTTPHandler::formatUnknownAction(const String &what, const String &action){
   size_t len = 40 + what.length() + action.length();

@@ -1,7 +1,0 @@
-{
-  "name": "Garage Door",
-  "short_name": "garagedoor",
-  "description": "Web app for garage door mcu",
-  "start_url": "/",
-  "display": "standalone"
-}

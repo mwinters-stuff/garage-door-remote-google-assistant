@@ -41,6 +41,8 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
     setDoorAction(action);
   };
   DS18B20.begin();
+  Debug.print("DS18B20 Init Found ");
+  Debug.println(DS18B20.getDS18Count());
   temperatureLastRead = millis();
 }
 

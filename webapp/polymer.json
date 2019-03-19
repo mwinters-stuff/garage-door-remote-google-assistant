@@ -4,5 +4,24 @@
     "rules": [
       "polymer-3"
     ]
-  }
+  },
+  "root": ".",
+  "entrypoint": "index.html",
+  "fragments": [
+  ],
+  "sources": [
+   "src/**"
+  ],
+  "extraDependencies": [
+    "manifest.json"
+  ],
+  "moduleResolution": "node",
+  "builds": [
+    { 
+      "name": "es6prod",
+      "preset": "es6-bundled",
+      "addServiceWorker": true,
+      "bundle": true
+    }
+  ]
 }

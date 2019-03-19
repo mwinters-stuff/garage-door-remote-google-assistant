@@ -5,16 +5,11 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <AdafruitIO_WiFi.h>
 #include <ESP8266mDNS.h>
 
-#include <AdafruitIO.h>
-#include <AdafruitIO_Feed.h>
-#include <AdafruitIO_WiFi.h>
 
 #include <TimeLib.h> 
 #include <NtpClientLib.h>
-
 
 #include "ConfigFile.h"
 #include "SettingsFile.h"
@@ -69,7 +64,7 @@ void setup() {
   Debug.begin(configFile->hostname);
   Debug.setResetCmdEnabled(true);
   Debug.setSerialEnabled(true); 
-	NTP.begin("192.168.1.1"); 
+	NTP.begin(configFile->ntp_server); 
 
   mqttHandler = new MQTTHandler(settingsFile, configFile);
   

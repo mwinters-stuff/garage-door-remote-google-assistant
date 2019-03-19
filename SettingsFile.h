@@ -37,10 +37,6 @@ class SettingsFile: public JSONFileBase{
     bool setDoorMoving(){ is_door_moving = true;};
     bool setDoorNotMoving(){ is_door_moving = false;};
 
-    bool isInHomeArea(){return is_in_home_area;};
-    bool setInHomeArea(){ is_in_home_area = true;};
-    bool setOutHomeArea(){ is_in_home_area = false;};
-
     double getTemperature(){ return temperature;};
     void setTemperature(double temperature){ this->temperature = temperature;};
 
@@ -50,7 +46,6 @@ class SettingsFile: public JSONFileBase{
   private:
     String last_door_action;
     bool   is_locked;
-    bool   is_in_home_area;
     double temperature;
     doorPositions door_position;
     bool is_door_moving;

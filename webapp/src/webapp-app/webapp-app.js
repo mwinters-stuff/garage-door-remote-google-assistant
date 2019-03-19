@@ -116,10 +116,6 @@ class WebappApp extends PolymerElement {
                   <td class="value">[[_true_false(_data.door_locked)]]</td>
                 </tr>
                 <tr>
-                  <td class="label">In Home Area</td>
-                  <td class="value">[[_true_false(_data.in_home_area)]]</td>
-                </tr>
-                <tr>
                   <td class="label">Temperature</td>
                   <td class="value">[[_data.temperature]]</td>
                 </tr>
@@ -151,33 +147,30 @@ class WebappApp extends PolymerElement {
             <div class="subheading">Configuration</div>
             <paper-tabs selected="{{_selectedConfTab}}">
               <paper-tab>Network</paper-tab>
-              <paper-tab>Adafruit IO</paper-tab>
-              <paper-tab>InfluxDB</paper-tab>
+              <paper-tab>MQTT</paper-tab>
             </paper-tabs>
             <iron-pages id="_ConfigPages" selected="{{_selectedConfTab}}">
               <div>
                   <paper-input always-float-label label="Hostname" value="{{_config.hostname}}"></paper-input>
                   <paper-input always-float-label label="WiFi AP Name" value="{{_config.wifi_ap}}"></paper-input>
                   <paper-input always-float-label label="WiFi Password" type="password" value="{{_config.wifi_password}}"></paper-input>
-                  <paper-input always-float-label label="Update Interval (Seconds)" value="{{_config.update_interval}}"></paper-input>
+                  <paper-input always-float-label label="Temperature Update Interval (Sec)" value="{{_config.update_interval}}"></paper-input>
+                  <paper-input always-float-label label="NTP Server" value="{{_config.ntp_server}}"></paper-input>
               </div>
               <div>
-                <paper-input always-float-label label="Username" value="{{_config.io_feed_username}}"></paper-input>
-                <paper-input always-float-label label="Key" value="{{_config.io_feed_key}}"></paper-input>
-                <paper-input always-float-label label="Feed Action" value="{{_config.io_feed_garagedooraction}}"></paper-input>
-                <paper-input always-float-label label="Feed Position" value="{{_config.io_feed_garagedoorposition}}"></paper-input>
-                <paper-input always-float-label label="Feed Geo Fence" value="{{_config.io_feed_inhomearea}}"></paper-input>
-              </div>
-              <div>
-                  <paper-input always-float-label label="Host" value="{{_config.influx_host}}"></paper-input>
-                  <paper-input always-float-label label="Port" value="{{_config.influx_port}}"></paper-input>
-                  <paper-input always-float-label label="Username" value="{{_config.influx_username}}"></paper-input>
-                  <paper-input always-float-label label="Password" type="password" value="{{_config.influx_password}}"></paper-input>
-                  <paper-input always-float-label label="Database" value="{{_config.influx_database}}"></paper-input>
-                  <paper-input always-float-label label="Measurement" value="{{_config.influx_measurement}}"></paper-input>
-                  <paper-input always-float-label label="Door" value="{{_config.influx_door}}"></paper-input>
-                  <paper-input always-float-label label="Temperature Tags" value="{{_config.influx_temperature_tags}}"></paper-input>
-                  <paper-input always-float-label label="Temperature Measurement" value="{{_config.influx_measurement_temperature}}"></paper-input>
+                <paper-input always-float-label label="Server Host" value="{{_config.mqtt_hostname}}"></paper-input>
+                <paper-input always-float-label label="Server Port" value="{{_config.mqtt_port}}"></paper-input>
+                <paper-input always-float-label label="Username" value="{{_config.mqtt_username}}"></paper-input>
+                <paper-input always-float-label label="Password" value="{{_config.mqtt_password}}"></paper-input>
+
+                <paper-input always-float-label label="Report Online" value="{{_config.mqtt_feed_online}}"></paper-input>
+                <paper-input always-float-label label="Temperature" value="{{_config.mqtt_feed_temperature}}"></paper-input>
+
+                <paper-input always-float-label label="Set Position" value="{{_config.mqtt_feed_set_position}}"></paper-input>
+                <paper-input always-float-label label="Report Position" value="{{_config.mqtt_feed_report_position}}"></paper-input>
+                
+                <paper-input always-float-label label="Set Locked" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
+                <paper-input always-float-label label="Report Locked" value="{{_config.mqtt_feed_report_locked}}"></paper-input>
               </div>
 
             </iron-pages>            

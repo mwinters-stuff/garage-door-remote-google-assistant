@@ -5,6 +5,7 @@
 #include <ESP8266DebounceSwitch.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <SPI.h>
 #include <functional>
 
 #include "ConfigFile.h"

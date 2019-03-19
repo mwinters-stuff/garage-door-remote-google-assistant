@@ -28,7 +28,6 @@ SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
     Serial.printf(String(FAILED_TO_READ).c_str(), fileName.c_str());
     last_door_action = UNKNOWN;
     is_locked = false;
-    is_in_home_area = true;
     door_position = dpStartup;
     is_door_moving = false;
   }
@@ -39,7 +38,6 @@ void SettingsFile::getJson(JsonObject & root){
   root[CURRENT_DOOR_POSITION] = doorPositionToString(door_position);
   root[LAST_DOOR_ACTION     ] = last_door_action;
   root[IS_LOCKED            ] = is_locked;
-  root[IS_IN_HOME_AREA      ] = is_in_home_area;
   root[TEMPERATURE          ] = temperature;
 }
 
@@ -47,7 +45,6 @@ void SettingsFile::setJson(const JsonObject &json){
   door_position         = stringToDoorPosition(json[CURRENT_DOOR_POSITION].as<String>());
   last_door_action      = json[LAST_DOOR_ACTION     ].as<String>();
   is_locked             = json[IS_LOCKED            ].as<bool>();
-  is_in_home_area       = json[IS_IN_HOME_AREA      ].as<bool>();
   temperature           = json[TEMPERATURE          ].as<double>();
 }
 

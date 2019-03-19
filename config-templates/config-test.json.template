@@ -4,16 +4,9 @@
   "wifi_password":"asdasdad",
   "hostname":"garage-door-test",
   "ntp_server": "192.168.1.1",
-
-  "influx_port":"8086",
-  "influx_database":"demo",
-  "influx_measurement":"garage-door",
-  "influx_door":"left",
-  "influx_username":"",
-  "influx_password":"",
   "update_interval": "60",
 
-   "mqtt_feed_set_position": "/feeds/setposition",
+  "mqtt_feed_set_position": "/feeds/setposition",
   "mqtt_feed_report_position": "/feeds/reportposition",
   "mqtt_feed_set_locked": "/feeds/setlock",
   "mqtt_feed_report_locked": "/feeds/reportlock",

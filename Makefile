@@ -18,9 +18,6 @@ ESP8266_VERSION=2.4.2
 # GLOBAL_USER_LIBDIR=./libs
 LOCAL_USER_LIBDIR=./libs
 USER_LIBS=\
-    $(LOCAL_LIBS)/Adafruit_IO_Arduino/src \
-		$(LOCAL_LIBS)/Adafruit_IO_Arduino/src/util \
-		$(LOCAL_LIBS)/Adafruit_IO_Arduino/src/wifi \
     $(LOCAL_LIBS)/Adafruit_MQTT_Library 
 
 
@@ -30,4 +27,5 @@ ifeq ($(ENABLE_GDB), 1)
 endif
 
 include ~/Arduino/Esp8266-Arduino-Makefile/espXArduino.mk
+
 

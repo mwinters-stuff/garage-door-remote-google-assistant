@@ -28,7 +28,6 @@ class HTTPHandler{
     // bool handleFileRead(AsyncWebServerRequest *request);
     String doDoorAction(const String &action);
     String doLockAction(const String &action);
-    String doInHomeArea(const String &action);
     String getContentType(String filename);
     bool handleFileRead(String path);
 

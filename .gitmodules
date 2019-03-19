@@ -13,9 +13,6 @@
 [submodule "libs/Time"]
 	path = libs/Time
 	url = https://github.com/PaulStoffregen/Time.git
-[submodule "libs/Adafruit_IO_Arduino"]
-	path = libs/Adafruit_IO_Arduino
-	url = https://github.com/adafruit/Adafruit_IO_Arduino.git
 [submodule "libs/Adafruit_MQTT_Library"]
 	path = libs/Adafruit_MQTT_Library
 	url = https://github.com/adafruit/Adafruit_MQTT_Library.git

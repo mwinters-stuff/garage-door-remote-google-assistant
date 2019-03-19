@@ -49,5 +49,10 @@
     "system_error": "cpp",
     "algorithm": "cpp"
   },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#312C38",
+    "titleBar.activeBackground": "#443D4E",
+    "titleBar.activeForeground": "#FBFAFB"
+  },
   
 }
