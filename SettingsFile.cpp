@@ -13,14 +13,14 @@ extern RemoteDebug Debug;
 
 // SettingsFile *SettingsFile::m_instance;
 static std::map<doorPositions, String> door_position_strings = {
-    { dpStartup, String(STARTUP)}, 
+    // { dpStartup, String(STARTUP)}, 
     { dpUnknown, String(UNKNOWN)}, 
     { dpOpen, String(OPEN)}, 
     { dpClosed, String(CLOSED)}, 
     { dpOpenToClosed, String(OPEN_CLOSED)}, 
     { dpClosedToOpen, String(CLOSED_OPEN)}, 
-    { dpManualOpenToClosed, String(MANUAL_OPEN_CLOSED)}, 
-    { dpManualClosedToOpen, String(MANUAL_CLOSED_OPEN)}
+    { dpOpenRequested, String(CLOSE_REQUESTED)}, 
+    { dpCloseRequested, String(OPEN_REQUESTED)}
 };
 
 SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
@@ -28,7 +28,7 @@ SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
     Serial.printf(String(FAILED_TO_READ).c_str(), fileName.c_str());
     last_door_action = UNKNOWN;
     is_locked = false;
-    door_position = dpStartup;
+    door_position = dpUnknown;
     is_door_moving = false;
   }
 }

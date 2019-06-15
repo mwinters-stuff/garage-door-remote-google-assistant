@@ -16,8 +16,11 @@
 
 #define FLASH_TIME_ON 50
 #define MOVING_FLASH_TIME_OFF 450
-#define MANUAL_FLASH_TIME_OFF 150
+#define REQUEST_FLASH_TIME_OFF 100
+#define REQUEST_FLASH_TIME_ON 100
 #define WAITING_TIME_OFF 4950
+#define REQUEST_MUST_OPEN 5000
+#define REQUEST_RETRIES 3
 
 class IOHandler{
   public:
@@ -57,6 +60,8 @@ class IOHandler{
     ESP8266DebounceSwitch switches;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
+    uint32_t requestMillis;
+    uint8_t requestRetries;
 
     stringCallback doorActionCallback;
 

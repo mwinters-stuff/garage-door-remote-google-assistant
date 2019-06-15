@@ -38,3 +38,8 @@ build*/*
 webapp/bower_components/
 webapp/build/
 webapp/node_modules/
+GPATH
+GRTAGS
+GTAGS
+.vscode/ipch/**
+

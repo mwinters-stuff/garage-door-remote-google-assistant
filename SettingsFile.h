@@ -3,14 +3,14 @@
 #include "JSONFileBase.h"
 
 enum doorPositions{
-  dpStartup,
+  // dpStartup,
   dpUnknown,
   dpOpen,
   dpClosed,
   dpOpenToClosed,
   dpClosedToOpen,
-  dpManualOpenToClosed,
-  dpManualClosedToOpen
+  dpOpenRequested,
+  dpCloseRequested
 };
 
 class SettingsFile: public JSONFileBase{

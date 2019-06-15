@@ -105,9 +105,9 @@ void MQTTHandler::connect() {
       lastSentPing = millis();
       if (mqtt.connected()) {
         Debug.print(millis() / 1000);
-        Debug.println(" Sending Ping");
+        Debug.println(F(" Sending Ping"));
         if (!mqtt.ping()) {
-          Debug.println("Ping Failed, Disconnect");
+          Debug.println(F("Ping Failed, Disconnect"));
           mqtt.disconnect();
         } else {
           pub_online.publish((uint32_t) millis());
@@ -122,16 +122,16 @@ void MQTTHandler::connect() {
     Debug.println(configFile->mqtt_feed_online);
     Debug.print(millis() / 1000);
     reconnectTimeout = millis();
-    Debug.print(" Connecting to MQTT... ");
+    Debug.print(F(" Connecting to MQTT... "));
     if ((ret = mqtt.connect()) != 0) {
       // WiFi.printDiag(Serial);
       Debug.println(mqtt.connectErrorString(ret));
-      Debug.println("Retrying MQTT connection in 5 seconds...");
+      Debug.println(F("Retrying MQTT connection in 5 seconds..."));
       mqtt.disconnect();
       return;
     }
     Debug.print(millis() / 1000);
-    Debug.println(" MQTT Connected!");
+    Debug.println(F(" MQTT Connected!"));
  
 
     pub_online.publish((uint32_t)millis());
@@ -146,17 +146,15 @@ void MQTTHandler::doorAction(String data) {
   Debug.print(F("Action: Received door action -> "));
   Debug.println(data);
 
-  Debug.println("doorActionCallback");
+  Debug.println(F("doorActionCallback"));
   doorActionCallback(data);
   // sendToInflux("door-action",data);
 }
 
 void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPositions _door_position) {
-  if (settingsFile->updateDoorPosition(current_door_position, _door_position)) {
-    String pos = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
-    pub_door_position.publish(pos.c_str());
-    // sendToInflux("door-position",pos);
-  }
+  settingsFile->updateDoorPosition(current_door_position, _door_position);
+  String pos = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
+  pub_door_position.publish(pos.c_str());
 }
 
 void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPositions _door_position, bool _door_moving) {
