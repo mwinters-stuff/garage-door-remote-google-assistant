@@ -10,11 +10,11 @@ SERIAL_BAUD = 115200
 LOG_SERIAL_TO_FILE=yes
 
 USER_DEFINE = -DTEST
-OTA_IP = garage-door-test.fritz.box
-#OTA_IP = garage-door.fritz.box
+# OTA_IP = garage-door-test.fritz.box
+# OTA_IP = garage-door.fritz.box
 OTA_PORT = 8266 
 OTA_AUTH = leo
-ESP8266_VERSION=2.4.2
+ESP8266_VERSION=2.5.2
 # GLOBAL_USER_LIBDIR=./libs
 LOCAL_USER_LIBDIR=./libs
 USER_LIBS=\

@@ -26,10 +26,10 @@ bool JSONFileBase::readFile()
         if (json.success())
         {
           json.printTo(Serial);
-          Serial.println(F("Printed"));
+          Serial.println();
 
           setJson(json);
-          Serial.println(F("Set"));
+
           result = true;
         }
         else
@@ -38,7 +38,11 @@ bool JSONFileBase::readFile()
         }
       }
       configFile.close();
+    }else{
+      Serial.println(F("File doesnt exist"));
     }
+  }else{
+    Serial.println(F("SPIFFS.begin failed"));
   }
   return result;
 }

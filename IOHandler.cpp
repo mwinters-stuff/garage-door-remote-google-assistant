@@ -63,11 +63,13 @@ void IOHandler::ledRed(bool on){
 }
 
 void IOHandler::update(){
+  if(!mqttHandler->isMQTTConnected()){
+    return;
+  }
   if(firstLoop){
     firstLoop = false;
     doorPositions door_position;
     if(digitalRead(SWITCH_OPEN) == LOW && digitalRead(SWITCH_CLOSED) == HIGH){
-      // door open
       Debug.println(F("Inital OPEN"));
       door_position = dpOpen;
     }else if(digitalRead(SWITCH_CLOSED) == LOW && digitalRead(SWITCH_OPEN) == HIGH){
@@ -367,6 +369,7 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
 }
 
 void IOHandler::toggleRelay(){
+  Debug.println(F("Toggle Relay"));
   ledRed(true);
   digitalWrite(RELAY,RELAY_CLOSED);
   delay(500);

@@ -30,8 +30,11 @@ HTTPHandler* httpHandler;
 #include <RemoteDebug.h>
 
 RemoteDebug Debug;
-
+uint32_t start_delay;
 void setup() {
+  pinMode(RELAY, OUTPUT);
+  digitalWrite(RELAY,LOW);
+
   #ifdef ENABLE_GDB
 	  gdbstub_init();
   #endif
@@ -81,17 +84,17 @@ void setup() {
 
   // mqttHandler->initFeeds();
 
-
+  
 }
 
 void loop() {
+
 
   Debug.handle();
 
   httpHandler->update();
   mqttHandler->update();
   ioHandler->update();
-
   if(system_get_free_heap_size() < 1000){
     ESP.restart();
   }

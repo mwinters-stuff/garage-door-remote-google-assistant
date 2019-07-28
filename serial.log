@@ -44,4 +44,266 @@ Net Status Network disconnected.
 Net Status Network disconnected.
 lastValue get /api/v2/mwinters/feeds/tests.garagedooraction/data/retain
 lastValue get /api/v2/mwinters/feeds/tests.garagedoorposition/data/retain
-À ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ À
+À ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ ÀÀ À{$lœŸ|Ädà|„lä#|‡ƒìÛs„cÄò'oß$g'œãäcpŒÇdsdrd8ûgà‚lÄœb'ã|$ìÇbŒóogçl„‡l`˜'l`orÇ'cœd{’“obœ$œl`üƒoÜ
+
+
+
+
+
+
+
+
+
+mounted file system
+File doesnt exist
+Failed to read /settings-test.json
+mounted file system
+reading file/config-test.json
+{"influx_host":"netserver","wifi_ap":"WINTERS","wifi_password":"tesskatt","hostname":"garage-door-test","ntp_server":"192.168.1.1","update_interval":"60","mqtt_feed_set_position":"testgaragedoor/feeds/setposition","mqtt_feed_report_position":"testgaragedoor/feeds/reportposition","mqtt_feed_set_locked":"testgaragedoor/feeds/setlock","mqtt_feed_online":"testgaragedoor/feeds/online","mqtt_feed_report_locked":"testgaragedoor/feeds/reportlock","mqtt_feed_temperature":"testgaragedoor/feeds/temperature","mqtt_username":"garagedoor","mqtt_password":"badcat","mqtt_port":"1883","mqtt_hostname":"192.168.1.6"}
+Connecting to Wifi.
+Connected, IP address: 192.168.1.107
+(D) DS18B20 Init Found 0
+(D) testgaragedoor/feeds/online
+(D) 5 Connecting to MQTT... 5 MQTT Connected!
+(D) Action: Update Door Position UNKNOWN --> OPEN_CLOSED
+(D) testgaragedoor/feeds/online
+(D) 19 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 24 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 29 Connecting to MQTT... 29 MQTT Connected!
+(D) 30 Sending Ping
+(D) 60 Sending Ping
+(D) 90 Sending Ping
+(D) 120 Sending Ping
+(D) 150 Sending Ping
+(D) 180 Sending Ping
+(D) 210 Sending Ping
+(D) 240 Sending Ping
+(D) 270 Sending Ping
+(D) 300 Sending Ping
+(D) 330 Sending Ping
+(D) 360 Sending Ping
+(D) 390 Sending Ping
+(D) 420 Sending Ping
+(D) 450 Sending Ping
+(D) 480 Sending Ping
+(D) 510 Sending Ping
+(D) 540 Sending Ping
+(D) 570 Sending Ping
+(D) 600 Sending Ping
+(D) testgaragedoor/feeds/online
+(D) 625 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 630 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 635 Connecting to MQTT... 635 MQTT Connected!
+(D) 635 Sending Ping
+(D) 665 Sending Ping
+(D) 695 Sending Ping
+(D) 725 Sending Ping
+(D) 755 Sending Ping
+(D) 785 Sending Ping
+(D) 815 Sending Ping
+(D) 845 Sending Ping
+(D) 875 Sending Ping
+(D) 905 Sending Ping
+(D) 935 Sending Ping
+(D) 965 Sending Ping
+(D) 995 Sending Ping
+(D) 1025 Sending Ping
+(D) 1055 Sending Ping
+(D) 1085 Sending Ping
+(D) 1115 Sending Ping
+(D) 1145 Sending Ping
+(D) 1175 Sending Ping
+(D) 1205 Sending Ping
+(D) 1235 Sending Ping
+(D) 1265 Sending Ping
+(D) 1295 Sending Ping
+(D) 1325 Sending Ping
+(D) 1355 Sending Ping
+(D) 1385 Sending Ping
+(D) 1415 Sending Ping
+(D) 1445 Sending Ping
+(D) 1475 Sending Ping
+(D) 1505 Sending Ping
+(D) 1535 Sending Ping
+(D) 1565 Sending Ping
+(D) 1595 Sending Ping
+(D) 1625 Sending Ping
+(D) 1655 Sending Ping
+(D) 1685 Sending Ping
+(D) 1715 Sending Ping
+(D) 1745 Sending Ping
+(D) 1775 Sending Ping
+(D) 1805 Sending Ping
+(D) testgaragedoor/feeds/online
+(D) 1830 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 1835 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 1840 Connecting to MQTT... 1840 MQTT Connected!
+(D) 1840 Sending Ping
+(D) 1870 Sending Ping
+(D) 1900 Sending Ping
+(D) 1930 Sending Ping
+(D) 1960 Sending Ping
+(D) 1990 Sending Ping
+(D) 2020 Sending Ping
+(D) 2050 Sending Ping
+(D) 2080 Sending Ping
+(D) 2110 Sending Ping
+(D) 2140 Sending Ping
+(D) 2170 Sending Ping
+(D) 2200 Sending Ping
+(D) 2230 Sending Ping
+(D) 2260 Sending Ping
+(D) 2290 Sending Ping
+(D) 2320 Sending Ping
+(D) 2350 Sending Ping
+(D) 2380 Sending Ping
+(D) 2410 Sending Ping
+(D) 2440 Sending Ping
+(D) 2470 Sending Ping
+(D) 2500 Sending Ping
+(D) 2530 Sending Ping
+(D) 2560 Sending Ping
+(D) 2591 Sending Ping
+(D) 2621 Sending Ping
+(D) Ping Failed, Disconnect
+(D) testgaragedoor/feeds/online
+(D) 2621 Connecting to MQTT... 2621 MQTT Connected!
+(D) 2651 Sending Ping
+(D) 2681 Sending Ping
+(D) 2711 Sending Ping
+(D) 2741 Sending Ping
+(D) 2771 Sending Ping
+(D) 2801 Sending Ping
+(D) 2831 Sending Ping
+(D) 2861 Sending Ping
+(D) 2891 Sending Ping
+(D) 2921 Sending Ping
+(D) 2951 Sending Ping
+(D) 2981 Sending Ping
+(D) 3011 Sending Ping
+(D) 3041 Sending Ping
+(D) 3071 Sending Ping
+(D) 3101 Sending Ping
+(D) 3131 Sending Ping
+(D) 3161 Sending Ping
+(D) 3191 Sending Ping
+(D) 3221 Sending Ping
+(D) 3251 Sending Ping
+(D) 3281 Sending Ping
+(D) 3311 Sending Ping
+(D) 3341 Sending Ping
+(D) 3371 Sending Ping
+(D) 3401 Sending Ping
+(D) 3431 Sending Ping
+(D) 3461 Sending Ping
+(D) 3491 Sending Ping
+(D) 3521 Sending Ping
+(D) 3551 Sending Ping
+(D) 3581 Sending Ping
+(D) 3611 Sending Ping
+(D) 3641 Sending Ping
+(D) 3671 Sending Ping
+(D) 3701 Sending Ping
+(D) 3731 Sending Ping
+(D) 3761 Sending Ping
+(D) 3791 Sending Ping
+(D) 3821 Sending Ping
+(D) 3851 Sending Ping
+(D) 3881 Sending Ping
+(D) 3911 Sending Ping
+(D) 3941 Sending Ping
+(D) 3971 Sending Ping
+(D) 4001 Sending Ping
+(D) 4031 Sending Ping
+(D) 4061 Sending Ping
+(D) 4091 Sending Ping
+(D) 4121 Sending Ping
+(D) 4151 Sending Ping
+(D) 4181 Sending Ping
+(D) 4211 Sending Ping
+(D) 4241 Sending Ping
+(D) testgaragedoor/feeds/online
+(D) 4251 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 4256 Connecting to MQTT... Connection failed
+(D) Retrying MQTT connection in 5 seconds...
+(D) testgaragedoor/feeds/online
+(D) 4261 Connecting to MQTT... 4261 MQTT Connected!
+(D) 4271 Sending Ping
+(D) 4301 Sending Ping
+(D) 4331 Sending Ping
+(D) 4361 Sending Ping
+(D) 4391 Sending Ping
+(D) 4421 Sending Ping
+(D) 4451 Sending Ping
+(D) 4481 Sending Ping
+(D) 4511 Sending Ping
+(D) 4541 Sending Ping
+(D) 4571 Sending Ping
+(D) 4601 Sending Ping
+(D) 4631 Sending Ping
+(D) 4661 Sending Ping
+(D) 4691 Sending Ping
+(D) 4721 Sending Ping
+(D) 4751 Sending Ping
+(D) 4781 Sending Ping
+(D) 4811 Sending Ping
+(D) 4841 Sending Ping
+(D) 4871 Sending Ping
+(D) 4901 Sending Ping
+(D) 4931 Sending Ping
+(D) 4961 Sending Ping
+(D) 4991 Sending Ping
+(D) 5021 Sending Ping
+(D) 5051 Sending Ping
+(D) 5081 Sending Ping
+(D) 5111 Sending Ping
+(D) 5141 Sending Ping
+(D) 5171 Sending Ping
+(D) 5201 Sending Ping
+(D) 5231 Sending Ping
+(D) 5261 Sending Ping
+(D) 5291 Sending Ping
+(D) 5321 Sending Ping
+(D) 5351 Sending Ping
+(D) 5381 Sending Ping
+(D) 5411 Sending Ping
+(D) 5441 Sending Ping
+(D) 5471 Sending Ping
+(D) 5501 Sending Ping
+(D) 5531 Sending Ping
+(D) 5561 Sending Ping
+(D) 5591 Sending Ping
+(D) 5621 Sending Ping
+(D) 5651 Sending Ping
+(D) 5681 Sending Ping
+(D) 5711 Sending Ping
+(D) 5741 Sending Ping
+(D) 5771 Sending Ping
+(D) 5801 Sending Ping
+(D) 5831 Sending Ping
+(D) 5861 Sending Ping
+(D) 5892 Sending Ping
+(D) 5922 Sending Ping
+(D) 5952 Sending Ping
+(D) 5982 Sending Ping
+(D) 6012 Sending Ping
+(D) 6042 Sending Ping
+(D) 6072 Sending Ping
+(D) 6102 Sending Ping
+(D) 6132 Sending Ping
+(D) 6162 Sending Ping
+(D) 6192 Sending Ping

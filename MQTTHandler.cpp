@@ -32,6 +32,7 @@ MQTTHandler::MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile)
     : settingsFile(settingsFile),
       configFile(configFile),
       wifiClient(),
+      isConnected(false),
       mqtt(&wifiClient, configFile->mqtt_hostname.c_str(), configFile->mqtt_port, configFile->mqtt_username.c_str(), configFile->mqtt_password.c_str()),
       pub_door_position(&mqtt, configFile->mqtt_feed_door_report_position.c_str(), MQTT_QOS_1),
       pub_door_locked(&mqtt, configFile->mqtt_feed_door_report_locked.c_str(), MQTT_QOS_1),
@@ -109,9 +110,11 @@ void MQTTHandler::connect() {
         if (!mqtt.ping()) {
           Debug.println(F("Ping Failed, Disconnect"));
           mqtt.disconnect();
+          isConnected = false;
         } else {
           pub_online.publish((uint32_t) millis());
           // TODO: report position and locked;
+          isConnected = true;
         }
       }
     }
@@ -128,11 +131,12 @@ void MQTTHandler::connect() {
       Debug.println(mqtt.connectErrorString(ret));
       Debug.println(F("Retrying MQTT connection in 5 seconds..."));
       mqtt.disconnect();
+      isConnected = false;
       return;
     }
     Debug.print(millis() / 1000);
     Debug.println(F(" MQTT Connected!"));
- 
+    isConnected = true;
 
     pub_online.publish((uint32_t)millis());
  

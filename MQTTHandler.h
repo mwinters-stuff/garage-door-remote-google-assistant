@@ -39,6 +39,9 @@ class MQTTHandler{
     // void sendToInflux(const String &dataPoint, const String &dataValue);
     void setTemperature(double temperature);
     
+    bool isMQTTConnected(){
+      return isConnected;
+    }
 
     static MQTTHandler* _getInstance(){return m_instance;};
     // static MQTTHandler* init();
@@ -51,6 +54,7 @@ class MQTTHandler{
     uint32_t lastSentPing = 0;
     String last_http_reponse_str;
     static MQTTHandler* m_instance;
+    bool isConnected;
     // void sendInflux(const String &body);
     void connect();
     
