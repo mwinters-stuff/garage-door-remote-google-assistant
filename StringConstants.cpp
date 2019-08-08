@@ -31,10 +31,8 @@ const char _HOSTNAME[] PROGMEM             = "hostname";
 const char _UPDATE_INTERVAL[] PROGMEM      = "update_interval";
 const char _NTP_SERVER[] PROGMEM           = "ntp_server";
 
-const char _MQTT_FEED_DOOR_SET_POSITION[] PROGMEM = "mqtt_feed_set_position";
-const char _MQTT_FEED_DOOR_REPORT_POSITION[] PROGMEM = "mqtt_feed_report_position";
-const char _MQTT_FEED_DOOR_SET_LOCKED[] PROGMEM = "mqtt_feed_set_locked";
-const char _MQTT_FEED_DOOR_REPORT_LOCKED[] PROGMEM = "mqtt_feed_report_locked";
+const char _MQTT_FEED_DOOR_POSITION[] PROGMEM = "mqtt_feed_set_position";
+const char _MQTT_FEED_DOOR_LOCKED[] PROGMEM = "mqtt_feed_set_locked";
 const char _MQTT_FEED_ONLINE[] PROGMEM = "mqtt_feed_online";
 const char _MQTT_FEED_TEMPERATURE[] PROGMEM = "mqtt_feed_temperature";
 const char _MQTT_USERNAME[] PROGMEM = "mqtt_username";

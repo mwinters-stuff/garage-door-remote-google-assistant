@@ -34,12 +34,12 @@ MQTTHandler::MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile)
       wifiClient(),
       isConnected(false),
       mqtt(&wifiClient, configFile->mqtt_hostname.c_str(), configFile->mqtt_port, configFile->mqtt_username.c_str(), configFile->mqtt_password.c_str()),
-      pub_door_position(&mqtt, configFile->mqtt_feed_door_report_position.c_str(), MQTT_QOS_1),
-      pub_door_locked(&mqtt, configFile->mqtt_feed_door_report_locked.c_str(), MQTT_QOS_1),
+      pub_door_position(&mqtt, configFile->mqtt_feed_door_position.c_str(), MQTT_QOS_1),
+      pub_door_locked(&mqtt, configFile->mqtt_feed_door_locked.c_str(), MQTT_QOS_1),
       pub_online(&mqtt,configFile->mqtt_feed_online.c_str(), MQTT_QOS_1),
       pub_temperature(&mqtt, configFile->mqtt_feed_temperature.c_str(), MQTT_QOS_1),
-      sub_door_position(&mqtt, configFile->mqtt_feed_door_set_position.c_str(), MQTT_QOS_1),
-      sub_door_locked(&mqtt, configFile->mqtt_feed_door_set_locked.c_str(), MQTT_QOS_1)
+      sub_door_position(&mqtt, configFile->mqtt_feed_door_position.c_str(), MQTT_QOS_1),
+      sub_door_locked(&mqtt, configFile->mqtt_feed_door_locked.c_str(), MQTT_QOS_1)
 {
   m_instance = this;
   sub_door_position.setCallback(doorPositionCallback);
@@ -47,46 +47,6 @@ MQTTHandler::MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile)
   mqtt.subscribe(&sub_door_position);
   mqtt.subscribe(&sub_door_locked);
 }
-
-
-
-// void MQTTHandler::initFeeds() {
-//   Debug.println(F("Init Feeds"));
-
-
-
-  // if (configFile->mqtt_hostname.length() > 0 && configFile->mqtt_username.length() > 0 && configFile->mqtt_password.length() > 0) {
-  //   Debug.println(F("Starting mqtt"));
-  //   mqtt = new Adafruit_MQTT_Client(&wifiClient, configFile->mqtt_hostname.c_str(), configFile->mqtt_port, configFile->mqtt_username.c_str(), configFile->mqtt_password.c_str());
-
-  //   pub_door_position = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_door_report_position.c_str(), MQTT_QOS_1);
-  //   pub_door_locked   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_door_report_locked.c_str(), MQTT_QOS_1);
-  //   pub_online   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_online.c_str(), MQTT_QOS_1);
-  //   pub_temperature   = new Adafruit_MQTT_Publish(mqtt, configFile->mqtt_feed_temperature.c_str(), MQTT_QOS_1);
-
-  //   sub_door_position = new Adafruit_MQTT_Subscribe(mqtt, configFile->mqtt_feed_door_set_position.c_str(), MQTT_QOS_1);
-  //   sub_door_locked = new Adafruit_MQTT_Subscribe(mqtt, configFile->mqtt_feed_door_set_locked.c_str(), MQTT_QOS_1);
-  //   // connect();
-  // } else {
-  //   Debug.println(F("MQTT Not Configured"));
-  //   if (mqtt) {
-  //     delete mqtt;
-  //     delete pub_door_position;
-  //     delete pub_door_locked;
-  //     delete pub_online;
-  //     delete pub_temperature;
-  //     delete sub_door_locked;
-  //     delete sub_door_position;
-  //   }
-  //   mqtt = NULL;
-  //   pub_door_position = NULL;
-  //   pub_door_locked = NULL;
-  //   pub_online = NULL;
-  //   pub_temperature = NULL;
-  //   sub_door_locked = NULL;
-  //   sub_door_position = NULL;
-  // }
-// }
 
 void MQTTHandler::update() {
   // if (mqtt) {
@@ -146,12 +106,14 @@ void MQTTHandler::connect() {
 }
 
 void MQTTHandler::doorAction(String data) {
-  settingsFile->setLastDoorAction(data);
-  Debug.print(F("Action: Received door action -> "));
-  Debug.println(data);
+  if(data != settingsFile->getLastDoorAction()){
+    settingsFile->setLastDoorAction(data);
+    Debug.print(F("Action: Received door action -> "));
+    Debug.println(data);
 
-  Debug.println(F("doorActionCallback"));
-  doorActionCallback(data);
+    Debug.println(F("doorActionCallback"));
+    doorActionCallback(data);
+  }
   // sendToInflux("door-action",data);
 }
 
@@ -175,17 +137,18 @@ void MQTTHandler::toggleLocked() {
 }
 
 void MQTTHandler::setLocked(bool locked) {
-  Debug.print(F("MQTTHandler Setting lock to "));
-  if (locked) {
-    Debug.println(LOCKED);
-    settingsFile->setLocked();
-    pub_door_locked.publish("LOCKED");
-  } else {
-    Debug.println(UNLOCKED);
-    pub_door_locked.publish("UNLOCKED");
-    settingsFile->setUnLocked();
+  if(locked != settingsFile->isLocked()){
+    Debug.print(F("MQTTHandler Setting lock to "));
+    if (locked) {
+      Debug.println(LOCKED);
+      settingsFile->setLocked();
+      pub_door_locked.publish("LOCK");
+    } else {
+      Debug.println(UNLOCKED);
+      pub_door_locked.publish("UNLOCK");
+      settingsFile->setUnLocked();
+    }
   }
-  
 }
 
 

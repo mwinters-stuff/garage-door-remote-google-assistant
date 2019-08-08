@@ -1,5 +1,6 @@
 ARDUINO_VARIANT = nodemcuv2
-UPLOAD_PORT = /dev/nodemcu
+# UPLOAD_PORT = /dev/nodemcu
+UPLOAD_PORT = /dev/frogboard
 # UPLOAD_PORT = /dev/ttyUSB1
 UPLOAD_SPEED=921600
 # UPLOAD_SPEED=115200
@@ -10,7 +11,7 @@ SERIAL_BAUD = 115200
 LOG_SERIAL_TO_FILE=yes
 
 USER_DEFINE = -DTEST
-# OTA_IP = garage-door-test.fritz.box
+OTA_IP = garage-door-test.fritz.box
 # OTA_IP = garage-door.fritz.box
 OTA_PORT = 8266 
 OTA_AUTH = leo

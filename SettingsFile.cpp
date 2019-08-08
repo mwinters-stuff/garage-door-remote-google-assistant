@@ -16,7 +16,7 @@ static std::map<doorPositions, String> door_position_strings = {
     // { dpStartup, String(STARTUP)}, 
     { dpUnknown, String(UNKNOWN)}, 
     { dpOpen, String(OPEN)}, 
-    { dpClosed, String(CLOSED)}, 
+    { dpClosed, String(CLOSE)}, 
     { dpOpenToClosed, String(OPEN_CLOSED)}, 
     { dpClosedToOpen, String(CLOSED_OPEN)}, 
     { dpOpenRequested, String(CLOSE_REQUESTED)}, 

@@ -166,11 +166,8 @@ class WebappApp extends PolymerElement {
                 <paper-input always-float-label label="Report Online" value="{{_config.mqtt_feed_online}}"></paper-input>
                 <paper-input always-float-label label="Temperature" value="{{_config.mqtt_feed_temperature}}"></paper-input>
 
-                <paper-input always-float-label label="Set Position" value="{{_config.mqtt_feed_set_position}}"></paper-input>
-                <paper-input always-float-label label="Report Position" value="{{_config.mqtt_feed_report_position}}"></paper-input>
-                
-                <paper-input always-float-label label="Set Locked" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
-                <paper-input always-float-label label="Report Locked" value="{{_config.mqtt_feed_report_locked}}"></paper-input>
+                <paper-input always-float-label label="Door Position" value="{{_config.mqtt_feed_set_position}}"></paper-input>
+                <paper-input always-float-label label="Door Locked" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
               </div>
 
             </iron-pages>            

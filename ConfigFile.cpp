@@ -23,10 +23,8 @@ void ConfigFile::getJson(JsonObject & root){
   root[NTP_SERVER        ] = ntp_server       ;
   root[UPDATE_INTERVAL   ] = update_interval;
 
-  root[MQTT_FEED_DOOR_SET_POSITION    ] = mqtt_feed_door_set_position;
-  root[MQTT_FEED_DOOR_REPORT_POSITION ] = mqtt_feed_door_report_position;
-  root[MQTT_FEED_DOOR_SET_LOCKED      ] = mqtt_feed_door_set_locked;
-  root[MQTT_FEED_DOOR_REPORT_LOCKED   ] = mqtt_feed_door_report_locked;
+  root[MQTT_FEED_DOOR_POSITION        ] = mqtt_feed_door_position;
+  root[MQTT_FEED_DOOR_LOCKED          ] = mqtt_feed_door_locked;
   root[MQTT_FEED_ONLINE               ] = mqtt_feed_online;
   root[MQTT_FEED_TEMPERATURE          ] = mqtt_feed_temperature;
   root[MQTT_USERNAME                  ] = mqtt_username;
@@ -44,10 +42,8 @@ void ConfigFile::setJson(const JsonObject &json){
   update_interval     = json[UPDATE_INTERVAL   ].as<String>();
   update_interval_ms = update_interval.toInt() * 1000;
 
-  mqtt_feed_door_set_position=    json[MQTT_FEED_DOOR_SET_POSITION    ].as<String>();
-  mqtt_feed_door_report_position= json[MQTT_FEED_DOOR_REPORT_POSITION ].as<String>();
-  mqtt_feed_door_set_locked=      json[MQTT_FEED_DOOR_SET_LOCKED      ].as<String>();
-  mqtt_feed_door_report_locked=   json[MQTT_FEED_DOOR_REPORT_LOCKED   ].as<String>();
+  mqtt_feed_door_position=        json[MQTT_FEED_DOOR_POSITION        ].as<String>();
+  mqtt_feed_door_locked=          json[MQTT_FEED_DOOR_LOCKED          ].as<String>();
   mqtt_feed_online=               json[MQTT_FEED_ONLINE               ].as<String>();
   mqtt_feed_temperature=          json[MQTT_FEED_TEMPERATURE          ].as<String>();
   mqtt_username=                  json[MQTT_USERNAME                  ].as<String>();

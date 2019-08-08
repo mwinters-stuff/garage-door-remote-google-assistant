@@ -15,10 +15,8 @@ class ConfigFile: public JSONFileBase{
     uint16_t update_interval_ms;
 
     String mqtt_hostname;
-    String mqtt_feed_door_report_position;
-    String mqtt_feed_door_set_position;
-    String mqtt_feed_door_report_locked;
-    String mqtt_feed_door_set_locked;
+    String mqtt_feed_door_position;
+    String mqtt_feed_door_locked;
     String mqtt_feed_online;
     String mqtt_feed_temperature;
     String mqtt_username;
