@@ -16,6 +16,10 @@
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.0.0",
-    "wct-browser-legacy": "^1.0.0"
+    "wct-browser-legacy": "^1.0.0",
+    "diff": "^3.5.0",
+    "debug": "^2.6.9",
+    "growl": "^1.10.0",
+    "lodash": "^4.17.13"
   }
 }

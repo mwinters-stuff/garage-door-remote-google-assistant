@@ -78,7 +78,7 @@ void IOHandler::update(){
     } else {
       door_position = dpOpenToClosed;
     }
-    mqttHandler->updateDoorPosition(dpUnknown, door_position, false);
+    mqttHandler->updateDoorPosition(door_position, door_position, false);
     switches.addSwitchPin(SWITCH_OPEN, digitalRead(SWITCH_OPEN) == HIGH, _switchCallback);
     switches.addSwitchPin(SWITCH_CLOSED, digitalRead(SWITCH_CLOSED) == HIGH, _switchCallback);
   }else{

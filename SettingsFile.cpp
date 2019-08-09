@@ -19,8 +19,8 @@ static std::map<doorPositions, String> door_position_strings = {
     { dpClosed, String(CLOSE)}, 
     { dpOpenToClosed, String(OPEN_CLOSED)}, 
     { dpClosedToOpen, String(CLOSED_OPEN)}, 
-    { dpOpenRequested, String(CLOSE_REQUESTED)}, 
-    { dpCloseRequested, String(OPEN_REQUESTED)}
+    { dpOpenRequested, String(OPEN_REQUESTED)}, 
+    { dpCloseRequested, String(CLOSE_REQUESTED)}
 };
 
 SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
@@ -54,6 +54,7 @@ bool SettingsFile::updateDoorPosition(doorPositions _current_door_position, door
     Debug.printf(String(ACTION_UPDATE_DOOR_POSITION).c_str(), 
       doorPositionToString(_current_door_position).c_str(), 
       doorPositionToString(door_position).c_str());
+      saveFile();
     return true;
   }
   return false;

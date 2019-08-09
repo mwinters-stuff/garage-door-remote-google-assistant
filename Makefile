@@ -1,6 +1,6 @@
 ARDUINO_VARIANT = nodemcuv2
-# UPLOAD_PORT = /dev/nodemcu
-UPLOAD_PORT = /dev/frogboard
+UPLOAD_PORT = /dev/nodemcu
+# UPLOAD_PORT = /dev/frogboard
 # UPLOAD_PORT = /dev/ttyUSB1
 UPLOAD_SPEED=921600
 # UPLOAD_SPEED=115200

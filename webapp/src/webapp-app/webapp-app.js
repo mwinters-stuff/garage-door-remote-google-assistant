@@ -302,7 +302,7 @@ class WebappApp extends PolymerElement {
   _door_action_title(position) {
     if (position === "OPEN") {
       return "Close Door"
-    } else if (position === "CLOSED") {
+    } else if (position === "CLOSE") {
       return "Open Door";
     } if (position === "" || position == null) {
       return "Unknown";
