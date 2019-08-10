@@ -158,7 +158,7 @@ void IOHandler::update(){
 
 void IOHandler::onOpenSwitchCallback(bool closed){
   switch_open_closed = closed;
-  Debug.println(String(F("onOpenSwitchCallback ")) + String(closed ? CLOSED : OPEN));
+  Debug.println(String(F("onOpenSwitchCallback ")) + String(closed ? CLOSE : OPEN));
   processSwitchs();
   switches.addSwitchPin(SWITCH_OPEN, !closed, _switchCallback);
 
@@ -166,7 +166,7 @@ void IOHandler::onOpenSwitchCallback(bool closed){
 
 void IOHandler::onClosedSwitchCallback(bool closed){
   switch_closed_closed = closed;
-  Debug.println(String(F("onClosedSwitchCallback ")) + String(closed ? CLOSED : OPEN));
+  Debug.println(String(F("onClosedSwitchCallback ")) + String(closed ? CLOSE : OPEN));
   processSwitchs();
   switches.addSwitchPin(SWITCH_CLOSED, !closed, _switchCallback);
 }
@@ -181,22 +181,22 @@ void IOHandler::processSwitchs(){
   Debug.print(F("IOHandler Switch: "));
   switch(door_position){
     // case dpStartup:
-    // case dpUnknown:
-    //   Debug.print(F("Startup "));
-    //   if(s_closed){
-    //     Debug.println(CLOSED);
-    //     door_position = dpClosed;
-    //     ledRed(false);
-    //   }else if(s_open){
-    //     door_position = dpOpen;
-    //     Debug.println(OPEN);
-    //     ledRed(false);
-    //   }else{
-    //     Debug.println(UNKNOWN);
-    //     ledRed(true);
-    //     delay(1000);
-    //   }
-    //   break;
+    case dpUnknown:
+      Debug.print(F("Startup "));
+      if(s_closed){
+        Debug.println(CLOSE);
+        door_position = dpClosed;
+        ledRed(false);
+      }else if(s_open){
+        door_position = dpOpen;
+        Debug.println(OPEN);
+        ledRed(false);
+      }else{
+        Debug.println(UNKNOWN);
+        ledRed(true);
+        delay(1000);
+      }
+      break;
     case dpClosedToOpen:
       Debug.print(CLOSED_OPEN);
       Debug.print(F(":"));
@@ -210,7 +210,7 @@ void IOHandler::processSwitchs(){
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Debug.println(CLOSED);
+        Debug.println(CLOSE);
         door_position = dpClosed;
         door_moving = false;
       }
@@ -326,7 +326,7 @@ void IOHandler::actionDoor(String position){
     // mqttHandler->updateDoorPosition(current_door_position, door_position);
   }else{
     ledRed(true);
-    Debug.println(LOCKED);
+    Debug.println(LOCK);
   }
 }
 
@@ -364,7 +364,7 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
     mqttHandler->toggleLocked();
     ledRed(settingsFile->isLocked());
   }else{
-    Debug.println(settingsFile->isLocked() ? LOCKED : UNLOCKED);
+    Debug.println(settingsFile->isLocked() ? LOCK : UNLOCK);
   }
 }
 

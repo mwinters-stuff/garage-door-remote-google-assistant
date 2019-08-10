@@ -49,11 +49,11 @@ const char _MQTT_HOSTNAME[] PROGMEM = "mqtt_hostname";
 
 const char _OPEN[] PROGMEM   = "OPEN";
 const char _CLOSE[] PROGMEM  = "CLOSE";
-const char _CLOSED[] PROGMEM = "CLOSED";
+// const char _CLOSED[] PROGMEM = "CLOSED";
 const char _LOCK[] PROGMEM   = "LOCK";
 const char _UNLOCK[] PROGMEM = "UNLOCK";
-const char _LOCKED[] PROGMEM   = "LOCKED";
-const char _UNLOCKED[] PROGMEM   = "UNLOCKED";
+// const char _LOCKED[] PROGMEM   = "LOCKED";
+// const char _UNLOCKED[] PROGMEM   = "UNLOCKED";
 const char _YES[] PROGMEM    = "YES";
 const char _NO[] PROGMEM     = "NO";
 const char _MOVING[] PROGMEM = "MOVING";

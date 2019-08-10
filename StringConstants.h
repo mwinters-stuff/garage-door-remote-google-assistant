@@ -37,10 +37,10 @@ extern const char _MQTT_PORT[] PROGMEM;
 
 extern const char _OPEN[] PROGMEM;
 extern const char _CLOSE[] PROGMEM;
-extern const char _CLOSED[] PROGMEM;
+// extern const char _CLOSED[] PROGMEM;
 extern const char _LOCK[] PROGMEM;
-extern const char _LOCKED[] PROGMEM;
-extern const char _UNLOCKED[] PROGMEM;
+// extern const char _LOCKED[] PROGMEM;
+// extern const char _UNLOCKED[] PROGMEM;
 extern const char _UNLOCK[] PROGMEM;
 extern const char _YES[] PROGMEM;
 extern const char _NO[] PROGMEM;
@@ -83,10 +83,10 @@ extern const char _INFLUX_URL[] PROGMEM;
 
 #define OPEN FPSTR(_OPEN)
 #define CLOSE FPSTR(_CLOSE)
-#define CLOSED FPSTR(_CLOSED)
+// #define CLOSED FPSTR(_CLOSED)
 #define LOCK FPSTR(_LOCK)
-#define LOCKED FPSTR(_LOCKED)
-#define UNLOCKED FPSTR(_UNLOCKED)
+// #define LOCKED FPSTR(_LOCKED)
+// #define UNLOCKED FPSTR(_UNLOCKED)
 #define UNLOCK FPSTR(_UNLOCK)
 #define YES FPSTR(_YES)
 #define NO FPSTR(_NO)

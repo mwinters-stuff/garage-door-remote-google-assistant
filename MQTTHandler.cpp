@@ -140,11 +140,11 @@ void MQTTHandler::setLocked(bool locked) {
   if(locked != settingsFile->isLocked()){
     Debug.print(F("MQTTHandler Setting lock to "));
     if (locked) {
-      Debug.println(LOCKED);
+      Debug.println(LOCK);
       settingsFile->setLocked();
       pub_door_locked.publish("LOCK");
     } else {
-      Debug.println(UNLOCKED);
+      Debug.println(UNLOCK);
       pub_door_locked.publish("UNLOCK");
       settingsFile->setUnLocked();
     }

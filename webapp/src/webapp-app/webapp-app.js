@@ -20,12 +20,12 @@ class WebappApp extends PolymerElement {
   static get template() {
     return html`
     <style is="custom-style" include="iron-flex iron-flex-alignment">
-      /* :host {
+      :host {
         transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --app-primary-color: var(--paper-indigo-500);
-        --app-secondary-color: black;
-
-      } */
+        <!-- --app-primary-color: var(--paper-indigo-500);
+        --app-secondary-color: black; -->
+        background-color: lightgray;
+      }
 
       paper-tabs {
         background-color: var(--paper-blue-900);
@@ -51,10 +51,12 @@ class WebappApp extends PolymerElement {
         background: var(--paper-orange-700);
         color: white;
       }
+      paper-card{
+        min-width: 400px;
+      }
 
       .content {
         @apply --layout-vertical;
-        /* max-width: 500px; */
         padding: 16px;
         @apply --layout-center;     
       }
@@ -163,11 +165,11 @@ class WebappApp extends PolymerElement {
                 <paper-input always-float-label label="Username" value="{{_config.mqtt_username}}"></paper-input>
                 <paper-input always-float-label label="Password" value="{{_config.mqtt_password}}"></paper-input>
 
-                <paper-input always-float-label label="Report Online" value="{{_config.mqtt_feed_online}}"></paper-input>
-                <paper-input always-float-label label="Temperature" value="{{_config.mqtt_feed_temperature}}"></paper-input>
+                <paper-input always-float-label label="Online Feed" value="{{_config.mqtt_feed_online}}"></paper-input>
+                <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
 
-                <paper-input always-float-label label="Door Position" value="{{_config.mqtt_feed_set_position}}"></paper-input>
-                <paper-input always-float-label label="Door Locked" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
+                <paper-input always-float-label label="Door Position Feed" value="{{_config.mqtt_feed_set_position}}"></paper-input>
+                <paper-input always-float-label label="Door Lock Feed" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
               </div>
 
             </iron-pages>            
