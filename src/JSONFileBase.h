@@ -12,8 +12,8 @@ class JSONFileBase{
 
     bool readFile();
     void saveFile();
-    virtual void getJson(JsonObject & root) = 0;
-    virtual void setJson(const JsonObject &object) = 0;
+    virtual void getJson(JsonDocument & root) = 0;
+    virtual void setJson(const JsonDocument &object) = 0;
 
 };
 

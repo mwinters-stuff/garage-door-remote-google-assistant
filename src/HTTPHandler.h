@@ -21,9 +21,9 @@ class HTTPHandler{
   private:
     // static HTTPHandler* m_instance;
     ESP8266WebServer httpServer;
+    IOHandler *ioHandler;
     SettingsFile *settingsFile;
     ConfigFile *configFile;
-    IOHandler *ioHandler;
 
     // bool handleFileRead(AsyncWebServerRequest *request);
     String doDoorAction(const String &action);

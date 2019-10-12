@@ -340,6 +340,8 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
     doorPositions door_position = current_door_position;
 
     switch(current_door_position){
+      case dpCloseRequested:
+      case dpClosedToOpen:
       case dpClosed:
         Debug.println(F("Button press open requested"));
         door_position = dpOpenRequested;
@@ -347,6 +349,8 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
         requestMillis = millis();
         requestRetries = REQUEST_RETRIES;
         break;
+      case dpOpenRequested:
+      case dpOpenToClosed:
       case dpOpen:
         Debug.println(F("Button press close requested"));
         door_position = dpOpenRequested;
@@ -354,7 +358,9 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
         requestMillis = millis();
         requestRetries = REQUEST_RETRIES;
         break;
-      
+      default:
+        Debug.println(F("Button press, incompatible state"));
+        return;
     }
     settingsFile->setCurrentDoorPosition(door_position);
 

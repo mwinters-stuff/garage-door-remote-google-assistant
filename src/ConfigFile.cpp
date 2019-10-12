@@ -15,7 +15,7 @@ ConfigFile::ConfigFile(): JSONFileBase(CONFIG_FILE){
   }
 }
 
-void ConfigFile::getJson(JsonObject & root){
+void ConfigFile::getJson(JsonDocument & root){
 
   root[WIFI_AP           ] = wifi_ap          ;
   root[WIFI_PASSWORD     ] = wifi_password    ;
@@ -34,7 +34,7 @@ void ConfigFile::getJson(JsonObject & root){
 
 }
 
-void ConfigFile::setJson(const JsonObject &json){
+void ConfigFile::setJson(const JsonDocument &json){
   wifi_ap             = json[WIFI_AP           ].as<String>();
   wifi_password       = json[WIFI_PASSWORD     ].as<String>();
   hostname            = json[HOSTNAME          ].as<String>();

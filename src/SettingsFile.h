@@ -18,8 +18,8 @@ class SettingsFile: public JSONFileBase{
 
     SettingsFile();
 
-    void getJson(JsonObject & root);
-    void setJson(const JsonObject &object);
+    void getJson(JsonDocument & root) override;
+    void setJson(const JsonDocument &object) override;
     bool updateDoorPosition(doorPositions current_door_position, doorPositions _door_position);
 
     static doorPositions stringToDoorPosition(const String &str);
@@ -30,12 +30,12 @@ class SettingsFile: public JSONFileBase{
     void setCurrentDoorPosition(const String &position){ this->door_position = stringToDoorPosition(position);};
 
     bool isLocked(){return is_locked;};
-    bool setLocked(){ is_locked = true;};
-    bool setUnLocked(){ is_locked = false;};
+    void setLocked(){ is_locked = true;};
+    void setUnLocked(){ is_locked = false;};
     
     bool isDoorMoving(){return is_door_moving;};
-    bool setDoorMoving(){ is_door_moving = true;};
-    bool setDoorNotMoving(){ is_door_moving = false;};
+    void setDoorMoving(){ is_door_moving = true;};
+    void setDoorNotMoving(){ is_door_moving = false;};
 
     double getTemperature(){ return temperature;};
     void setTemperature(double temperature){ this->temperature = temperature;};

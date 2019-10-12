@@ -30,8 +30,7 @@ void HTTPHandler::setupServer(){
   SPIFFS.begin();
 
   httpServer.on(F("/all"), HTTP_GET, [this]() {
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    DynamicJsonDocument root(1024);
 
     root[HEAP] = ESP.getFreeHeap();
     root[TEMPERATURE] = settingsFile->getTemperature();
@@ -42,10 +41,11 @@ void HTTPHandler::setupServer(){
     root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
     root[TIME_STAMP] = NTP.getTimeDateString();
 
-    // root.prettyPrintTo(Debug);
-    // Debug.println();
+    serializeJsonPretty(root, Debug);
+    Debug.println();
     String response;
-    root.printTo(response);
+    serializeJson(root, response);
+
     
     httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
     httpServer.send(200,F("application/json"),response);
@@ -53,16 +53,15 @@ void HTTPHandler::setupServer(){
   });
 
   httpServer.on(String(F("/config")).c_str(), HTTP_GET, [this]() {
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    DynamicJsonDocument root(1024);
     Debug.println(F("Get Config"));
     
     configFile->getJson(root);
 
-    String response;
-    root.prettyPrintTo(response);
-    Debug.println(response);
+    serializeJsonPretty(root, Debug);
     Debug.println();
+    String response;
+    serializeJson(root, response);
 
     httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
     httpServer.send(200,F("application/json"),response);
@@ -70,17 +69,16 @@ void HTTPHandler::setupServer(){
   });
 
   httpServer.on(String(F("/settings")).c_str(), HTTP_GET, [this]() {
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.createObject();
+    DynamicJsonDocument root(1024);
 
     Debug.println(F("Get Settings"));
     
     settingsFile->getJson(root);
 
-    String response;
-    root.prettyPrintTo(response);
-    Debug.println(response);
+    serializeJsonPretty(root, Debug);
     Debug.println();
+    String response;
+    serializeJson(root, response);
 
     httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
     httpServer.send(200,F("application/json"),response);
@@ -89,23 +87,29 @@ void HTTPHandler::setupServer(){
 
   httpServer.on(String(F("/save-config")).c_str(), HTTP_POST, [this]() {
     if(httpServer.hasArg(F("plain"))){
-      DynamicJsonBuffer jsonBuffer;
-      JsonObject& root = jsonBuffer.parse(httpServer.arg(F("plain")));
+      DynamicJsonDocument root(1024);
+      auto error = deserializeJson(root, httpServer.arg(F("plain")));
+      if(!error){
 
-      Debug.println(F("Save Config"));
+        Debug.println(F("Save Config"));
 
-      root.prettyPrintTo(Debug);
-      Debug.println();
+        serializeJsonPretty(root, Debug);
+        Debug.println();
 
-      configFile->setJson(root);
-      configFile->saveFile();
+        configFile->setJson(root);
+        configFile->saveFile();
 
-      httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
-      httpServer.send(200,TEXT_PLAIN,OKRESULT);
-    }else{
-      httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
-      httpServer.send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
+        httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
+        httpServer.send(200,TEXT_PLAIN,OKRESULT);
+        return;
+      }else{
+       Debug.print(F("deserializeJson() failed with code "));
+       Debug.println(error.c_str());
+      }
     }
+    httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
+    httpServer.send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
+   
   });
 
   httpServer.on(String(F("/action")).c_str(), HTTP_GET, [this](){
@@ -167,7 +171,7 @@ bool HTTPHandler::handleFileRead(String path){  // send the right file to the cl
       path += ".gz";                                         // Use the compressed version
     }
     File file = SPIFFS.open(path, "r");                    // Open the file
-    size_t sent = httpServer.streamFile(file, contentType);    // Send it to the client
+    httpServer.streamFile(file, contentType);    // Send it to the client
     file.close();                                          // Close the file again
     Serial.println(String("\tSent file: ") + path);
     return true;

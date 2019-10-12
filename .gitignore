@@ -43,3 +43,4 @@ GRTAGS
 GTAGS
 .vscode/ipch/**
 
+.pio/**

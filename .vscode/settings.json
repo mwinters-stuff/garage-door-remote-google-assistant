@@ -54,5 +54,9 @@
     "titleBar.activeBackground": "#443D4E",
     "titleBar.activeForeground": "#FBFAFB"
   },
+  "terminal.integrated.env.linux": {
+    "PATH": "/home/mathew/.platformio/penv/bin:/home/mathew/.platformio/penv:/opt/flutter/bin:/home/mathew/.npm-packages/bin:/opt/android-sdk/tools:/opt/android-sdk/platform-tools:/home/mathew/.local/bin:/home/mathew/bin:/home/mathew/.yarn/bin:/home/mathew/.config/yarn/global/node_modules/.bin:/opt/flutter/bin:/home/mathew/.npm-packages/bin:/opt/android-sdk/tools:/opt/android-sdk/platform-tools:/home/mathew/.local/bin:/home/mathew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/flutter/.pub-cache/bin:/opt/flutter/.pub-cache/bin",
+    "PLATFORMIO_CALLER": "vscode"
+  },
   
 }

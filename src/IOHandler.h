@@ -40,14 +40,16 @@ class IOHandler{
 
     static void _switchCallback(uint8_t button, bool closed);
   private:
+    MQTTHandler *mqttHandler;
     SettingsFile *settingsFile;
     ConfigFile *configFile;
-    MQTTHandler *mqttHandler;
+    uint32_t greenMillisFlash;
+    uint32_t redMillisFlash;
     OneWire oneWire;
     DallasTemperature DS18B20;
+    bool firstLoop;
     uint32_t temperatureLastRead;
     String doorAction;
-    bool firstLoop;
     
     bool switch_open_closed;
     bool switch_closed_closed;
@@ -58,8 +60,6 @@ class IOHandler{
     void readTemperature();
 
     ESP8266DebounceSwitch switches;
-    uint32_t greenMillisFlash;
-    uint32_t redMillisFlash;
     uint32_t requestMillis;
     uint8_t requestRetries;
 

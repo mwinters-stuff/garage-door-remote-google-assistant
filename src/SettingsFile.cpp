@@ -33,7 +33,7 @@ SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
   }
 }
 
-void SettingsFile::getJson(JsonObject & root){
+void SettingsFile::getJson(JsonDocument & root){
 
   root[CURRENT_DOOR_POSITION] = doorPositionToString(door_position);
   root[LAST_DOOR_ACTION     ] = last_door_action;
@@ -41,7 +41,7 @@ void SettingsFile::getJson(JsonObject & root){
   root[TEMPERATURE          ] = temperature;
 }
 
-void SettingsFile::setJson(const JsonObject &json){
+void SettingsFile::setJson(const JsonDocument &json){
   door_position         = stringToDoorPosition(json[CURRENT_DOOR_POSITION].as<String>());
   last_door_action      = json[LAST_DOOR_ACTION     ].as<String>();
   is_locked             = json[IS_LOCKED            ].as<bool>();

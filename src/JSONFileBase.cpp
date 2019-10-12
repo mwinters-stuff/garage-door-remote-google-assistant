@@ -15,34 +15,32 @@ bool JSONFileBase::readFile()
     if (SPIFFS.exists(fileName))
     {
       //file exists, reading and loading
-      Serial.print(F("reading file"));
+      Serial.print(F("reading file "));
       Serial.println(fileName);
       File configFile = SPIFFS.open(fileName, "r");
       if (configFile)
       {
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject &json = jsonBuffer.parseObject(configFile);
+        DynamicJsonDocument doc(1024);
+        auto error = deserializeJson(doc, configFile);
 
-        if (json.success())
+        if (!error)
         {
-          json.printTo(Serial);
+          serializeJsonPretty(doc, Serial);
           Serial.println();
-
-          setJson(json);
-
+          setJson(doc);
+          Serial.println(F("Set"));
           result = true;
         }
         else
         {
-          Serial.println(F("failed to load json"));
+          Serial.println(F("failed to load json "));
+          Serial.println(error.c_str());
         }
       }
       configFile.close();
-    }else{
-      Serial.println(F("File doesnt exist"));
     }
   }else{
-    Serial.println(F("SPIFFS.begin failed"));
+    Serial.println(F("SPIFFS Failed"));
   }
   return result;
 }
@@ -50,10 +48,9 @@ bool JSONFileBase::readFile()
 void JSONFileBase::saveFile(){
   Serial.print(F("saving file "));
   Serial.println(fileName);
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.createObject();
+  DynamicJsonDocument doc(1024);
 
-  getJson(json);
+  getJson(doc);
 
   File configFile = SPIFFS.open(fileName, "w");
   if (!configFile) {
@@ -61,6 +58,7 @@ void JSONFileBase::saveFile(){
     return;
   }
 
-  json.printTo(configFile);
+  serializeJson(doc, configFile);
+  
   configFile.close();
 }

@@ -17,18 +17,6 @@ class MQTTHandler{
   public:
     MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile);
     
-    // doorPositions start_move_door_position;
-    Adafruit_MQTT_Client mqtt;
-    Adafruit_MQTT_Publish pub_door_position;
-    Adafruit_MQTT_Publish pub_door_locked;
-    Adafruit_MQTT_Publish pub_online;
-    Adafruit_MQTT_Publish pub_temperature;
-
-    Adafruit_MQTT_Subscribe sub_door_position;
-    Adafruit_MQTT_Subscribe sub_door_locked;
-    WiFiClient wifiClient;
-
-    // void initFeeds();
     void update();
 
     void doorAction(String data);
@@ -50,11 +38,22 @@ class MQTTHandler{
   private:
     SettingsFile *settingsFile;
     ConfigFile *configFile;
+    WiFiClient wifiClient;
+    bool isConnected;
+    Adafruit_MQTT_Client mqtt;
+
+    Adafruit_MQTT_Publish pub_door_position;
+    Adafruit_MQTT_Publish pub_door_locked;
+    Adafruit_MQTT_Publish pub_online;
+    Adafruit_MQTT_Publish pub_temperature;
+
+    Adafruit_MQTT_Subscribe sub_door_position;
+    Adafruit_MQTT_Subscribe sub_door_locked;
+
     uint32_t reconnectTimeout = 0;
     uint32_t lastSentPing = 0;
     String last_http_reponse_str;
     static MQTTHandler* m_instance;
-    bool isConnected;
     // void sendInflux(const String &body);
     void connect();
     

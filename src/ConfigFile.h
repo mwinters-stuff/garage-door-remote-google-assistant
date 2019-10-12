@@ -25,8 +25,8 @@ class ConfigFile: public JSONFileBase{
 
     ConfigFile();
 
-    void getJson(JsonObject & root);
-    void setJson(const JsonObject &object);
+    void getJson(JsonDocument & root) override;
+    void setJson(const JsonDocument &object) override;
 };
 
 
