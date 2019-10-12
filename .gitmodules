@@ -18,7 +18,7 @@
 	url = https://github.com/adafruit/Adafruit_MQTT_Library.git
 [submodule "libs/ESP8266DebounceSwitch"]
 	path = libs/ESP8266DebounceSwitch
-	url = https://github.com/wintersandroid/ESP8266DebounceButtons.git
+	url = https://github.com/mwinters-stuff/ESP8266DebounceButtons.git
 [submodule "libs/OneWire"]
 	path = libs/OneWire
 	url = https://github.com/PaulStoffregen/OneWire.git
