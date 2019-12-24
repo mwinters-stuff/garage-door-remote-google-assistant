@@ -23,6 +23,10 @@ class ConfigFile: public JSONFileBase{
     String mqtt_password;
     uint16_t mqtt_port;
 
+    String syslog_server;
+    uint16_t syslog_port;
+    String syslog_app_name;
+
     ConfigFile();
 
     void getJson(JsonDocument & root) override;

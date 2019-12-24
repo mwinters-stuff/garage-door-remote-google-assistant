@@ -8,6 +8,7 @@
 extern RemoteDebug Debug;
 
 IOHandler *IOHandler::m_instance;
+extern void log_printf(PGM_P fmt_P, ...);
 
 IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, ConfigFile *configFile):
   mqttHandler(mqttHandler),
@@ -70,15 +71,15 @@ void IOHandler::update(){
     firstLoop = false;
     doorPositions door_position;
     if(digitalRead(SWITCH_OPEN) == LOW && digitalRead(SWITCH_CLOSED) == HIGH){
-      Debug.println(F("Inital OPEN"));
+      log_printf(PSTR("Inital OPEN"));
       door_position = dpOpen;
     }else if(digitalRead(SWITCH_CLOSED) == LOW && digitalRead(SWITCH_OPEN) == HIGH){
-      Debug.println(F("Inital CLOSED"));
+      log_printf(PSTR("Inital CLOSED"));
       door_position = dpClosed;
     } else {
       door_position = dpOpenToClosed;
     }
-    mqttHandler->updateDoorPosition(door_position, door_position, false);
+    mqttHandler->updateDoorPosition(dpUnknown, door_position, false);
     switches.addSwitchPin(SWITCH_OPEN, digitalRead(SWITCH_OPEN) == HIGH, _switchCallback);
     switches.addSwitchPin(SWITCH_CLOSED, digitalRead(SWITCH_CLOSED) == HIGH, _switchCallback);
   }else{
@@ -128,14 +129,14 @@ void IOHandler::update(){
         ledRed(false);
         redMillisFlash = 0;
         requestMillis = 0;
-        Debug.println(F("Request failed"));
 
         requestRetries--;
         if(requestRetries > 0){
-          Debug.println(F("Retrying"));
+          log_printf(PSTR("Request failed %d"), requestRetries);
           toggleRelay();
           requestMillis = millis();
         }else{
+          log_printf(PSTR("Request failed leaving as is"));
           doorPositions new_door_position = door_position;
           if(door_position == dpOpenRequested){
             new_door_position = dpClosed;
@@ -158,18 +159,21 @@ void IOHandler::update(){
 
 void IOHandler::onOpenSwitchCallback(bool closed){
   switch_open_closed = closed;
-  Debug.println(String(F("onOpenSwitchCallback ")) + String(closed ? CLOSE : OPEN));
+  log_printf(PSTR("onOpenSwitchCallback %s"), String(closed ? CLOSE : OPEN).c_str());
   processSwitchs();
   switches.addSwitchPin(SWITCH_OPEN, !closed, _switchCallback);
 
 }
 
+
 void IOHandler::onClosedSwitchCallback(bool closed){
   switch_closed_closed = closed;
-  Debug.println(String(F("onClosedSwitchCallback ")) + String(closed ? CLOSE : OPEN));
+  log_printf(PSTR("onClosedSwitchCallback %s"), String(closed ? CLOSE : OPEN).c_str());
   processSwitchs();
   switches.addSwitchPin(SWITCH_CLOSED, !closed, _switchCallback);
 }
+
+const String colon(":");
 
 void IOHandler::processSwitchs(){
   bool s_open = switch_open_closed;
@@ -178,68 +182,65 @@ void IOHandler::processSwitchs(){
   doorPositions door_position = settingsFile->getCurrentDoorPosition();
   doorPositions current_door_position = door_position;
   bool door_moving = settingsFile->isDoorMoving();
-  Debug.print(F("IOHandler Switch: "));
+  String logString;
   switch(door_position){
     // case dpStartup:
     case dpUnknown:
-      Debug.print(F("Startup "));
+      logString += F("Startup ");
       if(s_closed){
-        Debug.println(CLOSE);
+        logString += CLOSE;
         door_position = dpClosed;
         ledRed(false);
       }else if(s_open){
         door_position = dpOpen;
-        Debug.println(OPEN);
+        logString += OPEN;
         ledRed(false);
       }else{
-        Debug.println(UNKNOWN);
+        logString += UNKNOWN;
         ledRed(true);
         delay(1000);
       }
       break;
     case dpClosedToOpen:
-      Debug.print(CLOSED_OPEN);
-      Debug.print(F(":"));
+      logString += CLOSED_OPEN;
+      logString += colon;
       if(!s_closed && ! door_moving){
-        Debug.println(MOVING);
+        logString += MOVING;
         door_moving = true;
       }
       if(s_open && door_moving){
-        Debug.println(OPEN);
+        logString += OPEN;
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Debug.println(CLOSE);
+        logString += CLOSE;
         door_position = dpClosed;
         door_moving = false;
       }
       break;
     case dpOpenToClosed:
-      Debug.print(OPEN_CLOSED);
-      Debug.print(F(":"));
+      logString += OPEN_CLOSED;
+      logString += colon;
       if(!s_open && !door_moving){
-        Debug.println(MOVING);
+        logString += MOVING;
         door_moving = true;
       }
       if(s_open && door_moving){
-        Debug.println(OPEN);
+        logString += OPEN;
         door_position = dpOpen;
         door_moving = false;
       }
       if(s_closed && door_moving){
-        Debug.println(CLOSED);
+        logString += CLOSED;
         door_position = dpClosed;
         door_moving = false;
       }
       break;
     case dpOpenRequested:
-      Debug.print(F("Open requested"));
+      logString += F("Open requested");
       if(!s_closed && !door_moving){
-        Debug.print(F(":"));
-        Debug.print(MOVING);
-        Debug.print(F(":"));
-        Debug.println(CLOSED_OPEN);
+        logString += colon + MOVING + colon + CLOSED_OPEN;
         door_moving = true;
         door_position = dpClosedToOpen;
         redMillisFlash = 0;
@@ -247,12 +248,9 @@ void IOHandler::processSwitchs(){
       }
       break;
     case dpCloseRequested:
-      Debug.print(F("Close requested"));
+      logString += F("Close requested");
       if(!s_open && !door_moving){
-        Debug.print(F(":"));
-        Debug.print(MOVING);
-        Debug.print(F(":"));
-        Debug.println(OPEN_CLOSED);
+        logString += colon + MOVING + colon + OPEN_CLOSED;
         door_moving = true;
         door_position = dpOpenToClosed;
         redMillisFlash = 0;
@@ -260,34 +258,30 @@ void IOHandler::processSwitchs(){
       }
       break; 
     case dpClosed:
-      Debug.print(F("Door Opening"));
+      logString += F("Door Opening");
       if(!s_closed && !door_moving){
-        Debug.print(F(":"));
-        Debug.print(MOVING);
-        Debug.print(F(":"));
-        Debug.println(CLOSED_OPEN);
+        logString += colon + MOVING + colon + CLOSED_OPEN;
         door_moving = true;
         door_position = dpClosedToOpen;
       }
       break;
     case dpOpen:
-      Debug.print(F("Door closing"));
+      logString += F("Door closing");
       if(!s_open && !door_moving){
-        Debug.print(F(":"));
-        Debug.print(MOVING);
-        Debug.print(F(":"));
-        Debug.println(OPEN_CLOSED);
+        logString += colon + MOVING + colon + OPEN_CLOSED;
         door_moving = true;
         door_position = dpOpenToClosed;
       }
       break; 
     
   }
+  log_printf(PSTR("processSwitches %s"), logString.c_str());
+
   mqttHandler->updateDoorPosition(current_door_position, door_position, door_moving);
 }
 
 void IOHandler::actionDoor(String position){
-  Debug.print(F("IOHandler Action: "));
+  String logString;
   if(!settingsFile->isLocked()){
     doorPositions current_door_position = settingsFile->getCurrentDoorPosition();
     doorPositions door_position = current_door_position;
@@ -295,7 +289,7 @@ void IOHandler::actionDoor(String position){
     if (position.compareTo(OPEN) == 0)
     {
       if(door_position == dpClosed){
-        Debug.println(F("Open Requested"));
+        logString += F("Open Requested");
         // start_move_door_position = door_position;
         door_position = dpOpenRequested;
         redMillisFlash = millis();
@@ -303,6 +297,7 @@ void IOHandler::actionDoor(String position){
         requestRetries = REQUEST_RETRIES;
         toggleRelay();
       }else{
+        logString += F("Already Open");
         redMillisFlash = millis() + 1000;
         ledRed(true);
       }
@@ -310,7 +305,7 @@ void IOHandler::actionDoor(String position){
     if (position.compareTo(CLOSE) == 0)
     {
       if(door_position == dpOpen){
-        Debug.println(F("Close Requested"));
+        logString += F("Close Requested");
         // start_move_door_position = door_position;
         door_position = dpCloseRequested;
         redMillisFlash = millis();
@@ -318,6 +313,7 @@ void IOHandler::actionDoor(String position){
         requestRetries = REQUEST_RETRIES;
         toggleRelay();
       }else{
+        logString += F("Already Closed");
         redMillisFlash = millis() + 1000;
         ledRed(true);
       }
@@ -326,15 +322,15 @@ void IOHandler::actionDoor(String position){
     // mqttHandler->updateDoorPosition(current_door_position, door_position);
   }else{
     ledRed(true);
-    Debug.println(LOCK);
+    logString += LOCK;
   }
+  log_printf(PSTR("actionDoor %s"), logString.c_str());
 }
 
-
 void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
-  Debug.print(F("IOHandler onOpenCloseButtonPress "));
+  String logString;
   if(!settingsFile->isLocked() && msPressed < 1000){
-    Debug.println(F("Toggle"));
+    logString += F("Toggle ");
 
     doorPositions current_door_position = settingsFile->getCurrentDoorPosition();
     doorPositions door_position = current_door_position;
@@ -343,7 +339,7 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
       case dpCloseRequested:
       case dpClosedToOpen:
       case dpClosed:
-        Debug.println(F("Button press open requested"));
+        logString += F("Button press open requested");
         door_position = dpOpenRequested;
         redMillisFlash = millis();
         requestMillis = millis();
@@ -352,30 +348,34 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
       case dpOpenRequested:
       case dpOpenToClosed:
       case dpOpen:
-        Debug.println(F("Button press close requested"));
+        logString += F("Button press close requested");
         door_position = dpOpenRequested;
         redMillisFlash = millis();
         requestMillis = millis();
         requestRetries = REQUEST_RETRIES;
         break;
       default:
-        Debug.println(F("Button press, incompatible state"));
+        logString += F("Button press, incompatible state");
         return;
     }
     settingsFile->setCurrentDoorPosition(door_position);
 
     toggleRelay();
   }else if(msPressed > 5000){
-    Debug.println(LOCK);     
+    logString += F("Changing to ");
+    logString += (settingsFile->isLocked() ? LOCK : UNLOCK);     
     mqttHandler->toggleLocked();
     ledRed(settingsFile->isLocked());
   }else{
-    Debug.println(settingsFile->isLocked() ? LOCK : UNLOCK);
+    logString += F("IS ");
+    logString += (settingsFile->isLocked() ? LOCK : UNLOCK);     
+    
   }
+  log_printf(PSTR("onOpenCloseButtonPress %d %s"), msPressed, logString.c_str());
 }
 
 void IOHandler::toggleRelay(){
-  Debug.println(F("Toggle Relay"));
+  log_printf(PSTR("Toggle Relay"));
   ledRed(true);
   digitalWrite(RELAY,RELAY_CLOSED);
   delay(500);

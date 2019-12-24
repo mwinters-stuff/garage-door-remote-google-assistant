@@ -13,18 +13,17 @@ extern RemoteDebug Debug;
 
 //#define AIO_SERVER "io.adafruit.com"
 //#define AIO_SERVERPORT 8883
+extern void log_printf(PGM_P fmt_P, ...);
 
 MQTTHandler *MQTTHandler::m_instance;
 
 void doorPositionCallback(char *data, uint16_t len){
-  Debug.print(F("Received POSITION Message "));
-  Debug.println(data);
+  log_printf(PSTR("Received POSITION Message %s "), data);
   MQTTHandler::_getInstance()->doorAction(String(data));
 }
 
 void doorLockCallback(char *data, uint16_t len){
-  Debug.print(F("Received LOCK Message "));
-  Debug.println(data);
+  log_printf(PSTR("Received LOCK Message %s"), data);
   MQTTHandler::_getInstance()->setLocked(String(data) == "LOCK");
 }
 
@@ -85,17 +84,17 @@ void MQTTHandler::connect() {
     Debug.println(configFile->mqtt_feed_online);
     Debug.print(millis() / 1000);
     reconnectTimeout = millis();
-    Debug.print(F(" Connecting to MQTT... "));
+    log_printf(PSTR(" Connecting to MQTT... "));
     if ((ret = mqtt.connect()) != 0) {
       // WiFi.printDiag(Serial);
-      Debug.println(mqtt.connectErrorString(ret));
-      Debug.println(F("Retrying MQTT connection in 5 seconds..."));
+      log_printf(PSTR("MQTT Connect Failed %s"), mqtt.connectErrorString(ret));
+      log_printf(PSTR("Retrying MQTT connection in 5 seconds..."));
       mqtt.disconnect();
       isConnected = false;
       return;
     }
     Debug.print(millis() / 1000);
-    Debug.println(F(" MQTT Connected!"));
+    log_printf(PSTR(" MQTT Connected!"));
     isConnected = true;
 
     pub_online.publish((uint32_t)millis());
@@ -106,18 +105,16 @@ void MQTTHandler::connect() {
 }
 
 void MQTTHandler::doorAction(String data) {
-  if(data != settingsFile->getLastDoorAction()){
+  log_printf(PSTR("Action: Received door action -> %s"), data.c_str());
+  if(data != settingsFile->getLastDoorAction() && data != String(UNKNOWN_ACTION)){
     settingsFile->setLastDoorAction(data);
-    Debug.print(F("Action: Received door action -> "));
-    Debug.println(data);
-
-    Debug.println(F("doorActionCallback"));
     doorActionCallback(data);
   }
-  // sendToInflux("door-action",data);
 }
 
 void MQTTHandler::updateDoorPosition(doorPositions current_door_position, doorPositions _door_position) {
+  log_printf(PSTR("updateDoorPosition from %s to %s"), SettingsFile::doorPositionToString(current_door_position).c_str(), SettingsFile::doorPositionToString(_door_position).c_str());
+
   settingsFile->updateDoorPosition(current_door_position, _door_position);
   String pos = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
   pub_door_position.publish(pos.c_str());
@@ -138,13 +135,12 @@ void MQTTHandler::toggleLocked() {
 
 void MQTTHandler::setLocked(bool locked) {
   if(locked != settingsFile->isLocked()){
-    Debug.print(F("MQTTHandler Setting lock to "));
     if (locked) {
-      Debug.println(LOCK);
+      log_printf(PSTR("MQTTHandler Setting lock to %s"), LOCK);
       settingsFile->setLocked();
       pub_door_locked.publish("LOCK");
     } else {
-      Debug.println(UNLOCK);
+      log_printf(PSTR("MQTTHandler Setting lock to %s"), UNLOCK);
       pub_door_locked.publish("UNLOCK");
       settingsFile->setUnLocked();
     }

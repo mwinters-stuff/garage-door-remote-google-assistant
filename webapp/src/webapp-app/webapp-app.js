@@ -150,6 +150,7 @@ class WebappApp extends PolymerElement {
             <paper-tabs selected="{{_selectedConfTab}}">
               <paper-tab>Network</paper-tab>
               <paper-tab>MQTT</paper-tab>
+              <paper-tab>SysLog</paper-tab>
             </paper-tabs>
             <iron-pages id="_ConfigPages" selected="{{_selectedConfTab}}">
               <div>
@@ -170,6 +171,11 @@ class WebappApp extends PolymerElement {
 
                 <paper-input always-float-label label="Door Position Feed" value="{{_config.mqtt_feed_set_position}}"></paper-input>
                 <paper-input always-float-label label="Door Lock Feed" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
+              </div>
+              <div>
+                  <paper-input always-float-label label="Syslog Server" value="{{_config.syslog_server}}"></paper-input>
+                  <paper-input always-float-label label="Syslog Server Port" value="{{_config.syslog_port}}"></paper-input>
+                  <paper-input always-float-label label="Syslog App Name" value="{{_config.syslog_app_name}}"></paper-input>
               </div>
 
             </iron-pages>            

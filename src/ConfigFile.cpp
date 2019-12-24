@@ -32,6 +32,10 @@ void ConfigFile::getJson(JsonDocument & root){
   root[MQTT_HOSTNAME                  ] = mqtt_hostname;
   root[MQTT_PORT                      ] = mqtt_port;
 
+  root[SYSLOG_APP_NAME                ] = syslog_app_name;
+  root[SYSLOG_PORT                    ] = syslog_port;
+  root[SYSLOG_SERVER                  ] = syslog_server;
+
 }
 
 void ConfigFile::setJson(const JsonDocument &json){
@@ -40,7 +44,7 @@ void ConfigFile::setJson(const JsonDocument &json){
   hostname            = json[HOSTNAME          ].as<String>();
   ntp_server          = json[NTP_SERVER        ].as<String>();
   update_interval     = json[UPDATE_INTERVAL   ].as<String>();
-  update_interval_ms = update_interval.toInt() * 1000;
+  update_interval_ms  = update_interval.toInt() * 1000;
 
   mqtt_feed_door_position=        json[MQTT_FEED_DOOR_POSITION        ].as<String>();
   mqtt_feed_door_locked=          json[MQTT_FEED_DOOR_LOCKED          ].as<String>();
@@ -50,4 +54,8 @@ void ConfigFile::setJson(const JsonDocument &json){
   mqtt_password=                  json[MQTT_PASSWORD                  ].as<String>();
   mqtt_hostname=                  json[MQTT_HOSTNAME                  ].as<String>();
   mqtt_port=                      json[MQTT_PORT                      ].as<uint16_t>();
+
+  syslog_app_name =               json[SYSLOG_APP_NAME                ].as<String>();
+  syslog_port =                   json[SYSLOG_PORT                    ].as<uint16_t>();
+  syslog_server =                 json[SYSLOG_SERVER                  ].as<String>();
 }

@@ -31,6 +31,11 @@ const char _HOSTNAME[] PROGMEM             = "hostname";
 const char _UPDATE_INTERVAL[] PROGMEM      = "update_interval";
 const char _NTP_SERVER[] PROGMEM           = "ntp_server";
 
+const char _SYSLOG_SERVER[] PROGMEM        = "syslog_server";
+const char _SYSLOG_PORT[] PROGMEM          = "syslog_port";
+const char _SYSLOG_APP_NAME[] PROGMEM      = "syslog_app_name";
+
+
 const char _MQTT_FEED_DOOR_POSITION[] PROGMEM = "mqtt_feed_set_position";
 const char _MQTT_FEED_DOOR_LOCKED[] PROGMEM = "mqtt_feed_set_locked";
 const char _MQTT_FEED_ONLINE[] PROGMEM = "mqtt_feed_online";

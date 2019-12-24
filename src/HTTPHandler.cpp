@@ -41,8 +41,8 @@ void HTTPHandler::setupServer(){
     root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
     root[TIME_STAMP] = NTP.getTimeDateString();
 
-    serializeJsonPretty(root, Debug);
-    Debug.println();
+    // serializeJsonPretty(root, Debug);
+    // Debug.println();
     String response;
     serializeJson(root, response);
 
@@ -58,8 +58,8 @@ void HTTPHandler::setupServer(){
     
     configFile->getJson(root);
 
-    serializeJsonPretty(root, Debug);
-    Debug.println();
+    // serializeJsonPretty(root, Debug);
+    // Debug.println();
     String response;
     serializeJson(root, response);
 
@@ -75,8 +75,8 @@ void HTTPHandler::setupServer(){
     
     settingsFile->getJson(root);
 
-    serializeJsonPretty(root, Debug);
-    Debug.println();
+    // serializeJsonPretty(root, Debug);
+    // Debug.println();
     String response;
     serializeJson(root, response);
 
@@ -121,7 +121,7 @@ void HTTPHandler::setupServer(){
     String name = httpServer.argName(0);
     String action = httpServer.arg(0);
 
-    Debug.printf_P(PSTR("Action: %s = %s "), name.c_str(), action.c_str());
+    Debug.printf_P(PSTR("Action: %s = %s \r\n"), name.c_str(), action.c_str());
 
     String result = formatUnknownAction(name, action);
 
