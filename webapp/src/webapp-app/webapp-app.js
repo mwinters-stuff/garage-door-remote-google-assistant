@@ -304,7 +304,7 @@ class WebappApp extends PolymerElement {
   }
 
   _door_action_enabled(position, locked) {
-    return (position !== "OPEN" && position !== "CLOSED") ||locked;
+    return (position !== "OPEN" && position !== "CLOSE") ||locked;
   }
 
   _door_action_title(position) {
