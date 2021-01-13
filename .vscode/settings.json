@@ -4,6 +4,7 @@
   "esp8266fs.esptool.verbosity": "vvv",
   "esp8266fs.logLevel": "verbose",
   "files.associations": {
+    "*.h": "c",
     "array": "cpp",
     "string_view": "cpp",
     "initializer_list": "cpp",
@@ -47,7 +48,8 @@
     "memory": "cpp",
     "optional": "cpp",
     "system_error": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "string": "cpp"
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#312C38",

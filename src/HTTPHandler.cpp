@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <ESP8266mDNS.h>
-#include <FS.h>
+#include <LittleFS.h>
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
@@ -27,7 +27,6 @@ void HTTPHandler::update(){
 }
 
 void HTTPHandler::setupServer(){
-  SPIFFS.begin();
 
   httpServer.on(F("/all"), HTTP_GET, [this]() {
     DynamicJsonDocument root(1024);
@@ -166,11 +165,11 @@ bool HTTPHandler::handleFileRead(String path){  // send the right file to the cl
   }
   String contentType = getContentType(path);             // Get the MIME type
   String pathWithGz = path + ".gz";
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){  // If the file exists, either as a compressed archive, or normal
-    if(SPIFFS.exists(pathWithGz)){                          // If there's a compressed version available
+  if(LittleFS.exists(pathWithGz) || LittleFS.exists(path)){  // If the file exists, either as a compressed archive, or normal
+    if(LittleFS.exists(pathWithGz)){                          // If there's a compressed version available
       path += ".gz";                                         // Use the compressed version
     }
-    File file = SPIFFS.open(path, "r");                    // Open the file
+    File file = LittleFS.open(path, "r");                    // Open the file
     httpServer.streamFile(file, contentType);    // Send it to the client
     file.close();                                          // Close the file again
     Serial.println(String("\tSent file: ") + path);
@@ -192,10 +191,10 @@ void HTTPHandler::setupOTA(){
       Debug.println(F("filesystem"));
 
     // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-    SPIFFS.end();
+    LittleFS.end();
   });
   ArduinoOTA.onEnd([]() {
-    SPIFFS.begin();
+    LittleFS.begin();
     Debug.println(F("\nEnd"));
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -228,7 +227,7 @@ void HTTPHandler::setupOTA(){
 
 
 String HTTPHandler::doDoorAction(const String &action){
-  if(action.compareTo(OPEN) == 0 || action.compareTo(CLOSE)==0){
+  if(action.compareTo(OPEN) == 0 || action.compareTo(CLOSE) == 0 || action.compareTo(FORCE) == 0){
     // TODO: DataStore::get()->io_door_action->save(action);
     ioHandler->setDoorAction(action);
     return OKRESULT;

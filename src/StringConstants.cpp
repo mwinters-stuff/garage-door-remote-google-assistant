@@ -54,6 +54,7 @@ const char _MQTT_HOSTNAME[] PROGMEM = "mqtt_hostname";
 
 const char _OPEN[] PROGMEM   = "OPEN";
 const char _CLOSE[] PROGMEM  = "CLOSE";
+const char _FORCE[] PROGMEM  = "FORCE";
 // const char _CLOSED[] PROGMEM = "CLOSED";
 const char _LOCK[] PROGMEM   = "LOCK";
 const char _UNLOCK[] PROGMEM = "UNLOCK";

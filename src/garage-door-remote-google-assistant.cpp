@@ -1,13 +1,11 @@
 
-#ifdef ENABLE_GDB
-	#include "gdbstub.h"
-#endif
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
 #include <Syslog.h>
+#include <LittleFS.h>
 
 #include <TimeLib.h> 
 #include <NtpClientLib.h>
@@ -51,10 +49,8 @@ void log_printf(PGM_P fmt_P, ...){
 void setup() {
   pinMode(RELAY, OUTPUT);
   digitalWrite(RELAY,LOW);
+  LittleFS.begin();
 
-  #ifdef ENABLE_GDB
-	  gdbstub_init();
-  #endif
   Serial.begin(115200);
   for(int i = 0; i < 10; i++){
     Serial.println();

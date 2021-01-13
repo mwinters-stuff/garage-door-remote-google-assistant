@@ -1,19 +1,22 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
-            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
-        },
-        {
-            "name": "Linux",
+            "name": "PlatformIO",
             "includePath": [
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/include",
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/src",
-                "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Syslog_ID1506/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA",
+                "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/ESP8266DebounceButtons_ID6753/src",
+                "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Syslog_ID1506/src",
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/ArduinoHttpClient_ID798/src",
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/NtpClientLib_ID727/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src",
@@ -36,7 +39,6 @@
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu",
                 "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Time_ID44@1.5",
-                "/home/mathew/.platformio/lib/ServoESP32_ID1739/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src",
@@ -48,7 +50,6 @@
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src",
-                "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src",
                 "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src",
@@ -65,12 +66,13 @@
                 "path": [
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/include",
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/src",
-                    "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Syslog_ID1506/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA",
+                    "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src",
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/ESP8266DebounceButtons_ID6753/src",
+                    "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Syslog_ID1506/src",
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/ArduinoHttpClient_ID798/src",
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/NtpClientLib_ID727/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src",
@@ -93,7 +95,6 @@
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu",
                     "/home/mathew/Arduino/garage-door-remote-google-assistant/.pio/libdeps/esp12eTest/Time_ID44@1.5",
-                    "/home/mathew/.platformio/lib/ServoESP32_ID1739/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src",
@@ -105,7 +106,6 @@
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src",
-                    "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src",
                     "/home/mathew/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src",
@@ -119,7 +119,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=40304",
+                "PLATFORMIO=50004",
                 "ESP8266",
                 "ARDUINO_ARCH_ESP8266",
                 "ARDUINO_ESP8266_NODEMCU",
@@ -138,7 +138,6 @@
                 "VTABLES_IN_FLASH",
                 ""
             ],
-            "intelliSenseMode": "clang-x64",
             "cStandard": "c99",
             "cppStandard": "c++11",
             "compilerPath": "/home/mathew/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-gcc",

@@ -42,6 +42,7 @@ extern const char _MQTT_PORT[] PROGMEM;
 
 extern const char _OPEN[] PROGMEM;
 extern const char _CLOSE[] PROGMEM;
+extern const char _FORCE[] PROGMEM;
 // extern const char _CLOSED[] PROGMEM;
 extern const char _LOCK[] PROGMEM;
 // extern const char _LOCKED[] PROGMEM;
@@ -88,6 +89,7 @@ extern const char _INFLUX_URL[] PROGMEM;
 
 #define OPEN FPSTR(_OPEN)
 #define CLOSE FPSTR(_CLOSE)
+#define FORCE FPSTR(_FORCE)
 // #define CLOSED FPSTR(_CLOSED)
 #define LOCK FPSTR(_LOCK)
 // #define LOCKED FPSTR(_LOCKED)

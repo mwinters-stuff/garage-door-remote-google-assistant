@@ -1,5 +1,5 @@
 #include "JSONFileBase.h"
-#include <FS.h>
+#include <LittleFS.h>
 
 JSONFileBase::JSONFileBase(const String& fileName):
       fileName(fileName){
@@ -9,38 +9,33 @@ JSONFileBase::JSONFileBase(const String& fileName):
 bool JSONFileBase::readFile()
 {
   bool result = false;
-  if (SPIFFS.begin())
+  Serial.println(F("mounted file system"));
+  if (LittleFS.exists(fileName))
   {
-    Serial.println(F("mounted file system"));
-    if (SPIFFS.exists(fileName))
+    //file exists, reading and loading
+    Serial.print(F("reading file "));
+    Serial.println(fileName);
+    File configFile = LittleFS.open(fileName, "r");
+    if (configFile)
     {
-      //file exists, reading and loading
-      Serial.print(F("reading file "));
-      Serial.println(fileName);
-      File configFile = SPIFFS.open(fileName, "r");
-      if (configFile)
-      {
-        DynamicJsonDocument doc(1024);
-        auto error = deserializeJson(doc, configFile);
+      DynamicJsonDocument doc(1024);
+      auto error = deserializeJson(doc, configFile);
 
-        if (!error)
-        {
-          serializeJsonPretty(doc, Serial);
-          Serial.println();
-          setJson(doc);
-          Serial.println(F("Set"));
-          result = true;
-        }
-        else
-        {
-          Serial.println(F("failed to load json "));
-          Serial.println(error.c_str());
-        }
+      if (!error)
+      {
+        serializeJsonPretty(doc, Serial);
+        Serial.println();
+        setJson(doc);
+        Serial.println(F("Set"));
+        result = true;
       }
-      configFile.close();
+      else
+      {
+        Serial.println(F("failed to load json "));
+        Serial.println(error.c_str());
+      }
     }
-  }else{
-    Serial.println(F("SPIFFS Failed"));
+    configFile.close();
   }
   return result;
 }
@@ -52,7 +47,7 @@ void JSONFileBase::saveFile(){
 
   getJson(doc);
 
-  File configFile = SPIFFS.open(fileName, "w");
+  File configFile = LittleFS.open(fileName, "w");
   if (!configFile) {
     Serial.println(F("failed to open config file for writing"));
     return;

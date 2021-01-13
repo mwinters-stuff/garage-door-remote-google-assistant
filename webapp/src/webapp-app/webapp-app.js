@@ -140,6 +140,7 @@ class WebappApp extends PolymerElement {
             <paper-button raised class="blue" disabled="[[_door_action_enabled(_data.door_position, _data.door_locked)]]" 
               on-tap="_toggle_door">[[_door_action_title(_data.door_position)]]</paper-button>
             <paper-button on-tap="_toggle_locked">[[_door_locked_title(_data.door_locked)]]</paper-button>
+            <paper-button on-tap="_force">Force</paper-button>
             <paper-button raised class="green" on-tap="_configure">Configure</paper-button>
           </div>
         </paper-card>
@@ -338,6 +339,14 @@ class WebappApp extends PolymerElement {
   _toggle_locked() {
     this._actionParams = {
       "lock_action": this._data.door_locked ? "UNLOCK" : "LOCK"
+    };
+    this.$.doorActionAjax.generateRequest();
+    
+  }
+
+  _force() {
+    this._actionParams = {
+      "door_action": "FORCE"
     };
     this.$.doorActionAjax.generateRequest();
     

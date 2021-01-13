@@ -286,8 +286,14 @@ void IOHandler::actionDoor(String position){
     doorPositions current_door_position = settingsFile->getCurrentDoorPosition();
     doorPositions door_position = current_door_position;
     
-    if (position.compareTo(OPEN) == 0)
-    {
+    if(position.compareTo(FORCE) == 0){
+      logString += F("Force Door Requested");
+      redMillisFlash = millis();
+      requestMillis = millis();
+      toggleRelay();
+    }
+
+    if (position.compareTo(OPEN) == 0) {
       if(door_position == dpClosed){
         logString += F("Open Requested");
         // start_move_door_position = door_position;
@@ -302,8 +308,7 @@ void IOHandler::actionDoor(String position){
         ledRed(true);
       }
     }
-    if (position.compareTo(CLOSE) == 0)
-    {
+    if (position.compareTo(CLOSE) == 0) {
       if(door_position == dpOpen){
         logString += F("Close Requested");
         // start_move_door_position = door_position;
@@ -378,7 +383,7 @@ void IOHandler::toggleRelay(){
   log_printf(PSTR("Toggle Relay"));
   ledRed(true);
   digitalWrite(RELAY,RELAY_CLOSED);
-  delay(500);
+  delay(1000);
   ledRed(false);
   digitalWrite(RELAY,RELAY_OPEN);
 
