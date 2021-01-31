@@ -12,15 +12,16 @@
 #include "SettingsFile.h"
 #include "HardwareConfig.h"
 #include "MQTTHandler.h"
+#include "NewPing.h"
 #include <memory>
 
-#define FLASH_TIME_ON 50
-#define MOVING_FLASH_TIME_OFF 450
-#define REQUEST_FLASH_TIME_OFF 100
-#define REQUEST_FLASH_TIME_ON 100
-#define WAITING_TIME_OFF 4950
-#define REQUEST_MUST_OPEN 5000
-#define REQUEST_RETRIES 3
+// #define FLASH_TIME_ON 50
+// #define MOVING_FLASH_TIME_OFF 450
+// #define REQUEST_FLASH_TIME_OFF 100
+// #define REQUEST_FLASH_TIME_ON 100
+// #define WAITING_TIME_OFF 4950
+// #define REQUEST_MUST_OPEN 5000
+// #define REQUEST_RETRIES 3
 
 class IOHandler{
   public:
@@ -33,12 +34,11 @@ class IOHandler{
     void ledRed(bool on);
 
     void update();
+    void doorCommand(String position);
+    uint16_t sonicLastDistance(){
+      return sonic_last_distance;
+    };
 
-    void setDoorAction(String action){
-      doorAction = action;
-    }
-
-    static void _switchCallback(uint8_t button, bool closed);
   private:
     MQTTHandler *mqttHandler;
     SettingsFile *settingsFile;
@@ -47,27 +47,27 @@ class IOHandler{
     uint32_t redMillisFlash;
     OneWire oneWire;
     DallasTemperature DS18B20;
-    bool firstLoop;
+    NewPing sonic;
     uint32_t temperatureLastRead;
-    String doorAction;
+    uint32_t sonic_read_commanded_start;
+    uint16_t sonic_last_distance;
     
-    bool switch_open_closed;
-    bool switch_closed_closed;
-
+    
+#ifdef OPEN_CLOSE_BUTTON
     void onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed);
-    void onOpenSwitchCallback(bool closed);
-    void onClosedSwitchCallback(bool closed);
+#endif    
     void readTemperature();
 
     ESP8266DebounceSwitch switches;
-    uint32_t requestMillis;
+    uint32_t sonarReadMillis;
     uint8_t requestRetries;
+    bool sonic_reading_commanded;
+    uint16_t sonic_read_interval;
 
-    stringCallback doorActionCallback;
+    stringCallback doorCommandCallback;
 
-    void processSwitchs();
     void toggleRelay();
-    void actionDoor(String position);
+    void readSonar();
 
 
     static IOHandler* m_instance;

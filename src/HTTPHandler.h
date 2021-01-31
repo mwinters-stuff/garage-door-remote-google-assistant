@@ -26,7 +26,7 @@ class HTTPHandler{
     ConfigFile *configFile;
 
     // bool handleFileRead(AsyncWebServerRequest *request);
-    String doDoorAction(const String &action);
+    String doDoorCommand(const String &action);
     String doLockAction(const String &action);
     String getContentType(String filename);
     bool handleFileRead(String path);

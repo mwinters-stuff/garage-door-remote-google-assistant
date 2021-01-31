@@ -25,12 +25,16 @@ void ConfigFile::getJson(JsonDocument & root){
 
   root[MQTT_FEED_DOOR_POSITION        ] = mqtt_feed_door_position;
   root[MQTT_FEED_DOOR_LOCKED          ] = mqtt_feed_door_locked;
+  root[MQTT_FEED_DOOR_POSITION_COMMAND ] = mqtt_feed_door_position_command;
+  root[MQTT_FEED_DOOR_LOCKED_COMMAND  ] = mqtt_feed_door_locked_command;
   root[MQTT_FEED_ONLINE               ] = mqtt_feed_online;
   root[MQTT_FEED_TEMPERATURE          ] = mqtt_feed_temperature;
+  root[MQTT_FEED_SONIC_CM             ] = mqtt_feed_sonic_cm;
   root[MQTT_USERNAME                  ] = mqtt_username;
   root[MQTT_PASSWORD                  ] = mqtt_password;
   root[MQTT_HOSTNAME                  ] = mqtt_hostname;
   root[MQTT_PORT                      ] = mqtt_port;
+  root[DISTANCE_OPEN                  ] = distance_open;
 
   root[SYSLOG_APP_NAME                ] = syslog_app_name;
   root[SYSLOG_PORT                    ] = syslog_port;
@@ -48,12 +52,17 @@ void ConfigFile::setJson(const JsonDocument &json){
 
   mqtt_feed_door_position=        json[MQTT_FEED_DOOR_POSITION        ].as<String>();
   mqtt_feed_door_locked=          json[MQTT_FEED_DOOR_LOCKED          ].as<String>();
+  mqtt_feed_door_position_command=json[MQTT_FEED_DOOR_POSITION_COMMAND].as<String>();
+  mqtt_feed_door_locked_command=  json[MQTT_FEED_DOOR_LOCKED_COMMAND  ].as<String>();
   mqtt_feed_online=               json[MQTT_FEED_ONLINE               ].as<String>();
   mqtt_feed_temperature=          json[MQTT_FEED_TEMPERATURE          ].as<String>();
+  mqtt_feed_sonic_cm=             json[MQTT_FEED_SONIC_CM          ].as<String>();
   mqtt_username=                  json[MQTT_USERNAME                  ].as<String>();
   mqtt_password=                  json[MQTT_PASSWORD                  ].as<String>();
   mqtt_hostname=                  json[MQTT_HOSTNAME                  ].as<String>();
   mqtt_port=                      json[MQTT_PORT                      ].as<uint16_t>();
+
+  distance_open=                  json[DISTANCE_OPEN                  ].as<uint16_t>();
 
   syslog_app_name =               json[SYSLOG_APP_NAME                ].as<String>();
   syslog_port =                   json[SYSLOG_PORT                    ].as<uint16_t>();

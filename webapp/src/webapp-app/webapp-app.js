@@ -82,7 +82,7 @@ class WebappApp extends PolymerElement {
     </iron-ajax>
     <iron-ajax id="rebootAjax" url="[[_http_root]]reboot" method="GET" debounce-duration="300" on-response="_onRebootResponse" on-error="_onRebootError">
     </iron-ajax>
-    <iron-ajax id="doorActionAjax" url="[[_http_root]]action" handle-as="json" method="GET" params="[[_actionParams]]" debounce-duration="300" on-response="_onActionResponse"
+    <iron-ajax id="doorActionAjax" url="[[_http_root]]command" handle-as="json" method="GET" params="[[_actionParams]]" debounce-duration="300" on-response="_onActionResponse"
       on-response="_onActionError">
     </iron-ajax>
 
@@ -106,16 +106,16 @@ class WebappApp extends PolymerElement {
                   <td class="value">[[_data.time_stamp]]</td>
                 </tr>
                 <tr>
-                  <td class="label">Door Action</td>
-                  <td class="value">[[_data.door_action]]</td>
-                </tr>
-                <tr>
-                  <td class="label">Door Position</td>
-                  <td class="value">[[_data.door_position]]</td>
+                  <td class="label">Door Closed</td>
+                  <td class="value">[[_true_false(_data.door_closed)]]</td>
                 </tr>
                 <tr>
                   <td class="label">Door Locked</td>
                   <td class="value">[[_true_false(_data.door_locked)]]</td>
+                </tr>
+                <tr>
+                  <td class="label">Ultrasonic Distance</td>
+                  <td class="value">[[_data.sonic_distance]] cm</td>
                 </tr>
                 <tr>
                   <td class="label">Temperature</td>
@@ -137,8 +137,8 @@ class WebappApp extends PolymerElement {
             </table>
           </div>
           <div class="card-actions">
-            <paper-button raised class="blue" disabled="[[_door_action_enabled(_data.door_position, _data.door_locked)]]" 
-              on-tap="_toggle_door">[[_door_action_title(_data.door_position)]]</paper-button>
+            <paper-button raised class="blue" disabled="[[_door_action_enabled(_data.door_locked)]]" 
+              on-tap="_toggle_door">[[_door_action_title(_data.door_closed)]]</paper-button>
             <paper-button on-tap="_toggle_locked">[[_door_locked_title(_data.door_locked)]]</paper-button>
             <paper-button on-tap="_force">Force</paper-button>
             <paper-button raised class="green" on-tap="_configure">Configure</paper-button>
@@ -159,6 +159,7 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="WiFi AP Name" value="{{_config.wifi_ap}}"></paper-input>
                   <paper-input always-float-label label="WiFi Password" type="password" value="{{_config.wifi_password}}"></paper-input>
                   <paper-input always-float-label label="Temperature Update Interval (Sec)" value="{{_config.update_interval}}"></paper-input>
+                  <paper-input always-float-label label="Distance Open CM" value="{{_config.distance_open}}"></paper-input>
                   <paper-input always-float-label label="NTP Server" value="{{_config.ntp_server}}"></paper-input>
               </div>
               <div>
@@ -168,10 +169,13 @@ class WebappApp extends PolymerElement {
                 <paper-input always-float-label label="Password" value="{{_config.mqtt_password}}"></paper-input>
 
                 <paper-input always-float-label label="Online Feed" value="{{_config.mqtt_feed_online}}"></paper-input>
-                <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
+                <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_sonic_cm}}"></paper-input>
+                <paper-input always-float-label label="Utrasonic Distance Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
 
-                <paper-input always-float-label label="Door Position Feed" value="{{_config.mqtt_feed_set_position}}"></paper-input>
-                <paper-input always-float-label label="Door Lock Feed" value="{{_config.mqtt_feed_set_locked}}"></paper-input>
+                <paper-input always-float-label label="Door Position Command Feed" value="{{_config.mqtt_feed_position_command}}"></paper-input>
+                <paper-input always-float-label label="Door Position Report Feed" value="{{_config.mqtt_feed_report_position}}"></paper-input>
+                <paper-input always-float-label label="Door Lock Command Feed" value="{{_config.mqtt_feed_locked_command}}"></paper-input>
+                <paper-input always-float-label label="Door Lock Report Feed" value="{{_config.mqtt_feed_report_locked}}"></paper-input>
               </div>
               <div>
                   <paper-input always-float-label label="Syslog Server" value="{{_config.syslog_server}}"></paper-input>
@@ -304,19 +308,16 @@ class WebappApp extends PolymerElement {
     return home ? "Yes" : "No";
   }
 
-  _door_action_enabled(position, locked) {
-    return (position !== "OPEN" && position !== "CLOSE") ||locked;
+  _door_action_enabled(locked) {
+    return locked;
   }
 
-  _door_action_title(position) {
-    if (position === "OPEN") {
-      return "Close Door"
-    } else if (position === "CLOSE") {
+  _door_action_title(closed) {
+    if (closed) {
       return "Open Door";
-    } if (position === "" || position == null) {
-      return "Unknown";
+    } else  {
+      return "Close Door"
     }
-    return "Moving";
   }
 
   _door_locked_title(locked){
@@ -331,7 +332,7 @@ class WebappApp extends PolymerElement {
 
   _toggle_door() {
     this._actionParams = {
-      "door_action": this._data.door_position === "OPEN" ? "CLOSE" : "OPEN"
+      "door_command": this._data.door_closed ? "OPEN" : "CLOSE"
     };
     this.$.doorActionAjax.generateRequest();
   }
@@ -346,7 +347,7 @@ class WebappApp extends PolymerElement {
 
   _force() {
     this._actionParams = {
-      "door_action": "FORCE"
+      "door_command": "FORCE"
     };
     this.$.doorActionAjax.generateRequest();
     

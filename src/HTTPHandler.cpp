@@ -33,9 +33,9 @@ void HTTPHandler::setupServer(){
 
     root[HEAP] = ESP.getFreeHeap();
     root[TEMPERATURE] = settingsFile->getTemperature();
-    root[DOOR_ACTION] = settingsFile->getLastDoorAction();
-    root[DOOR_POSITION] = SettingsFile::doorPositionToString(settingsFile->getCurrentDoorPosition());
+    root[DOOR_CLOSED] = settingsFile->isClosed();
     root[DOOR_LOCKED] =  settingsFile->isLocked();
+    root[SONIC_DISTANCE] = ioHandler->sonicLastDistance();
     root[UP_TIME] = NTP.getUptimeString();
     root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
     root[TIME_STAMP] = NTP.getTimeDateString();
@@ -111,7 +111,7 @@ void HTTPHandler::setupServer(){
    
   });
 
-  httpServer.on(String(F("/action")).c_str(), HTTP_GET, [this](){
+  httpServer.on(String(F("/command")).c_str(), HTTP_GET, [this](){
     if(httpServer.args() == 0){
       httpServer.send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
       return;
@@ -124,8 +124,8 @@ void HTTPHandler::setupServer(){
 
     String result = formatUnknownAction(name, action);
 
-    if(name.equals(DOOR_ACTION)){
-      result = doDoorAction(action);
+    if(name.equals(DOOR_COMMAND)){
+      result = doDoorCommand(action);
     }
 
     if(name.equals(LOCK_ACTION)){
@@ -226,14 +226,14 @@ void HTTPHandler::setupOTA(){
 }
 
 
-String HTTPHandler::doDoorAction(const String &action){
-  if(action.compareTo(OPEN) == 0 || action.compareTo(CLOSE) == 0 || action.compareTo(FORCE) == 0){
+String HTTPHandler::doDoorCommand(const String &command){
+  if(command.compareTo(OPEN) == 0 || command.compareTo(CLOSE) == 0 || command.compareTo(FORCE) == 0){
     // TODO: DataStore::get()->io_door_action->save(action);
-    ioHandler->setDoorAction(action);
+    ioHandler->doorCommand(command);
     return OKRESULT;
   }
 
-  return formatUnknownAction(DOOR_ACTION, action);
+  return formatUnknownAction(DOOR_COMMAND, command);
 }
 
 String HTTPHandler::doLockAction(const String &action){
