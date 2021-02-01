@@ -169,8 +169,8 @@ class WebappApp extends PolymerElement {
                 <paper-input always-float-label label="Password" value="{{_config.mqtt_password}}"></paper-input>
 
                 <paper-input always-float-label label="Online Feed" value="{{_config.mqtt_feed_online}}"></paper-input>
-                <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_sonic_cm}}"></paper-input>
-                <paper-input always-float-label label="Utrasonic Distance Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
+                <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
+                <paper-input always-float-label label="Utrasonic Distance Feed" value="{{_config.mqtt_feed_sonic_cm}}"></paper-input>
 
                 <paper-input always-float-label label="Door Position Command Feed" value="{{_config.mqtt_feed_position_command}}"></paper-input>
                 <paper-input always-float-label label="Door Position Report Feed" value="{{_config.mqtt_feed_report_position}}"></paper-input>

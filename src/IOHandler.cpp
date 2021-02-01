@@ -18,7 +18,7 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
   redMillisFlash(0),
   oneWire(ONE_WIRE_PIN),
   DS18B20(&oneWire),
-  sonic(SONAR_TRIGGER, SONAR_ECHO, 500),
+  sonic(SONAR_TRIGGER, SONAR_ECHO),
   sonarReadMillis(0),
   sonic_reading_commanded(false),
   sonic_read_interval(SONAR_READ_INTERVAL_WAITING)
@@ -71,18 +71,18 @@ void IOHandler::update(){
 
 void IOHandler::readSonar(){
   if(millis() - sonarReadMillis > sonic_read_interval){
-
-    sonic_last_distance = sonic.ping_cm();
+   
+    sonic_last_distance = sonic.measureDistanceCm(settingsFile->getTemperature());
     mqttHandler->setSonicReading(sonic_last_distance);
     
     String log = String(F("Sonic CM ")) + String(sonic_last_distance);
     if(sonarReadMillis == 0){ 
       // first run update mqtt.
-      mqttHandler->setClosed(sonic_last_distance == 0 || sonic_last_distance > configFile->distance_open);
+      mqttHandler->setClosed(sonic_last_distance < 0 || sonic_last_distance > configFile->distance_open);
     }
 
 
-    if(sonic_last_distance == 0 || sonic_last_distance > configFile->distance_open){
+    if(sonic_last_distance < 0.0 || sonic_last_distance > configFile->distance_open){
       if(!settingsFile->isClosed()){
         log += F(" setting CLOSED");
         mqttHandler->setClosed(true);

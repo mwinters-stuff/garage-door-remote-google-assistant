@@ -12,7 +12,7 @@
 #include "SettingsFile.h"
 #include "HardwareConfig.h"
 #include "MQTTHandler.h"
-#include "NewPing.h"
+#include "HCSR04.h"
 #include <memory>
 
 // #define FLASH_TIME_ON 50
@@ -35,7 +35,7 @@ class IOHandler{
 
     void update();
     void doorCommand(String position);
-    uint16_t sonicLastDistance(){
+    double sonicLastDistance(){
       return sonic_last_distance;
     };
 
@@ -47,10 +47,10 @@ class IOHandler{
     uint32_t redMillisFlash;
     OneWire oneWire;
     DallasTemperature DS18B20;
-    NewPing sonic;
+    UltraSonicDistanceSensor sonic;
     uint32_t temperatureLastRead;
     uint32_t sonic_read_commanded_start;
-    uint16_t sonic_last_distance;
+    double sonic_last_distance;
     
     
 #ifdef OPEN_CLOSE_BUTTON
