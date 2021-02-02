@@ -10,6 +10,8 @@ extern RemoteDebug Debug;
 IOHandler *IOHandler::m_instance;
 extern void log_printf(PGM_P fmt_P, ...);
 
+#define SONIC_NO_READING 38000.0
+
 IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, ConfigFile *configFile):
   mqttHandler(mqttHandler),
   settingsFile(settingsFile),
@@ -18,7 +20,7 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
   redMillisFlash(0),
   oneWire(ONE_WIRE_PIN),
   DS18B20(&oneWire),
-  sonic(SONAR_TRIGGER, SONAR_ECHO),
+  sonic(SONAR_TRIGGER, SONAR_ECHO,20,100),
   sonarReadMillis(0),
   sonic_reading_commanded(false),
   sonic_read_interval(SONAR_READ_INTERVAL_WAITING)
@@ -45,6 +47,7 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
     doorCommand(command);
   };
   DS18B20.begin();
+  sonic.begin();
   Debug.print(F("DS18B20 Init Found "));
   Debug.println(DS18B20.getDS18Count());
   temperatureLastRead = millis();
@@ -65,24 +68,28 @@ void IOHandler::update(){
 
   readTemperature();
   switches.update();
+#ifdef TEST
+  sonic_read_interval = 500;
+#endif
+
   readSonar();
 
 }
 
 void IOHandler::readSonar(){
   if(millis() - sonarReadMillis > sonic_read_interval){
-   
-    sonic_last_distance = sonic.measureDistanceCm(settingsFile->getTemperature());
-    mqttHandler->setSonicReading(sonic_last_distance);
+    sonic.setTemperature(settingsFile->getTemperature());
+    sonic_last_distance = sonic.getDistance();
+    mqttHandler->setSonicReading(sonic_last_distance == SONIC_NO_READING ? 0 : sonic_last_distance);
     
     String log = String(F("Sonic CM ")) + String(sonic_last_distance);
     if(sonarReadMillis == 0){ 
       // first run update mqtt.
-      mqttHandler->setClosed(sonic_last_distance < 0 || sonic_last_distance > configFile->distance_open);
+      mqttHandler->setClosed(sonic_last_distance == SONIC_NO_READING || sonic_last_distance > configFile->distance_open);
     }
 
 
-    if(sonic_last_distance < 0.0 || sonic_last_distance > configFile->distance_open){
+    if(sonic_last_distance == SONIC_NO_READING || sonic_last_distance > configFile->distance_open){
       if(!settingsFile->isClosed()){
         log += F(" setting CLOSED");
         mqttHandler->setClosed(true);
@@ -95,6 +102,7 @@ void IOHandler::readSonar(){
     }
     log_printf(log.c_str());
     sonarReadMillis = millis();
+    #ifndef TEST
     if(sonic_reading_commanded){
       if(millis() - sonic_read_commanded_start > SONAR_READ_COMMANDED_FOR){
         log_printf(PSTR("No Longer reading sonic for commanded interval"));
@@ -102,6 +110,7 @@ void IOHandler::readSonar(){
         sonic_read_interval = SONAR_READ_INTERVAL_WAITING;
       }
     }
+    #endif
   }
 
 }

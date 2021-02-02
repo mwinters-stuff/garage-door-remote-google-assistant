@@ -12,7 +12,7 @@
 #include "SettingsFile.h"
 #include "HardwareConfig.h"
 #include "MQTTHandler.h"
-#include "HCSR04.h"
+#include <HCSR04.h>
 #include <memory>
 
 // #define FLASH_TIME_ON 50
@@ -47,7 +47,7 @@ class IOHandler{
     uint32_t redMillisFlash;
     OneWire oneWire;
     DallasTemperature DS18B20;
-    UltraSonicDistanceSensor sonic;
+    HCSR04 sonic;
     uint32_t temperatureLastRead;
     uint32_t sonic_read_commanded_start;
     double sonic_last_distance;
