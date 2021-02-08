@@ -1,7 +1,7 @@
 (
   cd webapp || exit
   # yarn install
-  ~/.yarn/bin/polymer build 
+  polymer build 
   mkdir -p ../data
   cp build/es6prod/* ../data/
 )

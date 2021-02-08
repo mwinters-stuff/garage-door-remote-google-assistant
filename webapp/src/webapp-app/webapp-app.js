@@ -22,8 +22,6 @@ class WebappApp extends PolymerElement {
     <style is="custom-style" include="iron-flex iron-flex-alignment">
       :host {
         transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        <!-- --app-primary-color: var(--paper-indigo-500);
-        --app-secondary-color: black; -->
         background-color: lightgray;
       }
 
@@ -159,7 +157,8 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="WiFi AP Name" value="{{_config.wifi_ap}}"></paper-input>
                   <paper-input always-float-label label="WiFi Password" type="password" value="{{_config.wifi_password}}"></paper-input>
                   <paper-input always-float-label label="Temperature Update Interval (Sec)" value="{{_config.update_interval}}"></paper-input>
-                  <paper-input always-float-label label="Distance Open CM" value="{{_config.distance_open}}"></paper-input>
+                  <paper-input always-float-label label="Distance Open Min CM" value="{{_config.distance_open_min}}"></paper-input>
+                  <paper-input always-float-label label="Distance Open Max CM" value="{{_config.distance_open_max}}"></paper-input>
                   <paper-input always-float-label label="NTP Server" value="{{_config.ntp_server}}"></paper-input>
               </div>
               <div>

@@ -79,17 +79,35 @@ void IOHandler::update(){
 void IOHandler::readSonar(){
   if(millis() - sonarReadMillis > sonic_read_interval){
     sonic.setTemperature(settingsFile->getTemperature());
-    sonic_last_distance = sonic.getDistance();
+    noInterrupts();
+    sonic_last_distance = SONIC_NO_READING;
+    float readingssum = 0.0f;
+    float readings_count = 0;
+    for(int i = 0; i < 5; i++){
+       float r = sonic.getDistance();
+        Debug.print("R: ");
+        Debug.print(r);
+        Debug.println();
+        
+        if(r != SONIC_NO_READING){
+         readingssum += r;
+         ++readings_count;
+       }
+    }
+    interrupts();
+    if(readings_count > 0){
+      sonic_last_distance = readingssum / readings_count;
+    }
     mqttHandler->setSonicReading(sonic_last_distance == SONIC_NO_READING ? 0 : sonic_last_distance);
     
     String log = String(F("Sonic CM ")) + String(sonic_last_distance);
+    bool is_closed = sonic_last_distance == SONIC_NO_READING || (sonic_last_distance < configFile->open_distance_min || sonic_last_distance > configFile->open_distance_max);
     if(sonarReadMillis == 0){ 
       // first run update mqtt.
-      mqttHandler->setClosed(sonic_last_distance == SONIC_NO_READING || sonic_last_distance > configFile->distance_open);
+      mqttHandler->setClosed(is_closed);
     }
 
-
-    if(sonic_last_distance == SONIC_NO_READING || sonic_last_distance > configFile->distance_open){
+    if(is_closed){
       if(!settingsFile->isClosed()){
         log += F(" setting CLOSED");
         mqttHandler->setClosed(true);

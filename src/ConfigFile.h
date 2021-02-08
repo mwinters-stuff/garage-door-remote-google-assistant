@@ -26,7 +26,8 @@ class ConfigFile: public JSONFileBase{
     String mqtt_password;
     uint16_t mqtt_port;
 
-    uint16_t distance_open;
+    uint16_t open_distance_min;
+    uint16_t open_distance_max;
 
     String syslog_server;
     uint16_t syslog_port;
