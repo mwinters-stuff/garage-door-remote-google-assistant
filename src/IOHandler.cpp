@@ -100,8 +100,20 @@ void IOHandler::readSonar(){
     }
     mqttHandler->setSonicReading(sonic_last_distance == SONIC_NO_READING ? 0 : sonic_last_distance);
     
+    Debug.print(F("Distance CM "));
+    Debug.print(sonic_last_distance);
+    Debug.print(F(" Min "));
+    Debug.print(configFile->open_distance_min);
+    Debug.print(F(" Max "));
+    Debug.print(configFile->open_distance_max);
+
     String log = String(F("Sonic CM ")) + String(sonic_last_distance);
-    bool is_closed = sonic_last_distance == SONIC_NO_READING || (sonic_last_distance < configFile->open_distance_min || sonic_last_distance > configFile->open_distance_max);
+    Debug.print(F(" Open "));
+    bool within_open = (sonic_last_distance >= configFile->open_distance_min && sonic_last_distance <= configFile->open_distance_max);
+    Debug.print(within_open ? F("TRUE"):F("FALSE"));
+    bool is_closed = sonic_last_distance == SONIC_NO_READING || !within_open;
+    Debug.print(F(" Closed "));
+    Debug.println(is_closed ? F("TRUE"):F("FALSE"));
     if(sonarReadMillis == 0){ 
       // first run update mqtt.
       mqttHandler->setClosed(is_closed);
