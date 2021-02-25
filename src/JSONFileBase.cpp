@@ -18,7 +18,7 @@ bool JSONFileBase::readFile()
     File configFile = LittleFS.open(fileName, "r");
     if (configFile)
     {
-      DynamicJsonDocument doc(1024);
+      DynamicJsonDocument doc(1500);
       auto error = deserializeJson(doc, configFile);
 
       if (!error)

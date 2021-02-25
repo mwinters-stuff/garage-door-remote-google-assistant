@@ -19,11 +19,12 @@ class MQTTHandler{
     
     void update();
 
-    void doorAction(String data);
-    void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position);
-    void updateDoorPosition(doorPositions current_door_position, doorPositions _door_position, bool _door_moving);
+    void doorPositionCommand(String data);
     void toggleLocked();
     void setLocked(bool locked);
+    void setClosed(bool closed);
+    void setSonicReading(int cm);
+
     // void sendToInflux(const String &dataPoint, const String &dataValue);
     void setTemperature(double temperature);
     
@@ -33,7 +34,7 @@ class MQTTHandler{
 
     static MQTTHandler* _getInstance(){return m_instance;};
     // static MQTTHandler* init();
-    stringCallback doorActionCallback;
+    stringCallback doorCommandCallback;
     String getLastHTTPResponseString(){ return last_http_reponse_str;};
   private:
     SettingsFile *settingsFile;
@@ -46,9 +47,10 @@ class MQTTHandler{
     Adafruit_MQTT_Publish pub_door_locked;
     Adafruit_MQTT_Publish pub_online;
     Adafruit_MQTT_Publish pub_temperature;
+    Adafruit_MQTT_Publish pub_sonic_cm;
 
-    Adafruit_MQTT_Subscribe sub_door_position;
-    Adafruit_MQTT_Subscribe sub_door_locked;
+    Adafruit_MQTT_Subscribe sub_door_position_command;
+    Adafruit_MQTT_Subscribe sub_door_locked_command;
 
     uint32_t reconnectTimeout = 0;
     uint32_t lastSentPing = 0;

@@ -17,11 +17,17 @@ class ConfigFile: public JSONFileBase{
     String mqtt_hostname;
     String mqtt_feed_door_position;
     String mqtt_feed_door_locked;
+    String mqtt_feed_door_position_command;
+    String mqtt_feed_door_locked_command;
     String mqtt_feed_online;
     String mqtt_feed_temperature;
+    String mqtt_feed_sonic_cm;
     String mqtt_username;
     String mqtt_password;
     uint16_t mqtt_port;
+
+    uint16_t open_distance_min;
+    uint16_t open_distance_max;
 
     String syslog_server;
     uint16_t syslog_port;
