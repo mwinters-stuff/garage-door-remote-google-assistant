@@ -49,7 +49,8 @@
     "optional": "cpp",
     "system_error": "cpp",
     "algorithm": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "random": "cpp"
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#312C38",

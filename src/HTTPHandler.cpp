@@ -10,7 +10,6 @@
 #include "ConfigFile.h"
 #include "HTTPHandler.h"
 
-#include "MQTTHandler.h"
 #include "IOHandler.h"
 #include "SettingsFile.h"
 #include "StringConstants.h"
@@ -24,21 +23,29 @@ HTTPHandler::HTTPHandler(IOHandler *ioHandler, SettingsFile *settingsFile, Confi
 void HTTPHandler::update(){
   httpServer.handleClient();
   ArduinoOTA.handle();
+  if (dnsServer) {
+    dnsServer->processNextRequest();
+  }
 }
 
 void HTTPHandler::setupServer(){
+  setupBaseHandlers();
+}
 
+void HTTPHandler::setupBaseHandlers(){
   httpServer.on(F("/all"), HTTP_GET, [this]() {
     DynamicJsonDocument root(1024);
 
     root[HEAP] = ESP.getFreeHeap();
-    root[TEMPERATURE] = settingsFile->getTemperature();
-    root[DOOR_CLOSED] = settingsFile->isClosed();
-    root[DOOR_LOCKED] =  settingsFile->isLocked();
-    root[SONIC_DISTANCE] = ioHandler->sonicLastDistance();
-    root[UP_TIME] = NTP.getUptimeString();
-    root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
-    root[TIME_STAMP] = NTP.getTimeDateString();
+    if(ioHandler){
+      root[TEMPERATURE] = settingsFile->getTemperature();
+      root[DOOR_CLOSED] = settingsFile->isClosed();
+      root[DOOR_LOCKED] =  settingsFile->isLocked();
+      root[SONIC_DISTANCE] = ioHandler->sonicLastDistance();
+      root[UP_TIME] = NTP.getUptimeString();
+      root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
+      root[TIME_STAMP] = NTP.getTimeDateString();
+    }
 
     // serializeJsonPretty(root, Debug);
     // Debug.println();
@@ -50,6 +57,8 @@ void HTTPHandler::setupServer(){
     httpServer.send(200,F("application/json"),response);
     
   });
+
+  httpServer.on(String(F("/reboot")).c_str(), HTTP_GET, std::bind(&HTTPHandler::handleReboot, this));
 
   httpServer.on(String(F("/config")).c_str(), HTTP_GET, [this]() {
     DynamicJsonDocument root(1024);
@@ -86,7 +95,7 @@ void HTTPHandler::setupServer(){
 
   httpServer.on(String(F("/save-config")).c_str(), HTTP_POST, [this]() {
     if(httpServer.hasArg(F("plain"))){
-      DynamicJsonDocument root(1024);
+      DynamicJsonDocument root(1500);
       auto error = deserializeJson(root, httpServer.arg(F("plain")));
       if(!error){
 
@@ -111,30 +120,32 @@ void HTTPHandler::setupServer(){
    
   });
 
-  httpServer.on(String(F("/command")).c_str(), HTTP_GET, [this](){
-    if(httpServer.args() == 0){
-      httpServer.send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
-      return;
-    }
-    
-    String name = httpServer.argName(0);
-    String action = httpServer.arg(0);
+  if(ioHandler){
+    httpServer.on(String(F("/command")).c_str(), HTTP_GET, [this](){
+      if(httpServer.args() == 0){
+        httpServer.send(500,TEXT_PLAIN,INVALID_ARGUMENTS);
+        return;
+      }
+      
+      String name = httpServer.argName(0);
+      String action = httpServer.arg(0);
 
-    Debug.printf_P(PSTR("Action: %s = %s \r\n"), name.c_str(), action.c_str());
+      Debug.printf_P(PSTR("Action: %s = %s \r\n"), name.c_str(), action.c_str());
 
-    String result = formatUnknownAction(name, action);
+      String result = formatUnknownAction(name, action);
 
-    if(name.equals(DOOR_COMMAND)){
-      result = doDoorCommand(action);
-    }
+      if(name.equals(DOOR_COMMAND)){
+        result = doDoorCommand(action);
+      }
 
-    if(name.equals(LOCK_ACTION)){
-      result = doLockAction(action);
-    }
+      if(name.equals(LOCK_ACTION)){
+        result = doLockAction(action);
+      }
 
-    httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
-    httpServer.send(200,TEXT_PLAIN,result);
-  });
+      httpServer.sendHeader(ACCESS_CONTROL_HEADER, "*");
+      httpServer.send(200,TEXT_PLAIN,result);
+    });
+  }
 
   
 
@@ -225,6 +236,41 @@ void HTTPHandler::setupOTA(){
 
 }
 
+
+void HTTPHandler::setupPortalServer() {
+  dnsServer = new DNSServer();
+  delay(500);  // Without delay I've seen the IP address blank
+  Debug.print(F("AP IP address: "));
+  Debug.println(WiFi.softAPIP());
+
+  /* Setup the DNS server redirecting all the domains to the apIP */
+  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer->start(DNS_PORT, "*", WiFi.softAPIP());
+
+  httpServer.on(F("/generate_204"), std::bind(&HTTPHandler::handleRedirect, this));
+  httpServer.on(F("/gen_204"), std::bind(&HTTPHandler::handleRedirect, this));
+
+  setupBaseHandlers();
+}
+
+void HTTPHandler::handleRedirect() {
+  String redirect = String(F("http://")) + WiFi.softAPIP().toString() + String("/");
+  Debug.print(F("handleRedirect "));
+  Debug.println(redirect);
+  httpServer.sendHeader(F("Location"), redirect);
+  httpServer.send(302, TEXT_PLAIN, INVALID_ARGUMENTS);
+  httpServer.client().stop();
+}
+
+void HTTPHandler::handleReboot() {
+  httpServer.send(200, TEXT_PLAIN, F("Rebooting soon"));
+
+  Debug.println(F("Rebooting"));
+
+  delay(5000);
+  ESP.reset();
+  delay(2000);
+}
 
 String HTTPHandler::doDoorCommand(const String &command){
   if(command.compareTo(OPEN) == 0 || command.compareTo(CLOSE) == 0 || command.compareTo(FORCE) == 0){

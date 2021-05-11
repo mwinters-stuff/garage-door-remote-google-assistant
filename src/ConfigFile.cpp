@@ -10,9 +10,6 @@
 // ConfigFile *ConfigFile::m_instance;
 
 ConfigFile::ConfigFile(): JSONFileBase(CONFIG_FILE){
-  if(!readFile()){
-    Serial.printf(String(FAILED_TO_READ).c_str(), fileName.c_str());
-  }
 }
 
 void ConfigFile::getJson(JsonDocument & root){
@@ -64,4 +61,15 @@ void ConfigFile::setJson(const JsonDocument &json){
   syslog_app_name                 = json[SYSLOG_APP_NAME                ].as<String>();
   syslog_port                     = json[SYSLOG_PORT                    ].as<uint16_t>();
   syslog_server                   = json[SYSLOG_SERVER                  ].as<String>();
+}
+
+bool ConfigFile::isMQTTConfigured(){
+  return !(mqtt_hostname.isEmpty() && mqtt_port == 0 && mqtt_username.isEmpty() && mqtt_password.isEmpty() &&
+    mqtt_feed_door_position.isEmpty() &&        
+    mqtt_feed_door_locked.isEmpty() &&          
+    mqtt_feed_door_position_command.isEmpty() &&
+    mqtt_feed_door_locked_command.isEmpty() &&  
+    mqtt_feed_online.isEmpty() &&               
+    mqtt_feed_temperature.isEmpty() &&          
+    mqtt_feed_sonic_cm.isEmpty() );
 }

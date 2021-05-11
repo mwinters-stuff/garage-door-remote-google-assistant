@@ -1,10 +1,18 @@
 #include "JSONFileBase.h"
+#include "StringConstants.h"
 #include <LittleFS.h>
 
 JSONFileBase::JSONFileBase(const String& fileName):
       fileName(fileName){
 }
 
+bool JSONFileBase::init(){
+  if(!readFile()){
+    Serial.printf(String(FAILED_TO_READ).c_str(), fileName.c_str());
+    return false;
+  }
+  return true;
+}
 
 bool JSONFileBase::readFile()
 {
@@ -43,7 +51,7 @@ bool JSONFileBase::readFile()
 void JSONFileBase::saveFile(){
   Serial.print(F("saving file "));
   Serial.println(fileName);
-  DynamicJsonDocument doc(1024);
+  DynamicJsonDocument doc(1500);
 
   getJson(doc);
 

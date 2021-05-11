@@ -12,11 +12,6 @@ extern RemoteDebug Debug;
 #endif
 
 SettingsFile::SettingsFile():JSONFileBase(SETTINGS_FILE){
-  if(!readFile()){
-    Serial.printf(String(FAILED_TO_READ).c_str(), fileName.c_str());
-    is_closed = false;
-    is_locked = false;
-  }
 }
 
 void SettingsFile::getJson(JsonDocument & root){

@@ -190,7 +190,7 @@ class WebappApp extends PolymerElement {
               <paper-button raised class="green" on-tap="_save">Save</paper-button>
             </div>
             <div>
-              <!--paper-button raised class="red" on-tap="_reboot">Reboot</paper-button -->
+              <paper-button raised class="red" on-tap="_reboot">Reboot</paper-button>
             </div>
           </div>
         </paper-card>

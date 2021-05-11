@@ -9,7 +9,7 @@ class JSONFileBase{
   public:
     JSONFileBase(const String& fileName);
     virtual ~JSONFileBase(){};
-
+    bool init();
     bool readFile();
     void saveFile();
     virtual void getJson(JsonDocument & root) = 0;

@@ -37,6 +37,8 @@ class ConfigFile: public JSONFileBase{
 
     void getJson(JsonDocument & root) override;
     void setJson(const JsonDocument &object) override;
+
+    bool isMQTTConfigured();
 };
 
 

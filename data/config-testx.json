@@ -1,0 +1,25 @@
+{
+  "influx_host": "netserver",
+  "wifi_ap":"WINTERS",
+  "wifi_password":"tesskatt",
+  "hostname":"garage-door-test",
+  "ntp_server": "192.168.1.1",
+  "update_interval": "60",
+  "syslog_server": "192.168.1.10",
+  "syslog_port": "514",
+  "syslog_app_name": "door-test",
+
+  "mqtt_feed_report_position": "testgaragedoor/report/door_position",
+  "mqtt_feed_report_locked": "testgaragedoor/report/door_locked",
+  "mqtt_feed_position_command": "testgaragedoor/command/door_position",
+  "mqtt_feed_locked_command": "testgaragedoor/command/door_locked",
+  "mqtt_feed_online": "testgaragedoor/report/online",
+  "mqtt_feed_temperature": "testgaragedoor/report/temperature",
+  "mqtt_feed_sonic_cm":"testgaragedoor/report/sonic_cm",
+  "mqtt_username": "garagedoor",
+  "mqtt_password": "gdoor",
+  "mqtt_port": "1883",
+  "mqtt_hostname": "192.168.1.3",
+  "distance_open":"50"
+
+}

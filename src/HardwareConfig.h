@@ -5,16 +5,16 @@
 
 
 
-#define OPEN_CLOSE_BUTTON D7
-#define ONE_WIRE_PIN D1
+// #define OPEN_CLOSE_BUTTON D7
+#define ONE_WIRE_PIN 16
 #define LED_GREEN D2
-#define LED_RED D3
-#define RELAY D8
+#define LED_RED D1
+#define RELAY D7
 
 // #define SWITCH_OPEN D5
 // #define SWITCH_CLOSED D6
-#define SONAR_TRIGGER D5
-#define SONAR_ECHO D6
+#define SONAR_TRIGGER D6
+#define SONAR_ECHO D5
 #define SONAR_MAX_DISTANCE 100
 #define SONAR_READ_INTERVAL_COMMANDED 1000
 #define SONAR_READ_INTERVAL_WAITING 10000
@@ -27,7 +27,7 @@
 #define RELAY_OPEN LOW
 #define RELAY_TOGGLE_TIME 1000
 
-#define TEMPERATURE_DELAY 600000
+// #define TEMPERATURE_DELAY 600000
 
 // Shouldnt need to change these.
 
