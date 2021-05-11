@@ -272,9 +272,11 @@ void IOHandler::toggleRelay() {
 
   log_printf(PSTR("Toggle Relay"));
   ledRed(true);
+  ledGreen(true);
   digitalWrite(RELAY, RELAY_CLOSED);
   delay(RELAY_TOGGLE_TIME);
   ledRed(false);
+  ledGreen(false);
   digitalWrite(RELAY, RELAY_OPEN);
 }
 
