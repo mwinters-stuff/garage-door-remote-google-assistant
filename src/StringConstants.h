@@ -41,14 +41,20 @@ extern const char _MQTT_USERNAME                  [] PROGMEM;
 extern const char _MQTT_PASSWORD                  [] PROGMEM;
 extern const char _MQTT_HOSTNAME                  [] PROGMEM;
 extern const char _MQTT_PORT                      [] PROGMEM;
+extern const char _MQTT_DEVICE_ID                 [] PROGMEM;
+extern const char _MQTT_DEVICE_NAME               [] PROGMEM;
 extern const char _OPEN                           [] PROGMEM;
 extern const char _CLOSE                          [] PROGMEM;
+extern const char _OPENING                        [] PROGMEM;
+extern const char _CLOSING                        [] PROGMEM;
 extern const char _FORCE                          [] PROGMEM;
 extern const char _CLOSED                         [] PROGMEM;
 extern const char _LOCK                           [] PROGMEM;
 extern const char _LOCKED                         [] PROGMEM;
 extern const char _UNLOCKED                       [] PROGMEM;
 extern const char _UNLOCK                         [] PROGMEM;
+extern const char _ONLINE                         [] PROGMEM;
+extern const char _OFFLINE                        [] PROGMEM;
 extern const char _YES                            [] PROGMEM;
 extern const char _NO                             [] PROGMEM;
 extern const char _ERROR_FAILED                   [] PROGMEM;
@@ -82,12 +88,16 @@ extern const char _INFLUX_URL                     [] PROGMEM;
 #define DISTANCE_OPEN_MAX               FPSTR(_DISTANCE_OPEN_MAX)
 #define OPEN                            FPSTR(_OPEN)
 #define CLOSE                           FPSTR(_CLOSE)
+#define OPENING                         FPSTR(_OPENING)
+#define CLOSING                         FPSTR(_CLOSING)
 #define FORCE                           FPSTR(_FORCE)
 #define CLOSED                          FPSTR(_CLOSED)
 #define LOCK                            FPSTR(_LOCK)
 #define LOCKED                          FPSTR(_LOCKED)
 #define UNLOCKED                        FPSTR(_UNLOCKED)
 #define UNLOCK                          FPSTR(_UNLOCK)
+#define ONLINE                          FPSTR(_ONLINE)
+#define OFFLINE                         FPSTR(_OFFLINE)
 #define YES                             FPSTR(_YES)
 #define NO                              FPSTR(_NO)
 #define ERROR_FAILED                    FPSTR(_ERROR_FAILED)
@@ -107,6 +117,8 @@ extern const char _INFLUX_URL                     [] PROGMEM;
 #define MQTT_PASSWORD                   FPSTR(_MQTT_PASSWORD)
 #define MQTT_HOSTNAME                   FPSTR(_MQTT_HOSTNAME)
 #define MQTT_PORT                       FPSTR(_MQTT_PORT)
+#define MQTT_DEVICE_ID                  FPSTR(_MQTT_DEVICE_ID)
+#define MQTT_DEVICE_NAME                FPSTR(_MQTT_DEVICE_NAME)
 
 
 #endif

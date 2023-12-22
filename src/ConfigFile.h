@@ -2,7 +2,6 @@
 #define _CONFIGFILE_H
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Time.h>
 #include "JSONFileBase.h"
 
 class ConfigFile: public JSONFileBase{
@@ -25,13 +24,16 @@ class ConfigFile: public JSONFileBase{
     String mqtt_username;
     String mqtt_password;
     uint16_t mqtt_port;
+    String mqtt_device_id;
+    String mqtt_device_name;
+    
 
     uint16_t open_distance_min;
     uint16_t open_distance_max;
 
-    String syslog_server;
-    uint16_t syslog_port;
-    String syslog_app_name;
+    // String syslog_server;
+    // uint16_t syslog_port;
+    // String syslog_app_name;
 
     ConfigFile();
 

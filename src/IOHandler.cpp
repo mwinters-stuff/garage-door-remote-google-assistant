@@ -7,12 +7,12 @@
 #include <RemoteDebug.h>
 extern RemoteDebug Debug;
 
-IOHandler *IOHandler::m_instance;
+// std::shared_ptr<IOHandler> IOHandler::m_instance;
 extern void log_printf(PGM_P fmt_P, ...);
 
 #define SONIC_NO_READING 38000.0
 
-IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, ConfigFile *configFile):
+IOHandler::IOHandler(std::shared_ptr<MQTTHandler> mqttHandler, std::shared_ptr<SettingsFile> settingsFile, std::shared_ptr<ConfigFile> configFile):
   mqttHandler(mqttHandler),
   settingsFile(settingsFile),
   configFile(configFile),
@@ -25,8 +25,8 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
   sonic_reading_commanded(false),
   sonic_read_interval(SONAR_READ_INTERVAL_WAITING)
 {
-  m_instance = this;
 
+  doInit = false;
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_RED, OUTPUT);
@@ -46,11 +46,25 @@ IOHandler::IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, Confi
   mqttHandler->doorCommandCallback = [&](String command){
     doorCommand(command);
   };
-  DS18B20.begin();
+
+  mqttHandler->connectedCallback = [&](){
+    doInit = true;
+  };
+}
+
+void IOHandler::init(){
+  Debug.println(F("IOHandler::Init"));
   sonic.begin();
-  Debug.print(F("DS18B20 Init Found "));
-  Debug.println(DS18B20.getDS18Count());
+
+  int tryDown = 10;
+  do{
+    delay(1000);
+    DS18B20.begin();
+    Debug.print(F("DS18B20 Init Found "));
+    Debug.println(DS18B20.getDS18Count());
+  }while(tryDown-- > 0 && DS18B20.getDS18Count() == 0);
   temperatureLastRead = millis();
+  doInit = false;
 }
 
 void IOHandler::ledGreen(bool on){
@@ -64,6 +78,10 @@ void IOHandler::ledRed(bool on){
 void IOHandler::update(){
   if(!mqttHandler->isMQTTConnected()){
     return;
+  }
+
+  if(doInit){
+    init();
   }
 
   readTemperature();
@@ -85,9 +103,9 @@ void IOHandler::readSonar(){
     float readings_count = 0;
     for(int i = 0; i < 5; i++){
        float r = sonic.getDistance();
-        Debug.print("R: ");
-        Debug.print(r);
-        Debug.println();
+        // Debug.print("R: ");
+        // Debug.print(r);
+        // Debug.println();
         
         if(r != SONIC_NO_READING){
          readingssum += r;
@@ -161,6 +179,7 @@ void IOHandler::doorCommand(String command){
         greenMillisFlash = 10000;
         ledGreen(true);
         toggleRelay();
+        mqttHandler->setOpening();
       }else{
         logString += F(": Already Open");
         redMillisFlash = millis() + 1000;
@@ -173,6 +192,7 @@ void IOHandler::doorCommand(String command){
         greenMillisFlash = 10000;
         ledGreen(true);
         toggleRelay();
+        mqttHandler->setClosing();
       }else{
         logString += F(": Already Closed");
         redMillisFlash = millis() + 1000;
@@ -194,6 +214,11 @@ void IOHandler::onOpenCloseButtonPress(uint8_t pin, uint32_t msPressed){
     greenMillisFlash = 10000;
     ledGreen(true);
     toggleRelay();
+    if(settingsFile->isClosed()){
+      mqttHandler->setOpening();
+    }else if(settingsFile->isOpen()){
+      mqttHandler->setClosing();
+    }
   }else if(msPressed > 5000){
     logString += F("Changing to ");
     logString += (settingsFile->isLocked() ? LOCK : UNLOCK);     

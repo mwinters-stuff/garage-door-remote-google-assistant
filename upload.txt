@@ -1,0 +1,16 @@
+python3 ~/.platformio/packages/framework-arduinoespressif8266/tools/espota.py \
+  --debug \
+  -i garage-door \
+  -I 192.168.1.121  \
+  -p 8266 -a leo \
+  -P 8266 \
+  -f .pio/build/esp12eReleaseOTA/firmware.bin
+
+python3 ~/.platformio/packages/framework-arduinoespressif8266/tools/espota.py \
+  --debug \
+  -i garage-door \
+  -I 192.168.1.121  \
+  -p 8266 -a leo \
+  -P 8266 \
+  -s \
+  -f .pio/build/esp12eReleaseOTA/littlefs.bin

@@ -149,7 +149,7 @@ class WebappApp extends PolymerElement {
             <paper-tabs selected="{{_selectedConfTab}}">
               <paper-tab>Network</paper-tab>
               <paper-tab>MQTT</paper-tab>
-              <paper-tab>SysLog</paper-tab>
+              <!-- <paper-tab>SysLog</paper-tab> -->
             </paper-tabs>
             <iron-pages id="_ConfigPages" selected="{{_selectedConfTab}}">
               <div>
@@ -159,13 +159,15 @@ class WebappApp extends PolymerElement {
                   <paper-input always-float-label label="Temperature Update Interval (Sec)" value="{{_config.update_interval}}"></paper-input>
                   <paper-input always-float-label label="Distance Open Min CM" value="{{_config.distance_open_min}}"></paper-input>
                   <paper-input always-float-label label="Distance Open Max CM" value="{{_config.distance_open_max}}"></paper-input>
-                  <paper-input always-float-label label="NTP Server" value="{{_config.ntp_server}}"></paper-input>
+                  <!-- <paper-input always-float-label label="NTP Server" value="{{_config.ntp_server}}"></paper-input> -->
               </div>
               <div>
                 <paper-input always-float-label label="Server Host" value="{{_config.mqtt_hostname}}"></paper-input>
                 <paper-input always-float-label label="Server Port" value="{{_config.mqtt_port}}"></paper-input>
                 <paper-input always-float-label label="Username" value="{{_config.mqtt_username}}"></paper-input>
                 <paper-input always-float-label label="Password" value="{{_config.mqtt_password}}"></paper-input>
+                <paper-input always-float-label label="Device ID" value="{{_config.mqtt_device_id}}"></paper-input>
+                <paper-input always-float-label label="Device Name" value="{{_config.mqtt_device_name}}"></paper-input>
 
                 <paper-input always-float-label label="Online Feed" value="{{_config.mqtt_feed_online}}"></paper-input>
                 <paper-input always-float-label label="Temperature Feed" value="{{_config.mqtt_feed_temperature}}"></paper-input>
@@ -176,11 +178,11 @@ class WebappApp extends PolymerElement {
                 <paper-input always-float-label label="Door Lock Command Feed" value="{{_config.mqtt_feed_locked_command}}"></paper-input>
                 <paper-input always-float-label label="Door Lock Report Feed" value="{{_config.mqtt_feed_report_locked}}"></paper-input>
               </div>
-              <div>
+              <!-- <div>
                   <paper-input always-float-label label="Syslog Server" value="{{_config.syslog_server}}"></paper-input>
                   <paper-input always-float-label label="Syslog Server Port" value="{{_config.syslog_port}}"></paper-input>
                   <paper-input always-float-label label="Syslog App Name" value="{{_config.syslog_app_name}}"></paper-input>
-              </div>
+              </div> -->
 
             </iron-pages>            
           </div>

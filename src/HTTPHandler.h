@@ -10,7 +10,7 @@
 
 class HTTPHandler{
   public:
-    HTTPHandler(IOHandler *ioHandler, SettingsFile *settingsFile, ConfigFile *configFile);
+    HTTPHandler(std::shared_ptr<IOHandler> ioHandler, std::shared_ptr<SettingsFile> settingsFile, std::shared_ptr<ConfigFile> configFile);
     void setupServer();
     void setupOTA();
     void update();
@@ -21,9 +21,9 @@ class HTTPHandler{
   private:
     // static HTTPHandler* m_instance;
     ESP8266WebServer httpServer;
-    IOHandler *ioHandler;
-    SettingsFile *settingsFile;
-    ConfigFile *configFile;
+    std::shared_ptr<IOHandler> ioHandler;
+    std::shared_ptr<SettingsFile> settingsFile;
+    std::shared_ptr<ConfigFile> configFile;
 
     // bool handleFileRead(AsyncWebServerRequest *request);
     String doDoorCommand(const String &action);

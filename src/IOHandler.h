@@ -25,11 +25,12 @@
 
 class IOHandler{
   public:
-    IOHandler(MQTTHandler *mqttHandler, SettingsFile *settingsFile, ConfigFile *configFile);
+    IOHandler(std::shared_ptr<MQTTHandler> mqttHandler, std::shared_ptr<SettingsFile> settingsFile, std::shared_ptr<ConfigFile> configFile);
 
-    static IOHandler* _getInstance(){return m_instance;};
+    // static std::shared_ptr<IOHandler> _getInstance(){return m_instance;};
     // static IOHandler* init();
 
+    void init();
     void ledGreen(bool on);
     void ledRed(bool on);
 
@@ -40,9 +41,9 @@ class IOHandler{
     };
 
   private:
-    MQTTHandler *mqttHandler;
-    SettingsFile *settingsFile;
-    ConfigFile *configFile;
+    std::shared_ptr<MQTTHandler> mqttHandler;
+    std::shared_ptr<SettingsFile> settingsFile;
+    std::shared_ptr<ConfigFile> configFile;
     uint32_t greenMillisFlash;
     uint32_t redMillisFlash;
     OneWire oneWire;
@@ -51,6 +52,7 @@ class IOHandler{
     uint32_t temperatureLastRead;
     uint32_t sonic_read_commanded_start;
     double sonic_last_distance;
+    bool doInit;
     
     
 #ifdef OPEN_CLOSE_BUTTON
@@ -70,7 +72,7 @@ class IOHandler{
     void readSonar();
 
 
-    static IOHandler* m_instance;
+    // static std::shared_ptr<IOHandler> m_instance;
 
 
 };

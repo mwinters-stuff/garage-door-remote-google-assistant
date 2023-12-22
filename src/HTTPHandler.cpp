@@ -3,7 +3,6 @@
 #include <LittleFS.h>
 #include <ArduinoJson.h>
 #include <TimeLib.h>
-#include <NtpClientLib.h>
 #include <RemoteDebug.h>
 #include <WString.h>
 
@@ -17,7 +16,7 @@
 
 extern RemoteDebug Debug;
 
-HTTPHandler::HTTPHandler(IOHandler *ioHandler, SettingsFile *settingsFile, ConfigFile *configFile): httpServer(80),
+HTTPHandler::HTTPHandler(std::shared_ptr<IOHandler> ioHandler, std::shared_ptr<SettingsFile> settingsFile, std::shared_ptr<ConfigFile> configFile): httpServer(80),
   ioHandler(ioHandler), settingsFile(settingsFile), configFile(configFile){
 }
 
@@ -36,9 +35,9 @@ void HTTPHandler::setupServer(){
     root[DOOR_CLOSED] = settingsFile->isClosed();
     root[DOOR_LOCKED] =  settingsFile->isLocked();
     root[SONIC_DISTANCE] = ioHandler->sonicLastDistance();
-    root[UP_TIME] = NTP.getUptimeString();
-    root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
-    root[TIME_STAMP] = NTP.getTimeDateString();
+    // root[UP_TIME] = NTP.getUptimeString();
+    // root[BOOT_TIME] = NTP.getTimeDateString(NTP.getLastBootTime());
+    // root[TIME_STAMP] = NTP.getTimeDateString();
 
     // serializeJsonPretty(root, Debug);
     // Debug.println();

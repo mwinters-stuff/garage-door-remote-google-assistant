@@ -1,19 +1,21 @@
 {
-  "influx_host": "netserver",
   "wifi_ap":"WINTERS",
   "wifi_password":"asdasdad",
-  "hostname":"garage-door-test",
   "ntp_server": "192.168.1.1",
   "update_interval": "60",
-
-  "mqtt_feed_set_position": "/feeds/setposition",
-  "mqtt_feed_report_position": "/feeds/reportposition",
-  "mqtt_feed_set_locked": "/feeds/setlock",
-  "mqtt_feed_report_locked": "/feeds/reportlock",
-  "mqtt_feed_temperature": "/feeds/temperature",
+  "mqtt_feed_online":"online",
+  "mqtt_feed_position_command": "setposition",
+  "mqtt_feed_report_position": "reportposition",
+  "mqtt_feed_set_locked": "setlock",
+  "mqtt_feed_locked_command": "reportlock",
+  "mqtt_feed_temperature": "temperature",
+  "mqtt_feed_sonic_cm": "sonic_cm",
   "mqtt_username": "garagedoor",
   "mqtt_password": "adasdasd",
   "mqtt_port": "1883",
-  "mqtt_hostname": "192.168.1.6"
+  "mqtt_hostname": "192.168.1.100",
+  "mqtt_device_id": "garage-door",
+  "mqtt_device_name": "Garage Door"
+
 
 }

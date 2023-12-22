@@ -1,6 +1,7 @@
+#!/bin/bash
 (
   cd webapp || exit
-  # yarn install
+  npm install
   polymer build 
   mkdir -p ../data
   cp build/es6prod/* ../data/

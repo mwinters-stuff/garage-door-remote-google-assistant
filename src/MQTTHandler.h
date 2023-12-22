@@ -1,21 +1,30 @@
 #ifndef _DATA_STORE_H
 #define _DATA_STORE_H
 #include <Arduino.h>
-#include <Adafruit_MQTT_Client.h>
-#include <Adafruit_MQTT.h>
+#include <Ticker.h>
+// #include <Adafruit_MQTT_Client.h>
+// #include <Adafruit_MQTT.h>
+#include <AsyncMqttClient.h>
 #include <ESP8266WiFi.h>
 #include "ConfigFile.h"
 #include "SettingsFile.h"
 #include <ESP8266WiFi.h>
+#include <functional>
 #include <memory>
 
 
 
 typedef std::function<void(String) > stringCallback;
+typedef std::function<void() > voidCallback;
 
 class MQTTHandler{
   public:
-    MQTTHandler(SettingsFile *settingsFile, ConfigFile *configFile);
+    MQTTHandler(std::shared_ptr<SettingsFile> settingsFile,std::shared_ptr<ConfigFile> configFile);
+
+    void connectToMQTT();
+    void onMQTTConnect(bool sessionPresent);
+    void onMQTTDisconnect(AsyncMqttClientDisconnectReason reason);
+    void onWifiDisconnect();
     
     void update();
 
@@ -23,6 +32,8 @@ class MQTTHandler{
     void toggleLocked();
     void setLocked(bool locked);
     void setClosed(bool closed);
+    void setClosing();
+    void setOpening();
     void setSonicReading(int cm);
 
     // void sendToInflux(const String &dataPoint, const String &dataValue);
@@ -32,33 +43,39 @@ class MQTTHandler{
       return isConnected;
     }
 
-    static MQTTHandler* _getInstance(){return m_instance;};
-    // static MQTTHandler* init();
+
+    void stop() ;
+    void publishValue(const String &topic,  const String &value);
+    
+
     stringCallback doorCommandCallback;
-    String getLastHTTPResponseString(){ return last_http_reponse_str;};
+    voidCallback connectedCallback;
   private:
-    SettingsFile *settingsFile;
-    ConfigFile *configFile;
+    std::shared_ptr<SettingsFile> settingsFile;
+    std::shared_ptr<ConfigFile> configFile;
+
     WiFiClient wifiClient;
+
     bool isConnected;
-    Adafruit_MQTT_Client mqtt;
+    AsyncMqttClient mqttClient;
+    Ticker mqttReconnectTimer;
+    bool dontReconnect;
+    uint32_t timeConnected;
+    String willTopic;
+    String wifiTopic;
 
-    Adafruit_MQTT_Publish pub_door_position;
-    Adafruit_MQTT_Publish pub_door_locked;
-    Adafruit_MQTT_Publish pub_online;
-    Adafruit_MQTT_Publish pub_temperature;
-    Adafruit_MQTT_Publish pub_sonic_cm;
-
-    Adafruit_MQTT_Subscribe sub_door_position_command;
-    Adafruit_MQTT_Subscribe sub_door_locked_command;
+    // Adafruit_MQTT_Subscribe sub_door_position_command;
+    // Adafruit_MQTT_Subscribe sub_door_locked_command;
 
     uint32_t reconnectTimeout = 0;
-    uint32_t lastSentPing = 0;
-    String last_http_reponse_str;
-    static MQTTHandler* m_instance;
-    // void sendInflux(const String &body);
-    void connect();
-    
+
+    void publishHomeAssistantDetect();
+    void publishConfig(const String &uid, const String &kind, const String &config);
+    void publishDeviceConfig(const String &uid, const String &kind, const String &name,const String &mqttStat, const String &uom, const String &deviceClass, const String &icon);
+    // void publishDeviceConfig(const String &uid, const String &kind, const String &name,const String &mqttStat, const String &uom, const String &icon);
+    // void publishDeviceConfig(const String &uid, const String &kind, const String &name,const String &mqttStat, const String &icon);
+
+
 };
 
 

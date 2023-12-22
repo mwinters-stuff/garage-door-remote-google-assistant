@@ -5,6 +5,7 @@
   "esp8266fs.logLevel": "verbose",
   "files.associations": {
     "*.h": "c",
+    "*.config": "plaintext",
     "array": "cpp",
     "string_view": "cpp",
     "initializer_list": "cpp",
@@ -49,7 +50,20 @@
     "optional": "cpp",
     "system_error": "cpp",
     "algorithm": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "atomic": "cpp",
+    "bit": "cpp",
+    "chrono": "cpp",
+    "compare": "cpp",
+    "concepts": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "iterator": "cpp",
+    "memory_resource": "cpp",
+    "random": "cpp",
+    "ratio": "cpp",
+    "ranges": "cpp",
+    "variant": "cpp"
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#312C38",
@@ -57,8 +71,8 @@
     "titleBar.activeForeground": "#FBFAFB"
   },
   "terminal.integrated.env.linux": {
-    "PATH": "/home/mathew/.platformio/penv/bin:/home/mathew/.platformio/penv:/opt/flutter/bin:/home/mathew/.npm-packages/bin:/opt/android-sdk/tools:/opt/android-sdk/platform-tools:/home/mathew/.local/bin:/home/mathew/bin:/home/mathew/.yarn/bin:/home/mathew/.config/yarn/global/node_modules/.bin:/opt/flutter/bin:/home/mathew/.npm-packages/bin:/opt/android-sdk/tools:/opt/android-sdk/platform-tools:/home/mathew/.local/bin:/home/mathew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/flutter/.pub-cache/bin:/opt/flutter/.pub-cache/bin",
     "PLATFORMIO_CALLER": "vscode"
   },
+  "cmake.configureOnOpen": false,
   
 }
