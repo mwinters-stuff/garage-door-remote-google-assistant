@@ -16,11 +16,9 @@ IOHandler::IOHandler(std::shared_ptr<MQTTHandler> mqttHandler, std::shared_ptr<S
   mqttHandler(mqttHandler),
   settingsFile(settingsFile),
   configFile(configFile),
-  greenMillisFlash(0),
-  redMillisFlash(0),
   oneWire(ONE_WIRE_PIN),
   DS18B20(&oneWire),
-  sonic(SONAR_TRIGGER, SONAR_ECHO,20,100),
+  sonic(SONAR_TRIGGER, SONAR_ECHO,20,500),
   sonarReadMillis(0),
   sonic_reading_commanded(false),
   sonic_read_interval(SONAR_READ_INTERVAL_WAITING)
@@ -58,12 +56,12 @@ void IOHandler::init(){
 
   int tryDown = 10;
   do{
-    delay(1000);
+    delay(100);
     DS18B20.begin();
     Debug.print(F("DS18B20 Init Found "));
     Debug.println(DS18B20.getDS18Count());
   }while(tryDown-- > 0 && DS18B20.getDS18Count() == 0);
-  temperatureLastRead = millis();
+  
   doInit = false;
 }
 
@@ -76,91 +74,98 @@ void IOHandler::ledRed(bool on){
 }
 
 void IOHandler::update(){
-  if(!mqttHandler->isMQTTConnected()){
-    return;
-  }
-
-  if(doInit){
-    init();
-  }
-
-  readTemperature();
   switches.update();
 #ifdef TEST
   sonic_read_interval = 500;
 #endif
+}
 
-  readSonar();
+void IOHandler::setupTimers(){
+  ticker_read_sonic.detach();
+  ticker_read_sonic.attach_ms_scheduled(sonic_read_interval,[&](){
+    readSonar();
+  });
 
+  ticker_read_temperature.detach();
+  ticker_read_temperature.attach_ms_scheduled(configFile->update_interval_ms, [&]{
+    readTemperature();
+  });
 }
 
 void IOHandler::readSonar(){
-  if(millis() - sonarReadMillis > sonic_read_interval){
-    sonic.setTemperature(settingsFile->getTemperature());
-    noInterrupts();
-    sonic_last_distance = SONIC_NO_READING;
-    float readingssum = 0.0f;
-    float readings_count = 0;
-    for(int i = 0; i < 5; i++){
-       float r = sonic.getDistance();
-        // Debug.print("R: ");
-        // Debug.print(r);
-        // Debug.println();
-        
-        if(r != SONIC_NO_READING){
-         readingssum += r;
-         ++readings_count;
-       }
-    }
-    interrupts();
-    if(readings_count > 0){
-      sonic_last_distance = readingssum / readings_count;
-    }
-    mqttHandler->setSonicReading(sonic_last_distance == SONIC_NO_READING ? 0 : sonic_last_distance);
-    
-    Debug.print(F("Distance CM "));
-    Debug.print(sonic_last_distance);
-    Debug.print(F(" Min "));
-    Debug.print(configFile->open_distance_min);
-    Debug.print(F(" Max "));
-    Debug.print(configFile->open_distance_max);
+  sonic.setTemperature(settingsFile->getTemperature());
+  noInterrupts();
+  sonic_last_distance = SONIC_NO_READING;
+  float readingssum = 0.0f;
+  float readings_count = 0;
+  for(int i = 0; i < 5; i++){
+      float r = sonic.getDistance();
+      // Debug.print("R: ");
+      // Debug.print(r);
+      // Debug.println();
+      
+      if(r != SONIC_NO_READING){
+        readingssum += r;
+        ++readings_count;
+      }
+  }
+  interrupts();
+  if(readings_count > 0){
+    sonic_last_distance = readingssum / readings_count;
+  }
+  mqttHandler->setSonicReading(sonic_last_distance == SONIC_NO_READING ? 0 : sonic_last_distance);
+  
+  Debug.print(F("Distance CM "));
+  Debug.print(sonic_last_distance);
+  Debug.print(F(" Min "));
+  Debug.print(configFile->open_distance_min);
+  Debug.print(F(" Max "));
+  Debug.print(configFile->open_distance_max);
 
-    String log = String(F("Sonic CM ")) + String(sonic_last_distance);
-    Debug.print(F(" Open "));
-    bool within_open = (sonic_last_distance >= configFile->open_distance_min && sonic_last_distance <= configFile->open_distance_max);
-    Debug.print(within_open ? F("TRUE"):F("FALSE"));
-    bool is_closed = sonic_last_distance == SONIC_NO_READING || !within_open;
-    Debug.print(F(" Closed "));
-    Debug.println(is_closed ? F("TRUE"):F("FALSE"));
-    if(sonarReadMillis == 0){ 
-      // first run update mqtt.
-      mqttHandler->setClosed(is_closed);
-    }
-
-    if(is_closed){
-      if(!settingsFile->isClosed()){
-        log += F(" setting CLOSED");
-        mqttHandler->setClosed(true);
-      }
-    }else{
-      if(!settingsFile->isOpen()){
-        log += F(" setting OPEN");
-        mqttHandler->setClosed(false);
-      }
-    }
-    log_printf(log.c_str());
-    sonarReadMillis = millis();
-    #ifndef TEST
-    if(sonic_reading_commanded){
-      if(millis() - sonic_read_commanded_start > SONAR_READ_COMMANDED_FOR){
-        log_printf(PSTR("No Longer reading sonic for commanded interval"));
-        sonic_reading_commanded = false;
-        sonic_read_interval = SONAR_READ_INTERVAL_WAITING;
-      }
-    }
-    #endif
+  String log = String(F("Sonic CM ")) + String(sonic_last_distance);
+  Debug.print(F(" Open "));
+  bool within_open = (sonic_last_distance >= configFile->open_distance_min && sonic_last_distance <= configFile->open_distance_max);
+  Debug.print(within_open ? F("TRUE"):F("FALSE"));
+  bool is_closed = sonic_last_distance == SONIC_NO_READING || !within_open;
+  Debug.print(F(" Closed "));
+  Debug.println(is_closed ? F("TRUE"):F("FALSE"));
+  if(sonarReadMillis == 0){ 
+    // first run update mqtt.
+    mqttHandler->setClosed(is_closed);
   }
 
+  if(is_closed){
+    ledRed(true);
+    ledGreen(false);
+    if(!settingsFile->isClosed()){
+      log += F(" setting CLOSED");
+      mqttHandler->setClosed(true);
+    }
+  }else{
+    ledRed(false);
+    ledGreen(true);
+    if(!settingsFile->isOpen()){
+      log += F(" setting OPEN");
+      mqttHandler->setClosed(false);
+    }
+  }
+  log_printf(log.c_str());
+  sonarReadMillis = millis();
+  #ifndef TEST
+  if(sonic_reading_commanded){
+    if(millis() - sonic_read_commanded_start > SONAR_READ_COMMANDED_FOR){
+      log_printf(PSTR("No Longer reading sonic for commanded interval"));
+      sonic_reading_commanded = false;
+      sonic_read_interval = SONAR_READ_INTERVAL_WAITING;
+
+      ticker_read_sonic.detach();
+      ticker_read_sonic.attach_ms_scheduled(sonic_read_interval,[&](){
+        readSonar();
+      });
+
+    }
+  }
+  #endif
 }
 
 
@@ -169,33 +174,30 @@ void IOHandler::doorCommand(String command){
   if(!settingsFile->isLocked()){
     if(command.compareTo(FORCE) == 0){
       logString += F(": Force Door Requested");
-      redMillisFlash = millis();
+      
       toggleRelay();
     }
 
     if (command.compareTo(OPEN) == 0) {
       if(settingsFile->isClosed()){
         logString += F(": Open Requested");
-        greenMillisFlash = 10000;
         ledGreen(true);
         toggleRelay();
         mqttHandler->setOpening();
       }else{
         logString += F(": Already Open");
-        redMillisFlash = millis() + 1000;
+        
         ledRed(true);
       }
     }
     if (command.compareTo(CLOSE) == 0) {
       if(settingsFile->isOpen()){
         logString += F(": Close Requested");
-        greenMillisFlash = 10000;
         ledGreen(true);
         toggleRelay();
         mqttHandler->setClosing();
       }else{
         logString += F(": Already Closed");
-        redMillisFlash = millis() + 1000;
         ledRed(true);
       }
     }
@@ -238,32 +240,34 @@ void IOHandler::toggleRelay(){
   sonic_read_interval = SONAR_READ_INTERVAL_COMMANDED;
   sonic_read_commanded_start = millis();
 
+  ticker_read_sonic.detach();
+  ticker_read_sonic.attach_ms_scheduled(sonic_read_interval,[&](){
+    readSonar();
+  });
+
 
   log_printf(PSTR("Toggle Relay"));
   ledRed(true);
   digitalWrite(RELAY,RELAY_CLOSED);
-  delay(RELAY_TOGGLE_TIME);
-  ledRed(false);
-  digitalWrite(RELAY,RELAY_OPEN);
-
+  ticker_relay.attach_ms(RELAY_TOGGLE_TIME, [&](){
+    ledRed(false);
+    digitalWrite(RELAY,RELAY_OPEN);
+  });
 }
 
 void IOHandler::readTemperature(){
   if(DS18B20.getDS18Count() > 0){
-    if(temperatureLastRead == 0 || (millis() - temperatureLastRead) >= configFile->update_interval_ms ){
-      ESP.wdtDisable();
-      DS18B20.requestTemperatures(); 
-      float temp = DS18B20.getTempCByIndex(0);
-      if(temp != 85.0 && temp != (-127.0)){
-        Debug.print(F("Temperature -> "));
-        Debug.println(temp);
-        settingsFile->setTemperature(temp);
-        mqttHandler->setTemperature(temp);
-      }else{
-        Debug.println(F("Temperature Reading Failed"));
-      }
-      temperatureLastRead = millis();
-      ESP.wdtEnable((uint32_t)0);
+    ESP.wdtDisable();
+    DS18B20.requestTemperatures(); 
+    float temp = DS18B20.getTempCByIndex(0);
+    if(temp != 85.0 && temp != (-127.0)){
+      Debug.print(F("Temperature -> "));
+      Debug.println(temp);
+      settingsFile->setTemperature(temp);
+      mqttHandler->setTemperature(temp);
+    }else{
+      Debug.println(F("Temperature Reading Failed"));
     }
+    ESP.wdtEnable((uint32_t)0);
   }
 }

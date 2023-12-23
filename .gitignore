@@ -44,3 +44,4 @@ GTAGS
 .vscode/ipch/**
 
 .pio/**
+.cache/**

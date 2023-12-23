@@ -7,6 +7,7 @@
 #include <DallasTemperature.h>
 #include <SPI.h>
 #include <functional>
+#include <Ticker.h>
 
 #include "ConfigFile.h"
 #include "SettingsFile.h"
@@ -35,6 +36,9 @@ class IOHandler{
     void ledRed(bool on);
 
     void update();
+    
+    void setupTimers();
+
     void doorCommand(String position);
     double sonicLastDistance(){
       return sonic_last_distance;
@@ -44,15 +48,15 @@ class IOHandler{
     std::shared_ptr<MQTTHandler> mqttHandler;
     std::shared_ptr<SettingsFile> settingsFile;
     std::shared_ptr<ConfigFile> configFile;
-    uint32_t greenMillisFlash;
-    uint32_t redMillisFlash;
     OneWire oneWire;
     DallasTemperature DS18B20;
     HCSR04 sonic;
-    uint32_t temperatureLastRead;
     uint32_t sonic_read_commanded_start;
     double sonic_last_distance;
     bool doInit;
+    Ticker ticker_relay;
+    Ticker ticker_read_sonic;
+    Ticker ticker_read_temperature;
     
     
 #ifdef OPEN_CLOSE_BUTTON
