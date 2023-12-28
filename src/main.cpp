@@ -83,6 +83,7 @@ void doSmartWifiConfig(){
 
 void  connectToWifi(){
   Serial.println(F("\n\nConnecting to Wifi"));
+  WiFi.setHostname(configFile->hostname.c_str());
   WiFi.begin(configFile->wifi_ap.c_str(), configFile->wifi_password.c_str());
   flashTimer.detach();
   flashTimer.attach_ms_scheduled(unconfigured ? FLASH_LED_UNCONFIGURED_DELAY : FLASH_LED_CONNECTING_DELAY, [](){ toggleLED(); });
